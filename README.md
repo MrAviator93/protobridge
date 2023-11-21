@@ -49,7 +49,7 @@ This example shows you how to initialize communication with the LM75 sensor and 
 
 ```cpp
 // Include I2C library files
-#include <devices/Controllers.hpp>
+#include <i2c/Controllers.hpp>
 
 // Output
 #include <format>

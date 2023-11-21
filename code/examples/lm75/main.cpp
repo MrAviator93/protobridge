@@ -1,7 +1,7 @@
 
 // Include I2C library files
-#include <devices/I2CBusController.hpp>
-#include <devices/LM75Controller.hpp>
+#include <i2c/I2CBusController.hpp>
+#include <i2c/LM75Controller.hpp>
 
 // Output
 #include <vector>

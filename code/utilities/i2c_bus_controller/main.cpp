@@ -1,11 +1,11 @@
 
 // I2C
-#include <devices/MCP23017Controller.hpp>
-#include <devices/I2CBusController.hpp>
-#include <devices/BMP180Controller.hpp>
-#include <devices/LM75Controller.hpp>
-#include <devices/BME680Controller.hpp>
-#include <devices/BME680ControllerV2.hpp>
+#include <i2c/MCP23017Controller.hpp>
+#include <i2c/I2CBusController.hpp>
+#include <i2c/BMP180Controller.hpp>
+#include <i2c/LM75Controller.hpp>
+#include <i2c/BME680Controller.hpp>
+#include <i2c/BME680ControllerV2.hpp>
 
 // C++
 #include <vector>
