@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace I2C::MPU6050
+namespace PBL::I2C::MPU6050
 {
 
 // MPU-6050 Register Addresses
@@ -183,5 +183,5 @@ enum class GyroSensitivity : std::uint8_t
 	DPS_2000 = 0x18 // +/- 2000 degrees/s
 };
 
-} // namespace I2C::MPU6050
+} // namespace PBL::I2C::MPU6050
 #endif // I2C_DEVICES_MPU6050_DEFINITIONS_HPP__

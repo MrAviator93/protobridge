@@ -17,7 +17,7 @@ FILE UTMOST REVIEW DONE ON (24.10.2023) BY ARTUR K.
 #include <cstdint>
 #include <shared_mutex>
 
-namespace I2C
+namespace PBL::I2C
 {
 
 /**
@@ -168,5 +168,5 @@ private:
 	std::string m_lastError; //<! TBW
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_I2C_BUS_CONTROLLER_HPP__

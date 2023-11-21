@@ -24,7 +24,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	I2C::I2CBusController busController{ deviceName };
+	PBL::I2C::I2CBusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )
@@ -34,7 +34,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create an MPU6050 controller, attached to the bus controller, using the default device address
-	I2C::MPU6050Controller mpu6050{ busController };
+	PBL::I2C::MPU6050Controller mpu6050{ busController };
 
 	while( true )
 	{

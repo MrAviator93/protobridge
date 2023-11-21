@@ -31,7 +31,7 @@ int main()
 	// Constant system, prediction model omitted
 	{
 		// Create a Kalman filter instance
-		I2C::KalmanFilter1Dd kf{ initialValue, processNoise, measurementNoise, error };
+		PBL::Utils::KalmanFilter1Dd kf{ initialValue, processNoise, measurementNoise, error };
 
 		// Simulated measurements
 
@@ -47,7 +47,7 @@ int main()
 	{
 		double dt{ 0.1 }; // Time step between measurements
 		double rate{ 0.1 };
-		I2C::KalmanFilterAdvanced1D< double, I2C::LinearMotionModel > kf{
+		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::LinearMotionModel > kf{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - Linear Motion Model" << std::endl;
@@ -64,7 +64,7 @@ int main()
 		double circularSpeed{ 1.0 }; // Speed of the circular motion
 		double circularRadius{ 5.0 }; // Radius of the circular path
 
-		I2C::KalmanFilterAdvanced1D< double, I2C::CircularMotionModel > kfCircular{
+		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::CircularMotionModel > kfCircular{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - Circular Motion Model:" << std::endl;
@@ -83,7 +83,7 @@ int main()
 		double externalForce = 10.0; // The external force applied to the system
 		double mass = 2.0; // Mass of the object subjected to the external force
 
-		I2C::KalmanFilterAdvanced1D< double, I2C::ExternalForceModel > kfExternal{
+		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::ExternalForceModel > kfExternal{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - External Force Model:" << std::endl;
@@ -97,7 +97,7 @@ int main()
 	}
 
 	{
-		I2C::KalmanFilterAdvanced1D< double, I2C::RandomWalkModel > kfRandom{
+		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::RandomWalkModel > kfRandom{
 			initialValue, processNoise, measurementNoise, error, 0.0,  processNoise };
 
 		std::cout << "Results - Random Walk Model:" << std::endl;
@@ -112,7 +112,7 @@ int main()
 
 	// Won't compile
 	// {
-	// 	I2C::KalmanFilterAdvanced1D< double, NonInvocable > kfNonInvocable{
+	// 	PBL::Utils::KalmanFilterAdvanced1D< double, NonInvocable > kfNonInvocable{
 	// 		initialValue, processNoise, measurementNoise, error };
 	// }
 

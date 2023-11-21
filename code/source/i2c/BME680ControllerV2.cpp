@@ -18,7 +18,7 @@ extern "C" {
 #include "bme680.h"
 }
 
-namespace I2C
+namespace PBL::I2C
 {
 
 static I2CBusController* pBusController{ nullptr };
@@ -148,4 +148,4 @@ void BME680ControllerV2::printMeasurements()
 	}
 }
 
-} // namespace I2C
+} // namespace PBL::I2C

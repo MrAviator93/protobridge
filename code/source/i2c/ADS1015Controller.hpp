@@ -4,7 +4,7 @@
 
 #include "ICBase.hpp"
 
-namespace I2C
+namespace PBL::I2C
 {
 
 /**
@@ -27,5 +27,5 @@ public:
 	explicit ADS1015Controller( class I2CBusController& busController, Address address = H48 );
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_ADS1015_CONTROLLER_HPP__

@@ -9,7 +9,7 @@ FILE UTMOST REVIEW DONE ON (24.10.2023) BY ARTUR K.
 
 #include "ICBase.hpp"
 
-namespace I2C
+namespace PBL::I2C
 {
 
 class I2CBusController;
@@ -220,5 +220,5 @@ private:
 	std::uint8_t m_portBPinStates{}; //!< Current pin states for port B
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_MCP23017_CONTROLLER_HPP__

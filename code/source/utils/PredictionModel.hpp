@@ -9,7 +9,7 @@
 #include <concepts>
 #include <type_traits>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 template < typename T >
@@ -150,5 +150,5 @@ concept PredictionModelType =
 	requires { typename ModelType::ValueType; } && std::is_floating_point_v< typename ModelType::ValueType > &&
 	CheckInvocableRecursiveV< typename ModelType::ValueType, ModelType >;
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_PREDICTION_MODEL_HPP__

@@ -2,7 +2,7 @@
 #include "ICBase.hpp"
 #include "I2CBusController.hpp"
 
-namespace I2C
+namespace PBL::I2C
 {
 
 bool ICBase::write( std::uint8_t reg, std::uint8_t value )
@@ -40,4 +40,4 @@ void ICBase::sleep( std::chrono::microseconds sleepTimeUs )
 	m_busController.sleep( sleepTimeUs );
 }
 
-} // namespace I2C
+} // namespace PBL::I2C

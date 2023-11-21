@@ -5,7 +5,7 @@
 #include "RandomGenerator.hpp"
 #include "PredictionModel.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -161,5 +161,5 @@ private:
 using KalmanFilter1Df = KalmanFilter1D< float >;
 using KalmanFilter1Dd = KalmanFilter1D< double >;
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_KALMAN_FILTER_HPP__

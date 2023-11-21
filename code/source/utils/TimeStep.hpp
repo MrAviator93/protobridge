@@ -4,7 +4,7 @@
 
 #include "TimeTypes.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -100,5 +100,5 @@ private:
 	T m_duration;
 };
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_TIME_STEP_HPP__

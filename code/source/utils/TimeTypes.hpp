@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 using Clock = std::chrono::high_resolution_clock;
@@ -18,5 +18,5 @@ using Milliseconds = std::chrono::milliseconds; // Signed integer type of at lea
 using Microseconds = std::chrono::microseconds; // Signed integer type of at least 55 bits
 using Nanoseconds = std::chrono::nanoseconds; // Signed integer type of at least 64 bits
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_TIME_TYPES_HPP__

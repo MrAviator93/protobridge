@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace I2C::Examples
+namespace PBL::Examples
 {
 
 /**
@@ -39,5 +39,5 @@ private:
 	I2CControllerBusType m_busController;
 };
 
-} // namespace I2C::Examples
+} // namespace PBL::Examples
 #endif // I2C_EXAMPLES_EXAMPLE_APP_HPP__

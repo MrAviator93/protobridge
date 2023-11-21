@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace I2C
+namespace PBL::I2C
 {
 
 class I2CBusController;
@@ -77,5 +77,5 @@ private:
 	std::uint8_t m_icAddress;
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_IC_BASE_HPP__

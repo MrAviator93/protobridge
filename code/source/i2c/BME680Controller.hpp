@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-namespace I2C
+namespace PBL::I2C
 {
 class I2CBusController;
 
@@ -53,5 +53,5 @@ private:
 	std::unique_ptr< BME680CalibData > m_calibData;
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_BME680_CONTROLLER_HPP__

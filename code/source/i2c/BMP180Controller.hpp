@@ -14,7 +14,7 @@ FILE UTMOST REVIEW DONE ON (24.10.2023) BY ARTUR K.
 // C++
 #include <optional>
 
-namespace I2C
+namespace PBL::I2C
 {
 
 class I2CBusController;
@@ -102,8 +102,8 @@ public:
 
 private:
 	SamplingAccuracy m_samplingAccuracy;
-	FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
+	Utils::FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_BMP180_CONTROLLER_HPP__

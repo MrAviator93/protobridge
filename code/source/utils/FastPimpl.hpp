@@ -6,7 +6,7 @@
 #include <memory>
 #include <utility>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -87,5 +87,5 @@ private:
 	alignas( Alignment ) std::byte m_storage[ Size ]; //!< Aligned storage for the type T.
 };
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_FAST_PIMPL_HPP__

@@ -4,7 +4,7 @@
 
 #include <concepts>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -141,5 +141,5 @@ private:
 	T m_alphaVelocity{}; //!< Weight factor for the velocity data in the filter calculation
 };
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_COMPLEMENTARY_FILTER_HPP__

@@ -12,7 +12,7 @@ SCENARIO( "Converting degrees to radians" )
 		WHEN( "the value is 0" )
 		{
 			double degrees{ 0.0 };
-			double radians = I2C::degreesToRadians( degrees );
+			double radians = PBL::Utils::degreesToRadians( degrees );
 
 			THEN( "the result should be 0 radians" )
 			{
@@ -23,22 +23,22 @@ SCENARIO( "Converting degrees to radians" )
 		WHEN( "the value is 90" )
 		{
 			double degrees{ 90.0 };
-			double radians = I2C::degreesToRadians( degrees );
+			double radians = PBL::Utils::degreesToRadians( degrees );
 
 			THEN( "the result should be pi/2 radians" )
 			{
-				CHECK( radians == doctest::Approx( I2C::PI / 2.0 ) );
+				CHECK( radians == doctest::Approx( PBL::Utils::PI / 2.0 ) );
 			}
 		}
 
 		WHEN( "the value is 180" )
 		{
 			double degrees{ 180.0 };
-			double radians = I2C::degreesToRadians( degrees );
+			double radians = PBL::Utils::degreesToRadians( degrees );
 
 			THEN( "the result should be pi radians" )
 			{
-				CHECK( radians == doctest::Approx( I2C::PI ) );
+				CHECK( radians == doctest::Approx( PBL::Utils::PI ) );
 			}
 		}
 	}
@@ -51,7 +51,7 @@ SCENARIO( "Converting radians to degrees" )
 		WHEN( "the value is 0" )
 		{
 			double radians{ 0.0 };
-			double degrees{ I2C::radiansToDegrees( radians ) };
+			double degrees{ PBL::Utils::radiansToDegrees( radians ) };
 
 			THEN( "the result should be 0 degrees" )
 			{
@@ -61,8 +61,8 @@ SCENARIO( "Converting radians to degrees" )
 
 		WHEN( "the value is pi/2" )
 		{
-			double radians = I2C::PI / 2.0;
-			double degrees{ I2C::radiansToDegrees( radians ) };
+			double radians = PBL::Utils::PI / 2.0;
+			double degrees{ PBL::Utils::radiansToDegrees( radians ) };
 
 			THEN( "the result should be 90 degrees" )
 			{
@@ -72,8 +72,8 @@ SCENARIO( "Converting radians to degrees" )
 
 		WHEN( "the value is pi" )
 		{
-			double radians = I2C::PI;
-			double degrees{ I2C::radiansToDegrees( radians ) };
+			double radians = PBL::Utils::PI;
+			double degrees{ PBL::Utils::radiansToDegrees( radians ) };
 			
 			THEN( "the result should be 180 degrees" )
 			{

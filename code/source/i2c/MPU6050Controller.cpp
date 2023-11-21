@@ -5,7 +5,7 @@
 
 // https://howtomechatronics.com/tutorials/arduino/arduino-and-mpu6050-accelerometer-and-gyroscope-tutorial/
 
-namespace I2C
+namespace PBL::I2C
 {
 
 MPU6050Controller::MPU6050Controller( I2CBusController& busController, Address address ) noexcept
@@ -145,7 +145,7 @@ void MPU6050Controller::calculateImuError()
 	GyroErrorZ = GyroErrorZ / static_cast< double >( kGyroCalibReadIterations );
 }
 
-Vector3f MPU6050Controller::angles()
+Utils::Vector3f MPU6050Controller::angles()
 {
 	// TODO (AK)
 	return {};
@@ -215,4 +215,4 @@ Vector3f MPU6050Controller::angles()
 // 	return m_x;
 // }
 
-} // namespace I2C
+} // namespace PBL::I2C

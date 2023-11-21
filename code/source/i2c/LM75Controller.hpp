@@ -17,7 +17,7 @@
 // C++
 #include <optional>
 
-namespace I2C
+namespace PBL::I2C
 {
 
 class I2CBusController;
@@ -116,5 +116,5 @@ public:
 	[[nodiscard]] std::optional< float > getTemperatureF();
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_LM75_CONTROLLER_HPP__

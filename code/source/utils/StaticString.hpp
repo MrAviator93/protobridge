@@ -7,7 +7,7 @@
 #include <cstring>
 #include <algorithm>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -81,5 +81,5 @@ struct StaticString final
 template < std::size_t N >
 StaticString( const char ( &str )[ N ] ) -> StaticString< N - 1 >;
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_STATIC_STRING_HPP__

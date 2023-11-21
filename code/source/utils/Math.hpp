@@ -5,7 +5,7 @@
 #include <cmath>
 #include <type_traits>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 constexpr double PI{ 3.14159265358979323846 };
@@ -178,5 +178,5 @@ template < std::floating_point T >
 	return ( fahrenheit - T{ 32.0 } ) / T{ 0.5556 };
 }
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_MATH_HPP__

@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 template < typename T >
@@ -201,6 +201,6 @@ private:
 	RandomGenerator< Rep > m_randomGenerator;
 };
 
-} // namespace I2C
+} // namespace PBL::Utils
 
 #endif // I2C_UTILS_RANDOM_GENERATOR_HPP__

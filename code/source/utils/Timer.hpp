@@ -4,7 +4,7 @@
 
 #include "TimeTypes.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -45,5 +45,5 @@ private:
 	TimePointNs m_startTP; //!< Starting time stamp
 };
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_TIMER_HPP__

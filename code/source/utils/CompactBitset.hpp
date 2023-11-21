@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -294,5 +294,5 @@ constexpr std::size_t CompactBitset< N >::countBitsInByte( std::uint8_t byte ) n
 	return count;
 }
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_COMPACT_BITSET_HPP__

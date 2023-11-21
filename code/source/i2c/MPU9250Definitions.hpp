@@ -4,8 +4,8 @@
 
 #include <cstdint>
 
-namespace I2C::MPU9250
+namespace PBL::I2C::MPU9250
 {
 
-} // namespace I2C::MPU9250
+} // namespace PBL::I2C::MPU9250
 #endif // I2C_DEVICES_MPY9250_DEFINITIONS_HPP__

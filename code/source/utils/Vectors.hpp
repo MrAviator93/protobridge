@@ -4,7 +4,7 @@
 
 #include "Math.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 template < typename T >
@@ -40,5 +40,5 @@ using Vector3d = Vector3< double >;
 using Vector4f = Vector4< float >;
 using Vector4d = Vector4< double >;
 
-} // namespace I2C
+} // namespace PBL::Utils
 #endif // I2C_UTILS_VECTORS_HPP__

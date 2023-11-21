@@ -4,7 +4,7 @@
 
 #include "ICBase.hpp"
 
-namespace I2C
+namespace PBL::I2C
 {
 
 /**
@@ -31,5 +31,5 @@ public:
 	explicit PCA9685Controller( class I2CBusController& busController, Address address = H40 );
 };
 
-} // namespace I2C
+} // namespace PBL::I2C
 #endif // I2C_DEVICES_PCA9658_CONTROLLER_HPP__
