@@ -118,8 +118,7 @@ git clone git@github.com:MrAviator93/protobridge.git
 Standard build procedure, navigate to the project directory and build the library using CMake and make:
 
 ```bash
-mkdir build
-cd build
+mkdir build && cd build
 cmake ../code/ -DCMAKE_BUILD_TYPE=Release
 cmake --build . --parallel $(nproc)
 sudo cmake --install .
