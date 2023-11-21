@@ -15,7 +15,7 @@ set(I2C_UTILS_HEADERS
     KalmanFilter.hpp
     StaticString.hpp
     CompactBitset.hpp
-    PredicionModel.hpp
+    PredicionModels.hpp
     RandomGenerator.hpp
     ComplementaryFilter.hpp
 )
