@@ -1,0 +1,16 @@
+
+function(create_executable EXEC_NAME LIBS_VAR_NAME)
+    set(libs "${${LIBS_VAR_NAME}}")
+    set(sources ${ARGN})
+    add_executable(${EXEC_NAME} ${sources})
+    if(UNIX)
+        list(APPEND libs pthread)
+        set_target_properties(${EXEC_NAME} PROPERTIES LINK_FLAGS "-no-pie")
+    endif()
+    target_link_libraries(${EXEC_NAME} PRIVATE ${libs})
+endfunction()
+
+function(create_test_executable EXEC_NAME LIBS_VAR_NAME)
+    create_executable(${EXEC_NAME} ${LIBS_VAR_NAME} ${ARGN})
+    add_test(NAME ${EXEC_NAME} COMMAND ${EXEC_NAME})
+endfunction()

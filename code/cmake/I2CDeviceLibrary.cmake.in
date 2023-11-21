@@ -1,0 +1,13 @@
+# cmake/I2CDeviceLibrary.cmake.in
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(Utils)
+find_dependency(Devices)
+
+include("${CMAKE_CURRENT_LIST_DIR}/I2CDeviceLibraryTargets.cmake")
+
+set(VADCore_LIBRARIES
+    I2C::Utils
+    I2C::Devices
+)

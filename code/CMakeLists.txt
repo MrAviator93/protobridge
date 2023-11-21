@@ -1,0 +1,86 @@
+cmake_minimum_required(VERSION "3.26.0")
+
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
+option(I2C_BUILD_TESTS "Compile unit tests." ON)
+option(I2C_BUILD_EXAMPLES "Compile examples." ON)
+option(I2C_BUILD_UTILITIES "Compile utilities." ON)
+option(I2C_CORE_GENERATE_DOC "Generate documentation." ON)
+
+project(I2CLib VERSION 1.0 LANGUAGES C CXX)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+include(CreateExecutable)
+include(CreateStaticLibrary)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED TRUE)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1) 
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # TODO: Add more stricter compiler flags
+    add_compile_options("-Wall" "-Wextra" "-Wcast-align" "-Wunused" "-O2" "-fexceptions" "-pedantic")
+endif()
+
+add_subdirectory(source)
+
+if (I2C_BUILD_TESTS)
+        find_package(doctest CONFIG REQUIRED)
+        include(CTest)
+        set(BUILD_TESTING ON)
+        set(CMAKE_CTEST_ARGUMENTS "--verbose")
+        add_subdirectory(test)
+endif()
+
+if (I2C_BUILD_EXAMPLES)
+        add_subdirectory(examples)
+endif()
+
+if (I2C_BUILD_UTILITIES)
+        add_subdirectory(utilities)
+endif()
+
+if (I2C_CORE_GENERATE_DOC)
+    find_package(Doxygen)
+    if (DOXYGEN_FOUND)
+        # Check for dot tool of Graphviz
+        if (NOT DOXYGEN_DOT_EXECUTABLE)
+            message(WARNING "Graphviz's dot tool not found. Graphs in documentation might not be generated.")
+        endif()
+        
+        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/Doxyfile.in)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+
+        add_custom_target(docs
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM)
+    else()
+        message("Doxygen has not been found on the current system. Install it in order to generate the documentation.")
+    endif()
+endif()
+
+
+find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
+if (CMAKE_CXX_CPPCHECK)
+    list( APPEND CMAKE_CXX_CPPCHECK 
+            "--enable=all"
+            "--suppressions-list=${CMAKE_SOURCE_DIR}/CppCheckSuppressions.txt"
+    )
+
+    add_custom_target(analyze
+        COMMAND ${CMAKE_CXX_CPPCHECK} ${CMAKE_SOURCE_DIR}/source/
+        COMMENT "Static code analysis using ${CPP_CHECK_VERSION}"
+    )
+endif()

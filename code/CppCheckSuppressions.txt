@@ -1,0 +1,5 @@
+// Usage: cppcheck --enable=all --suppressions-list=CppCheckSuppressions.txt Source/
+// Suppress all unused function warnings
+unusedFunction
+unusedPrivateFunction
+missingIncludeSystem
