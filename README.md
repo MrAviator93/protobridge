@@ -131,7 +131,7 @@ This will compile the source code and create the necessary output directories an
 The project is configured to generate documentation through Doxygen. You can create a comprehensive set of documentation by following these steps:
 
 ```bash
-cd Build
+cd build
 make docs
 ```
 
