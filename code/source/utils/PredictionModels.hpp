@@ -1,6 +1,5 @@
-
-#ifndef I2C_UTILS_PREDICTION_MODELS_HPP__
-#define I2C_UTILS_PREDICTION_MODELS_HPP__
+#ifndef PBL_UTILS_PREDICTION_MODELS_HPP__
+#define PBL_UTILS_PREDICTION_MODELS_HPP__
 
 // C++
 #include <cmath>
@@ -151,4 +150,4 @@ concept PredictionModelType =
 	CheckInvocableRecursiveV< typename ModelType::ValueType, ModelType >;
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_PREDICTION_MODELS_HPP__
+#endif // PBL_UTILS_PREDICTION_MODELS_HPP__

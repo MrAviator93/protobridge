@@ -1,7 +1,7 @@
+#ifndef PBL_UTILS_COMPLEMENTARY_FILTER_HPP__
+#define PBL_UTILS_COMPLEMENTARY_FILTER_HPP__
 
-#ifndef I2C_UTILS_COMPLEMENTARY_FILTER_HPP__
-#define I2C_UTILS_COMPLEMENTARY_FILTER_HPP__
-
+// C++
 #include <concepts>
 
 namespace PBL::Utils
@@ -142,4 +142,4 @@ private:
 };
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_COMPLEMENTARY_FILTER_HPP__
+#endif // PBL_UTILS_COMPLEMENTARY_FILTER_HPP__

@@ -1,7 +1,7 @@
+#ifndef PBL_UTILS_STATIC_STRING_HPP__
+#define PBL_UTILS_STATIC_STRING_HPP__
 
-#ifndef I2C_UTILS_STATIC_STRING_HPP__
-#define I2C_UTILS_STATIC_STRING_HPP__
-
+// C++
 #include <array>
 #include <string>
 #include <cstring>
@@ -82,4 +82,4 @@ template < std::size_t N >
 StaticString( const char ( &str )[ N ] ) -> StaticString< N - 1 >;
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_STATIC_STRING_HPP__
+#endif // PBL_UTILS_STATIC_STRING_HPP__

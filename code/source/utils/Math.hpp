@@ -1,6 +1,5 @@
-
-#ifndef I2C_UTILS_MATH_HPP__
-#define I2C_UTILS_MATH_HPP__
+#ifndef PBL_UTILS_MATH_HPP__
+#define PBL_UTILS_MATH_HPP__
 
 #include <cmath>
 #include <type_traits>
@@ -179,4 +178,4 @@ template < std::floating_point T >
 }
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_MATH_HPP__
+#endif // PBL_UTILS_MATH_HPP__

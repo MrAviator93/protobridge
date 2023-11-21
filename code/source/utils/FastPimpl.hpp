@@ -1,9 +1,9 @@
+#ifndef PBL_UTILS_FAST_PIMPL_HPP__
+#define PBL_UTILS_FAST_PIMPL_HPP__
 
-#ifndef I2C_UTILS_FAST_PIMPL_HPP__
-#define I2C_UTILS_FAST_PIMPL_HPP__
-
-#include <cstddef>
+// C++
 #include <memory>
+#include <cstddef>
 #include <utility>
 
 namespace PBL::Utils
@@ -88,4 +88,4 @@ private:
 };
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_FAST_PIMPL_HPP__
+#endif // PBL_UTILS_FAST_PIMPL_HPP__

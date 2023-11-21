@@ -1,9 +1,8 @@
-
-#ifndef I2C_UTILS_KALMAN_FILTER_HPP__
-#define I2C_UTILS_KALMAN_FILTER_HPP__
+#ifndef PBL_UTILS_KALMAN_FILTER_HPP__
+#define PBL_UTILS_KALMAN_FILTER_HPP__
 
 #include "RandomGenerator.hpp"
-#include "PredictionModel.hpp"
+#include "PredictionModels.hpp"
 
 namespace PBL::Utils
 {
@@ -162,4 +161,4 @@ using KalmanFilter1Df = KalmanFilter1D< float >;
 using KalmanFilter1Dd = KalmanFilter1D< double >;
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_KALMAN_FILTER_HPP__
+#endif // PBL_UTILS_KALMAN_FILTER_HPP__

@@ -1,7 +1,7 @@
+#ifndef PBL_UTILS_TIME_TYPES_HPP__
+#define PBL_UTILS_TIME_TYPES_HPP__
 
-#ifndef I2C_UTILS_TIME_TYPES_HPP__
-#define I2C_UTILS_TIME_TYPES_HPP__
-
+// C++
 #include <chrono>
 
 namespace PBL::Utils
@@ -19,4 +19,4 @@ using Microseconds = std::chrono::microseconds; // Signed integer type of at lea
 using Nanoseconds = std::chrono::nanoseconds; // Signed integer type of at least 64 bits
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_TIME_TYPES_HPP__
+#endif // PBL_UTILS_TIME_TYPES_HPP__

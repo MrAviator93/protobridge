@@ -1,6 +1,5 @@
-
-#ifndef I2C_UTILS_TIMER_HPP__
-#define I2C_UTILS_TIMER_HPP__
+#ifndef PBL_UTILS_TIMER_HPP__
+#define PBL_UTILS_TIMER_HPP__
 
 #include "TimeTypes.hpp"
 
@@ -46,4 +45,4 @@ private:
 };
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_TIMER_HPP__
+#endif // PBL_UTILS_TIMER_HPP__
