@@ -1,9 +1,3 @@
-/***********************************************************************
-FILE I2CBUSCONTROLLER.HPP CONTAINTS I2C BUS CONTROLLER CLASS IMPLEMENTATION
-
-FILE UTMOST REVIEW DONE ON (24.10.2023) BY ARTUR K. 
-***********************************************************************/
-
 #ifndef I2C_DEVICES_I2C_BUS_CONTROLLER_HPP__
 #define I2C_DEVICES_I2C_BUS_CONTROLLER_HPP__
 
@@ -42,7 +36,7 @@ public:
 	virtual ~I2CBusController();
 
 	/// Returns the OS name of the physical bus name
-	[[nodiscard]] auto& bus() const { return m_i2cBusName; }
+	[[nodiscard]] auto& bus() const { return m_busName; }
 
 	/// Returns whether the I2C is open on the device.
 	[[nodiscard]] bool isOpen() const { return m_open.load(); }
@@ -158,7 +152,7 @@ private:
 	// void detach(ICBase& ic);
 
 private:
-	const std::string m_i2cBusName; //!< I2C Bus name, i.e. "/dev/i2c-1"
+	const std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
 	std::atomic_bool m_open{ false }; //!< Indicates whether the I2C bus is open
 
 	mutable std::mutex m_fdMtx; //!< Locks the read write operations

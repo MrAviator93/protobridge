@@ -1,6 +1,7 @@
 
 set(I2C_UTILS_SOURCES
     Timer.cpp
+    SpinLock.cpp
 )
 
 set(I2C_UTILS_HEADERS
@@ -8,6 +9,7 @@ set(I2C_UTILS_HEADERS
     Timer.hpp
     Vectors.hpp
     TimeStep.hpp
+    SpinLock.hpp
     TimeTypes.hpp
     FastPimpl.hpp
     KalmanFilter.hpp

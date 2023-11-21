@@ -1,5 +1,3 @@
-
-// I2C
 #include "I2CBusController.hpp"
 
 // C++
@@ -37,9 +35,9 @@ bool check( std::uint64_t fs, std::uint64_t f, char const* what )
 } // namespace
 
 I2CBusController::I2CBusController( const std::string& busName )
-	: m_i2cBusName{ busName }
+	: m_busName{ busName }
 {
-	m_fd = ::open( m_i2cBusName.c_str(), O_RDWR | O_NONBLOCK );
+	m_fd = ::open( m_busName.c_str(), O_RDWR | O_NONBLOCK );
 	if( m_fd < 0 )
 	{
 		reportError();

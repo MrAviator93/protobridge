@@ -1,9 +1,3 @@
-/***********************************************************************
-FILE BMP180CONTROLLER.HPP CONTAINS BMP180 CONTROLLER CLASS IMPLEMENTATION
-
-FILE UTMOST REVIEW DONE ON (24.10.2023) BY ARTUR K. 
-***********************************************************************/
-
 #ifndef I2C_DEVICES_BMP180_CONTROLLER_HPP__
 #define I2C_DEVICES_BMP180_CONTROLLER_HPP__
 
