@@ -33,11 +33,11 @@ Whether your aim is to configure an environmental sensor or manage an I/O expand
 - User-Friendly Device Management.
 - Comprehensive documentation support.
 - Support for a range of popular ICs, including:
-  - [MCP23017 - I/O Expander](./code/examples/mcp23017/main.cpp)
-  - [LM75 - Temperature Sensor](./code/examples/lm75/main.cpp)
-  - [BMP180 - Barometric Pressure Sensor](./code/examples/bmp180/main.cpp)
-  - [BME680 - Environmental Sensor (temperature, humidity, pressure, and gas)](./code/examples/bme680/main.cpp)
-  - [MPU6050 - Inertial Measurement Unit](./code/examples/mcp23017/main.cpp)
+  - [MCP23017 - I/O Expander](./code/examples/i2c/mcp23017/main.cpp)
+  - [LM75 - Temperature Sensor](./code/examples/i2c/lm75/main.cpp)
+  - [BMP180 - Barometric Pressure Sensor](./code/examples/i2c/bmp180/main.cpp)
+  - [BME680 - Environmental Sensor (temperature, humidity, pressure, and gas)](./code/examples/i2c/bme680/main.cpp)
+  - [MPU6050 - Inertial Measurement Unit](./code/examples/i2c/mcp23017/main.cpp)
 
 ## Examples
 
@@ -112,7 +112,7 @@ The i2c-tools package contains a collection of utilities for I2C, and libi2c-dev
 Clone the repository into your local machine using the following command:
 
 ```bash
-git clone git@github.com:MrAviator93/I2CDeviceLibrary.git
+git clone git@github.com:MrAviator93/protobridge.git
 ```
 
 Standard build procedure, navigate to the project directory and build the library using CMake and make:
