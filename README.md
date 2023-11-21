@@ -58,14 +58,14 @@ This example shows you how to initialize communication with the LM75 sensor and 
 int main(int, char**)
 {
     // Create a bus controller for the I2C bus (Raspberry Pi 4)
-    I2C::I2CBusController busController{"/dev/i2c-1"};
+    PBL::I2C::I2CBusController busController{"/dev/i2c-1"};
 
     // Check if the I2C bus is open and accessible
     if (busController.isOpen()) 
     {
       // Create an LM75 controller, attached to the bus controller,
       // using the default device address
-      I2C::LM75Controller lm75{busController};
+      PBL::I2C::LM75Controller lm75{busController};
 
       // Read the temperature in Celsius from the LM75 sensor
       auto temp = lm75.getTemperatureC();
