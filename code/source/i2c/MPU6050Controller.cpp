@@ -1,4 +1,3 @@
-
 #include "MPU6050Controller.hpp"
 #include "MPU6050Definitions.hpp"
 #include "I2CBusController.hpp"

@@ -1,4 +1,3 @@
-
 #include "ADS1015Controller.hpp"
 #include "I2CBusController.hpp"
 

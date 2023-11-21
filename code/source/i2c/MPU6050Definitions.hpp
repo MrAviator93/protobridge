@@ -1,6 +1,7 @@
-#ifndef I2C_DEVICES_MPU6050_DEFINITIONS_HPP__
-#define I2C_DEVICES_MPU6050_DEFINITIONS_HPP__
+#ifndef PBL_I2C_MPU6050_DEFINITIONS_HPP__
+#define PBL_I2C_MPU6050_DEFINITIONS_HPP__
 
+// C++
 #include <cstdint>
 
 namespace PBL::I2C::MPU6050
@@ -184,4 +185,4 @@ enum class GyroSensitivity : std::uint8_t
 };
 
 } // namespace PBL::I2C::MPU6050
-#endif // I2C_DEVICES_MPU6050_DEFINITIONS_HPP__
+#endif // PBL_I2C_MPU6050_DEFINITIONS_HPP__

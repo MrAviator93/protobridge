@@ -1,4 +1,3 @@
-
 #include "MCP23017Controller.hpp"
 #include "I2CBusController.hpp"
 

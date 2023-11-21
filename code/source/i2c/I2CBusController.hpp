@@ -1,5 +1,5 @@
-#ifndef I2C_DEVICES_I2C_BUS_CONTROLLER_HPP__
-#define I2C_DEVICES_I2C_BUS_CONTROLLER_HPP__
+#ifndef PBL_I2C_BUS_CONTROLLER_HPP__
+#define PBL_I2C_BUS_CONTROLLER_HPP__
 
 // C++
 #include <span>
@@ -163,4 +163,4 @@ private:
 };
 
 } // namespace PBL::I2C
-#endif // I2C_DEVICES_I2C_BUS_CONTROLLER_HPP__
+#endif // PBL_I2C_BUS_CONTROLLER_HPP__

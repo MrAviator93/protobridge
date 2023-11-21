@@ -1,6 +1,6 @@
 
-#ifndef I2C_DEVICES_IC_BASE_HPP__
-#define I2C_DEVICES_IC_BASE_HPP__
+#ifndef PBL_I2C_IC_BASE_HPP__
+#define PBL_I2C_IC_BASE_HPP__
 
 // C++
 #include <span>
@@ -78,4 +78,4 @@ private:
 };
 
 } // namespace PBL::I2C
-#endif // I2C_DEVICES_IC_BASE_HPP__
+#endif // PBL_I2C_IC_BASE_HPP__

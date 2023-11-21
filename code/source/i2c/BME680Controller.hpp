@@ -1,10 +1,10 @@
+#ifndef PBL_I2C_BME680_CONTROLLER_HPP__
+#define PBL_I2C_BME680_CONTROLLER_HPP__
 
-#ifndef I2C_DEVICES_BME680_CONTROLLER_HPP__
-#define I2C_DEVICES_BME680_CONTROLLER_HPP__
-
-#include <cstdint>
+// C++
 #include <memory>
 #include <string>
+#include <cstdint>
 
 namespace PBL::I2C
 {
@@ -54,4 +54,4 @@ private:
 };
 
 } // namespace PBL::I2C
-#endif // I2C_DEVICES_BME680_CONTROLLER_HPP__
+#endif // PBL_I2C_BME680_CONTROLLER_HPP__

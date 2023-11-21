@@ -10,7 +10,6 @@
 
 #include "LM75Controller.hpp"
 #include "I2CBusController.hpp"
-
 #include <utils/Math.hpp>
 
 // C++

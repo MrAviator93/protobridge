@@ -1,6 +1,6 @@
 
-#ifndef I2C_DEVICES_CONTROLLERS_HPP__
-#define I2C_DEVICES_CONTROLLERS_HPP__
+#ifndef PBL_I2C_CONTROLLERS_HPP__
+#define PBL_I2C_CONTROLLERS_HPP__
 
 #include "I2CBusController.hpp"
 #include "LM75Controller.hpp"
@@ -11,4 +11,4 @@
 #include "MCP23017Controller.hpp"
 #include "BME680ControllerV2.hpp"
 
-#endif // I2C_DEVICES_CONTROLLERS_HPP__
+#endif // PBL_I2C_CONTROLLERS_HPP__

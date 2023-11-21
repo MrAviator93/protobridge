@@ -8,10 +8,9 @@
  *  For license details, see the LICENSE file in the project root.
  */
 
-#ifndef I2C_DEVICES_LM75_CONTROLLER_HPP__
-#define I2C_DEVICES_LM75_CONTROLLER_HPP__
+#ifndef PBL_I2C_LM75_CONTROLLER_HPP__
+#define PBL_I2C_LM75_CONTROLLER_HPP__
 
-// I2C
 #include "ICBase.hpp"
 
 // C++
@@ -117,4 +116,4 @@ public:
 };
 
 } // namespace PBL::I2C
-#endif // I2C_DEVICES_LM75_CONTROLLER_HPP__
+#endif // PBL_I2C_LM75_CONTROLLER_HPP__

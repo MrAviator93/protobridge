@@ -1,4 +1,3 @@
-
 #include "ICBase.hpp"
 #include "I2CBusController.hpp"
 

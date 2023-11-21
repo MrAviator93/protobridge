@@ -1,7 +1,6 @@
 #ifndef I2C_DEVICES_BMP180_CONTROLLER_HPP__
 #define I2C_DEVICES_BMP180_CONTROLLER_HPP__
 
-// I2C
 #include "ICBase.hpp"
 #include <utils/FastPimpl.hpp>
 

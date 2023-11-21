@@ -1,4 +1,3 @@
-
 #include "MPU9250Controller.hpp"
 #include "I2CBusController.hpp"
 

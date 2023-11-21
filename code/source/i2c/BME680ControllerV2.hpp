@@ -1,8 +1,6 @@
+#ifndef PBL_I2C__BME680_CONTROLLER_V2_HPP__
+#define PBL_I2C__BME680_CONTROLLER_V2_HPP__
 
-#ifndef I2C_DEVICES_BME680_CONTROLLER_V2_HPP__
-#define I2C_DEVICES_BME680_CONTROLLER_V2_HPP__
-
-// I2C
 #include <utils/FastPimpl.hpp>
 
 // C++
@@ -36,4 +34,4 @@ private:
 };
 
 } // namespace PBL::I2C
-#endif // I2C_DEVICES_BME680_CONTROLLER_V2_HPP__
+#endif // PBL_I2C__BME680_CONTROLLER_V2_HPP__
