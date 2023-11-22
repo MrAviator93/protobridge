@@ -30,6 +30,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options("-Wall" "-Wextra" "-Wcast-align" "-Wunused" "-O2" "-fexceptions" "-pedantic")
 endif()
 
+find_package(Threads REQUIRED)
+
 add_subdirectory(source)
 
 if (I2C_BUILD_TESTS)

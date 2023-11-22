@@ -1,10 +1,16 @@
 
-set(REQUIRED_LIBS
-    I2C::I2CUtils
+set(PRIVATE_DEPS
+    PBL::Utils
 )
 
-create_test_executable(test_utils REQUIRED_LIBS
+set(SRC
     main.cpp
     MathTest.cpp
     CompactBitsetTest.cpp
+)
+
+create_test_executable(
+    TARGET test_utils
+    PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
+    SRC_FILES ${SRC}
 )

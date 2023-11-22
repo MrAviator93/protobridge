@@ -1,8 +1,14 @@
 
-set(REQUIRED_LIBS
-    I2C::I2CUtils
+set(PRIVATE_DEPS
+    PBL::Utils
 )
 
-create_test_executable(test_devices REQUIRED_LIBS
+set(SRC
     main.cpp
+)
+
+create_test_executable(
+    TARGET test_devices
+    PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
+    SRC_FILES ${SRC}
 )

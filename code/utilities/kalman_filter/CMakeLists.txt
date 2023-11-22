@@ -1,6 +1,10 @@
 
-set(REQUIRED_LIBS
-    I2C::I2CUtils
+set(PRIVATE_DEPS
+    PBL::Utils
 )
 
-create_executable(kalman_filter REQUIRED_LIBS main.cpp)
+create_executable(
+    TARGET kalman_filter
+    PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
+    SRC_FILES main.cpp
+)

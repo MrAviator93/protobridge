@@ -1,16 +1,24 @@
 
-function(create_executable EXEC_NAME LIBS_VAR_NAME)
-    set(libs "${${LIBS_VAR_NAME}}")
-    set(sources ${ARGN})
-    add_executable(${EXEC_NAME} ${sources})
+function(create_executable)
+    set(options)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs PRIVATE_DEPENDENCIES PUBLIC_DEPENDENCIES SRC_FILES)
+
+    # Parse the arguments passed to the function
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    add_executable(${ARG_TARGET} ${ARG_SRC_FILES})
+
     if(UNIX)
-        list(APPEND libs pthread)
-        set_target_properties(${EXEC_NAME} PROPERTIES LINK_FLAGS "-no-pie")
+        list(APPEND ARG_PRIVATE_DEPENDENCIES "Threads::Threads")
+        set_target_properties(${ARG_TARGET} PROPERTIES LINK_FLAGS "-no-pie")
     endif()
-    target_link_libraries(${EXEC_NAME} PRIVATE ${libs})
+
+    target_link_libraries(${ARG_TARGET} PRIVATE ${ARG_PRIVATE_DEPENDENCIES})
+    target_link_libraries(${ARG_TARGET} PUBLIC ${ARG_PUBLIC_DEPENDENCIES})
 endfunction()
 
-function(create_test_executable EXEC_NAME LIBS_VAR_NAME)
-    create_executable(${EXEC_NAME} ${LIBS_VAR_NAME} ${ARGN})
-    add_test(NAME ${EXEC_NAME} COMMAND ${EXEC_NAME})
+function(create_test_executable)
+    create_executable(${ARGN})
+    add_test(NAME ${ARGV0} COMMAND ${ARGV0})
 endfunction()

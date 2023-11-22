@@ -1,24 +1,4 @@
 
-set(I2C_DEVICES_SOURCES
-    # Controllers
-    I2CBusController.cpp
-
-    # Devinces
-    ICBase.cpp
-    LM75Controller.cpp
-    BMP180Controller.cpp
-    ADS1015Controller.cpp
-    MPU6050Controller.cpp
-    MPU9250Controller.cpp
-    PCA9685Controller.cpp
-    MCP23017Controller.cpp
-
-    # BME680 To be refactored
-    bme680.c
-    BME680Controller.cpp
-    BME680ControllerV2.cpp
-)
-
 set(I2C_DEVICES_HEADERS
     I2CBase.hpp
     Controllers.hpp
@@ -38,20 +18,40 @@ set(I2C_DEVICES_HEADERS
     BME680ControllerV2.hpp
 )
 
-set(I2C_DEVICES_PRIVATE_LINK_LIBS
-    I2C::I2CUtils
+set(PBL_LIB_SOURCE
+    # Controllers
+    I2CBusController.cpp
+
+    # Devinces
+    ICBase.cpp
+    LM75Controller.cpp
+    BMP180Controller.cpp
+    ADS1015Controller.cpp
+    MPU6050Controller.cpp
+    MPU9250Controller.cpp
+    PCA9685Controller.cpp
+    MCP23017Controller.cpp
+
+    # BME680 To be refactored
+    bme680.c
+    BME680Controller.cpp
+    BME680ControllerV2.cpp
 )
 
-set(I2C_DEVICES_PUBLIC_INCLUDE_DIRS
+set(PBL_LIB_PRIVATE_DEPS
+    PBL::Utils
+)
+
+set(PBL_LIB_PUBLIC_INCLUDE_DIRS
     $<INSTALL_INTERFACE:include/utils>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>
 )
 
 create_static_library(
-    I2C
-    I2CDevices
-    I2C_DEVICES_SOURCES
-    I2C_DEVICES_HEADERS
-    I2C_DEVICES_PRIVATE_LINK_LIBS
-    I2C_DEVICES_PUBLIC_INCLUDE_DIRS
+    LIB_NAMESPACE PBL
+    LIB_NAME_BASE I2C
+    LIB_PUBLIC_HEADERS ${I2C_DEVICES_HEADERS}
+    LIB_SOURCES ${PBL_LIB_SOURCE}
+    LIB_PRIVATE_LINK_LIBS ${PBL_LIB_PRIVATE_DEPS}
+    LIB_PUBLIC_INCLUDE_DIRS ${PBL_LIB_PUBLIC_INCLUDE_DIRS}
 )
