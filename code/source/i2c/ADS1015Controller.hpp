@@ -23,7 +23,7 @@ public:
 
 	using enum Address;
 
-	explicit ADS1015Controller( class I2CBusController& busController, Address address = H48 );
+	explicit ADS1015Controller( class BusController& busController, Address address = H48 );
 };
 
 } // namespace PBL::I2C

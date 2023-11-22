@@ -18,7 +18,7 @@ public:
 
 	};
 
-	explicit MPU9250Controller(class I2CBusController& busController, Address address);
+	explicit MPU9250Controller(class BusController& busController, Address address);
 };
 
 } // namespace PBL::I2C

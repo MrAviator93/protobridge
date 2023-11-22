@@ -8,7 +8,7 @@
 
 namespace PBL::I2C
 {
-class I2CBusController;
+class BusController;
 
 class BME680Controller final
 {
@@ -17,7 +17,7 @@ class BME680Controller final
 public:
 	struct BME680CalibData;
 
-	explicit BME680Controller( I2CBusController& busController, std::uint8_t address = 0x77 );
+	explicit BME680Controller( BusController& busController, std::uint8_t address = 0x77 );
 
 	~BME680Controller();
 
@@ -48,7 +48,7 @@ private:
 
 private:
 	const std::uint8_t m_bme680Address;
-	I2CBusController& m_busController;
+	BusController& m_busController;
 	std::string m_lastError{ "no errors" };
 	std::unique_ptr< BME680CalibData > m_calibData;
 };

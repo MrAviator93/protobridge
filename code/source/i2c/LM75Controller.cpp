@@ -9,7 +9,7 @@
  */
 
 #include "LM75Controller.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 #include <utils/Math.hpp>
 
 // C++
@@ -36,7 +36,7 @@ constexpr std::size_t kShutdownModeBit = 7; // Bit 7 is used for the shutdown mo
 
 } // namespace
 
-LM75Controller::LM75Controller( I2CBusController& busController, Address address ) noexcept
+LM75Controller::LM75Controller( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
 { }
 

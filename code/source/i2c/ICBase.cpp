@@ -1,5 +1,5 @@
 #include "ICBase.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 namespace PBL::I2C
 {

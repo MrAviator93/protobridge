@@ -1,5 +1,5 @@
 #include "BME680Controller.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 // C++
 #include <chrono>
@@ -484,7 +484,7 @@ static uint8_t calc_heater_dur( uint16_t dur )
 	return durval;
 }
 
-BME680Controller::BME680Controller( I2CBusController& busController, std::uint8_t address )
+BME680Controller::BME680Controller( BusController& busController, std::uint8_t address )
 	: m_busController{ busController }
 	, m_bme680Address{ address }
 	, m_calibData{ std::make_unique< BME680CalibData >() }

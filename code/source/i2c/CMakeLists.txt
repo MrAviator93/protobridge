@@ -1,9 +1,9 @@
 
-set(I2C_DEVICES_HEADERS
+set(PBL_LIB_HEADERS
     I2CBase.hpp
     Controllers.hpp
+    BusController.hpp
     LM75Controller.hpp
-    I2CBusController.hpp
     BMP180Controller.hpp
     MPU6050Controller.hpp
     MPU9250Controller.hpp
@@ -20,7 +20,7 @@ set(I2C_DEVICES_HEADERS
 
 set(PBL_LIB_SOURCE
     # Controllers
-    I2CBusController.cpp
+    BusController.cpp
 
     # Devinces
     ICBase.cpp
@@ -50,7 +50,7 @@ set(PBL_LIB_PUBLIC_INCLUDE_DIRS
 create_static_library(
     LIB_NAMESPACE PBL
     LIB_NAME_BASE I2C
-    LIB_PUBLIC_HEADERS ${I2C_DEVICES_HEADERS}
+    LIB_PUBLIC_HEADERS ${PBL_LIB_HEADERS}
     LIB_SOURCES ${PBL_LIB_SOURCE}
     LIB_PRIVATE_LINK_LIBS ${PBL_LIB_PRIVATE_DEPS}
     LIB_PUBLIC_INCLUDE_DIRS ${PBL_LIB_PUBLIC_INCLUDE_DIRS}

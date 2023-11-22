@@ -10,7 +10,7 @@
 namespace PBL::I2C
 {
 
-class I2CBusController;
+class BusController;
 
 /**
  * @class BMP180Controller
@@ -35,7 +35,7 @@ class I2CBusController;
  *
  * Example usage:
  * @code
- * I2CBusController busController;
+ * BusController busController;
  * BMP180Controller bmp180(busController, BMP180Controller::HIGH_RESOLUTION);
  * 
  * float temperature = bmp180.getTrueTemperatureC(); // Read temperature in Celsius
@@ -75,7 +75,7 @@ public:
 	using enum Address;
 	using enum SamplingAccuracy;
 
-	explicit BMP180Controller( I2CBusController& busController,
+	explicit BMP180Controller( BusController& busController,
 							   SamplingAccuracy sAccuracy = STANDARD,
 							   Address address = DEFAULT );
 

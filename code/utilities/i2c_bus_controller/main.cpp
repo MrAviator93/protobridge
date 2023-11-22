@@ -1,7 +1,7 @@
 
 // I2C
 #include <i2c/MCP23017Controller.hpp>
-#include <i2c/I2CBusController.hpp>
+#include <i2c/BusController.hpp>
 #include <i2c/BMP180Controller.hpp>
 #include <i2c/LM75Controller.hpp>
 #include <i2c/BME680Controller.hpp>
@@ -25,7 +25,7 @@ int main( const int argc, const char* const* const argv )
 		deviceName = args[ 1 ];
 	}
 
-	PBL::I2C::I2CBusController busController{ deviceName };
+	PBL::I2C::BusController busController{ deviceName };
 	PBL::I2C::LM75Controller lm75{ busController };
 
 	if( const auto temp = lm75.getTemperatureC(); temp.has_value() )

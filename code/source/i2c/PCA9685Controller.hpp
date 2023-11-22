@@ -27,7 +27,7 @@ public:
 
 	using enum Address;
 
-	explicit PCA9685Controller( class I2CBusController& busController, Address address = H40 );
+	explicit PCA9685Controller( class BusController& busController, Address address = H40 );
 };
 
 } // namespace PBL::I2C

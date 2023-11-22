@@ -37,7 +37,7 @@ BusController::~BusController()
 	m_open = false;
 }
 
-void SPIBusController::reportError()
+void BusController::reportError()
 {
 	auto e = errno;
     std::array< char, 256 > err;

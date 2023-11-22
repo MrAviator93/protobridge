@@ -8,7 +8,7 @@
 namespace PBL::I2C
 {
 
-class I2CBusController;
+class BusController;
 
 /**
  * @brief The MPU6050Controller class provides a high-level utility for interacting with an MPU6050 sensor module.
@@ -38,10 +38,10 @@ public:
      * @brief Constructs a new MPU6050Controller object, initializing the I2C communication with the provided
      * bus controller and sensor address. It sets up the necessary configurations for the MPU6050 operation.
 	 * 
-     * @param busController Reference to the I2CBusController, facilitating the I2C communication functions.
+     * @param busController Reference to the BusController, facilitating the I2C communication functions.
 	 * @param address The device address for the MPU6050 sensor, defaulted to 0x68, the standard I2C address.
      */
-	explicit MPU6050Controller( I2CBusController& busController, Address address = DEFAULT ) noexcept;
+	explicit MPU6050Controller( BusController& busController, Address address = DEFAULT ) noexcept;
 
 	/**
      * @brief Retrieves the current angular orientation of the MPU6050, using a complementary filter for

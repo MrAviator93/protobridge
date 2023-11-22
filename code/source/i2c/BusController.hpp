@@ -15,7 +15,7 @@ namespace PBL::I2C
 {
 
 /**
- * @class I2CBusController
+ * @class BusController
  * @brief An interface wrapper for I2C bus.
  * To list the I2C buses available: i2cdetect -l or you may use also: ls /dev/i2c*
  * Say, 0 & 1 are available.
@@ -26,14 +26,14 @@ namespace PBL::I2C
  * 
  * @author AK aka MrAviator93
  */
-class I2CBusController
+class BusController
 {
 public:
 	/// Default ctor opens a file descriptor.
-	explicit I2CBusController( const std::string& busName );
+	explicit BusController( const std::string& busName );
 
 	/// Default dtor, closes file m_fd file.
-	virtual ~I2CBusController();
+	virtual ~BusController();
 
 	/// Returns the OS name of the physical bus name
 	[[nodiscard]] auto& bus() const { return m_busName; }
@@ -129,10 +129,10 @@ public:
 
 private:
 	// This class is non-copyable and non-movable
-	I2CBusController( const I2CBusController& ) = delete;
-	I2CBusController( I2CBusController&& ) = delete;
-	I2CBusController operator=( const I2CBusController& ) = delete;
-	I2CBusController operator=( I2CBusController&& ) = delete;
+	BusController( const BusController& ) = delete;
+	BusController( BusController&& ) = delete;
+	BusController operator=( const BusController& ) = delete;
+	BusController operator=( BusController&& ) = delete;
 
 	/// Retrieves error buffer
 	void reportError();

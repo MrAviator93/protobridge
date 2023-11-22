@@ -1,10 +1,10 @@
 #include "PCA9685Controller.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 namespace PBL::I2C
 {
 
-PCA9685Controller::PCA9685Controller( I2CBusController& busController, Address address )
+PCA9685Controller::PCA9685Controller( BusController& busController, Address address )
 	: ICBase{ busController, address }
 { }
 

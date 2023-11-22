@@ -1,6 +1,6 @@
 
 // Include I2C library files
-#include <i2c/I2CBusController.hpp>
+#include <i2c/BusController.hpp>
 #include <i2c/MPU6050Controller.hpp>
 
 // Output
@@ -24,7 +24,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	PBL::I2C::I2CBusController busController{ deviceName };
+	PBL::I2C::BusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )

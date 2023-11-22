@@ -1,5 +1,5 @@
 #include "BME680ControllerV2.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 // C++
 #include <cmath>
@@ -21,9 +21,9 @@ extern "C" {
 namespace PBL::I2C
 {
 
-static I2CBusController* pBusController{ nullptr };
+static BusController* pBusController{ nullptr };
 
-BME680ControllerV2::BME680ControllerV2( I2CBusController& busController, std::uint8_t address )
+BME680ControllerV2::BME680ControllerV2( BusController& busController, std::uint8_t address )
 	: m_busController{ busController }
 	, m_bme680Address{ address }
 	, m_pBme680{}

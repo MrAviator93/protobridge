@@ -19,7 +19,7 @@
 namespace PBL::I2C
 {
 
-class I2CBusController;
+class BusController;
 
 /**
  * @class LM75Controller
@@ -35,14 +35,14 @@ class I2CBusController;
  *  - Configuration of the sensor’s thermostat settings for different thermal management strategies.
  *  - Monitoring the alert system that indicates when certain temperature thresholds are breached.
  *
- * The class uses an instance of I2CBusController to handle the actual I2C communications, ensuring compatibility 
+ * The class uses an instance of BusController to handle the actual I2C communications, ensuring compatibility 
  * with various I2C bus management strategies. It's designed with robustness in mind, allowing seamless integration 
  * into larger systems, and is particularly well-suited for applications involving environmental monitoring, 
  * thermal protection, and industrial process control.
  *
  * Example usage:
  * @code
- * I2CBusController busController;
+ * BusController busController;
  * LM75Controller lm75(busController);
  * 
  * float currentTemp = lm75.getTemperatureC(); // Gets the current temperature in Celsius
@@ -91,7 +91,7 @@ public:
      * @param busController 
      * @param address the address of an LM75 IC on the I2C bus.
      */
-	explicit LM75Controller( I2CBusController& busController, Address address = H48 ) noexcept;
+	explicit LM75Controller( BusController& busController, Address address = H48 ) noexcept;
 
 	/// Sets the LM75's shutdown mode to reduce power consumption, returns true on success.
 	bool setPowerMode( PowerMode mode );

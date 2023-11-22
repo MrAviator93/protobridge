@@ -1,5 +1,5 @@
 #include "MCP23017Controller.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 namespace PBL::I2C
 {
@@ -45,13 +45,13 @@ constexpr std::uint8_t kOlatBRegister{ 0x15 }; //!< PORT B: Output latch registe
 
 } // namespace
 
-MCP23017Controller::MCP23017Controller( I2CBusController& busController, Address address ) noexcept
+MCP23017Controller::MCP23017Controller( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
 {
 	configure();
 }
 
-MCP23017Controller::MCP23017Controller( I2CBusController& busController,
+MCP23017Controller::MCP23017Controller( BusController& busController,
 										std::uint8_t portAConfig,
 										std::uint8_t portBConfig,
 										Address address ) noexcept

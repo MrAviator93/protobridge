@@ -11,7 +11,7 @@
 namespace PBL::I2C
 {
 
-class I2CBusController;
+class BusController;
 
 /**
  * @brief A concept that checks for valid I2C address types.
@@ -61,7 +61,7 @@ protected:
      * @param icAddress The unique address of the IC on the I2C bus.
 	 */
 	template < AddressType T >
-	ICBase( I2CBusController& busController, const T icAddress ) noexcept
+	ICBase( BusController& busController, const T icAddress ) noexcept
 		: m_busController{ busController }
 		, m_icAddress{ static_cast< std::uint8_t >( icAddress ) }
 	{ }
@@ -73,7 +73,7 @@ protected:
 	auto& controller() const { return m_busController; }
 
 private:
-	I2CBusController& m_busController;
+	BusController& m_busController;
 	std::uint8_t m_icAddress;
 };
 

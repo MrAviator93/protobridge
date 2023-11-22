@@ -2,7 +2,7 @@
 #ifndef PBL_I2C_CONTROLLERS_HPP__
 #define PBL_I2C_CONTROLLERS_HPP__
 
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 #include "LM75Controller.hpp"
 #include "BMP180Controller.hpp"
 #include "MPU6050Controller.hpp"

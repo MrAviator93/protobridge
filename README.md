@@ -58,7 +58,7 @@ This example shows you how to initialize communication with the LM75 sensor and 
 int main(int, char**)
 {
     // Create a bus controller for the I2C bus (Raspberry Pi 4)
-    PBL::I2C::I2CBusController busController{"/dev/i2c-1"};
+    PBL::I2C::BusController busController{"/dev/i2c-1"};
 
     // Check if the I2C bus is open and accessible
     if (busController.isOpen()) 

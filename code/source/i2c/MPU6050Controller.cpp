@@ -1,13 +1,13 @@
 #include "MPU6050Controller.hpp"
 #include "MPU6050Definitions.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 // https://howtomechatronics.com/tutorials/arduino/arduino-and-mpu6050-accelerometer-and-gyroscope-tutorial/
 
 namespace PBL::I2C
 {
 
-MPU6050Controller::MPU6050Controller( I2CBusController& busController, Address address ) noexcept
+MPU6050Controller::MPU6050Controller( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
 { }
 

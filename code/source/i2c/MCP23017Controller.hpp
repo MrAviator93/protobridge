@@ -6,7 +6,7 @@
 namespace PBL::I2C
 {
 
-class I2CBusController;
+class BusController;
 
 /**
  * @class MCP23017Controller
@@ -27,7 +27,7 @@ class I2CBusController;
  *
  * Example usage:
  * @code
- * I2CBusController busController;
+ * BusController busController;
  * MCP23017Controller mcp23017(busController); // assume 0x20 is the I2C address of MCP23017
  *
  * // Set individual pins or multiple pins as outputs or inputs
@@ -108,10 +108,10 @@ public:
 	using enum PinState;
 
 	/// Default ctor, all pins are configured as output by default
-	explicit MCP23017Controller( I2CBusController& busController, Address address = H20 ) noexcept;
+	explicit MCP23017Controller( BusController& busController, Address address = H20 ) noexcept;
 
 	/// The secondary ctor, which enables the individual port configuration
-	MCP23017Controller( I2CBusController& busController,
+	MCP23017Controller( BusController& busController,
 						std::uint8_t portAConfig,
 						std::uint8_t portBConfig,
 						Address address = H20 ) noexcept;

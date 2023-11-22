@@ -1,5 +1,5 @@
 #include "BMP180Controller.hpp"
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 #include <utils/Math.hpp>
 
 // C++
@@ -69,7 +69,7 @@ constexpr std::uint8_t getBmp180CmdForMode( BMP180Controller::SamplingAccuracy m
 }
 
 template < typename T >
-T readCalibConst( I2CBusController& busController, std::uint8_t bmp180Addr, std::uint8_t regAddr )
+T readCalibConst( BusController& busController, std::uint8_t bmp180Addr, std::uint8_t regAddr )
 {
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
@@ -89,7 +89,7 @@ T readCalibConst( I2CBusController& busController, std::uint8_t bmp180Addr, std:
 struct BMP180Controller::CalibrationConstants
 {
 	/// Read calibration constants from BME180 device
-	void read( I2CBusController& busController, std::uint8_t address );
+	void read( BusController& busController, std::uint8_t address );
 
 	std::int16_t ac1{};
 	std::int16_t ac2{};
@@ -104,7 +104,7 @@ struct BMP180Controller::CalibrationConstants
 	std::int16_t md{};
 };
 
-void BMP180Controller::CalibrationConstants::read( I2CBusController& busController, std::uint8_t address )
+void BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
 {
 	ac1 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibAc1 );
 	ac2 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibAc2 );
@@ -119,7 +119,7 @@ void BMP180Controller::CalibrationConstants::read( I2CBusController& busControll
 	md = readCalibConst< std::int16_t >( busController, address, kBmp180CalibMd );
 }
 
-BMP180Controller::BMP180Controller( I2CBusController& busController, SamplingAccuracy sAccuracy, Address address )
+BMP180Controller::BMP180Controller( BusController& busController, SamplingAccuracy sAccuracy, Address address )
 	: ICBase{ busController, address }
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}

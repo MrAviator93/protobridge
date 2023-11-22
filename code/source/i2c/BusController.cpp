@@ -1,4 +1,4 @@
-#include "I2CBusController.hpp"
+#include "BusController.hpp"
 
 // C++
 #include <array>
@@ -34,7 +34,7 @@ bool check( std::uint64_t fs, std::uint64_t f, char const* what )
 }
 } // namespace
 
-I2CBusController::I2CBusController( const std::string& busName )
+BusController::BusController( const std::string& busName )
 	: m_busName{ busName }
 {
 	m_fd = ::open( m_busName.c_str(), O_RDWR | O_NONBLOCK );
@@ -49,13 +49,13 @@ I2CBusController::I2CBusController( const std::string& busName )
 	m_open = true;
 }
 
-I2CBusController::~I2CBusController()
+BusController::~BusController()
 {
 	::close( m_fd );
 	m_open = false;
 }
 
-bool I2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t& result )
+bool BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t& result )
 {
 	if( !isOpen() )
 	{
@@ -99,7 +99,7 @@ bool I2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uin
 }
 
 std::int16_t
-I2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
+BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
 {
 	if( !isOpen() )
 	{
@@ -138,7 +138,7 @@ I2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t*
 	return dataSize;
 }
 
-bool I2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t data )
+bool BusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t data )
 {
 	if( !isOpen() )
 	{
@@ -171,12 +171,12 @@ bool I2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::ui
 	return true;
 }
 
-bool I2CBusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::span< std::uint8_t > data )
+bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::span< std::uint8_t > data )
 {
 	return write( slaveAddr, reg, data.data(), data.size() );
 }
 
-bool I2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
+bool BusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
 {
 	if( !isOpen() )
 	{
@@ -216,17 +216,17 @@ bool I2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::ui
 	return true;
 }
 
-void I2CBusController::sleep( std::chrono::milliseconds sleepTimeMs )
+void BusController::sleep( std::chrono::milliseconds sleepTimeMs )
 {
 	std::this_thread::sleep_for( sleepTimeMs );
 }
 
-void I2CBusController::sleep( std::chrono::microseconds sleepTimeUs )
+void BusController::sleep( std::chrono::microseconds sleepTimeUs )
 {
 	std::this_thread::sleep_for( sleepTimeUs );
 }
 
-void I2CBusController::reportError()
+void BusController::reportError()
 {
 	auto e = errno;
 	std::array< char, 256 > err{};
@@ -235,7 +235,7 @@ void I2CBusController::reportError()
 	m_lastError = ::strerror_r( e, err.data(), err.size() );
 }
 
-void I2CBusController::checkFunc()
+void BusController::checkFunc()
 {
 	std::uint64_t funcs{};
 
