@@ -4,7 +4,12 @@
 #include <array>
 #include <thread>
 #include <vector>
+#include <string>
+#include <utility>
 #include <sstream>
+#include <algorithm>
+
+// TODO: Debug remove
 #include <iostream>
 
 // C
@@ -21,7 +26,7 @@ namespace PBL::I2C
 {
 namespace
 {
-bool check( std::uint64_t fs, std::uint64_t f, char const* what )
+bool check( std::uint64_t fs, std::uint64_t f, std::string_view what )
 {
 	if( fs & f )
 	{
@@ -32,6 +37,29 @@ bool check( std::uint64_t fs, std::uint64_t f, char const* what )
 
 	return false;
 }
+
+constexpr std::array< std::pair< std::size_t, std::string_view >, 20 > kFuncsToCheck = {
+	std::pair{ I2C_FUNC_I2C, "I2C_FUNC_I2C" },
+	std::pair{ I2C_FUNC_10BIT_ADDR, "I2C_FUNC_10BIT_ADDR" },
+	std::pair{ I2C_FUNC_PROTOCOL_MANGLING, "I2C_FUNC_PROTOCOL_MANGLING" },
+	std::pair{ I2C_FUNC_SMBUS_PEC, "I2C_FUNC_SMBUS_PEC" },
+	std::pair{ I2C_FUNC_NOSTART, "I2C_FUNC_NOSTART" },
+	std::pair{ I2C_FUNC_SLAVE, "I2C_FUNC_SLAVE" },
+	std::pair{ I2C_FUNC_SMBUS_BLOCK_PROC_CALL, "I2C_FUNC_SMBUS_BLOCK_PROC_CALL" },
+	std::pair{ I2C_FUNC_SMBUS_QUICK, "I2C_FUNC_SMBUS_QUICK" },
+	std::pair{ I2C_FUNC_SMBUS_READ_BYTE, "I2C_FUNC_SMBUS_READ_BYTE" },
+	std::pair{ I2C_FUNC_SMBUS_WRITE_BYTE, "I2C_FUNC_SMBUS_WRITE_BYTE" },
+	std::pair{ I2C_FUNC_SMBUS_READ_BYTE_DATA, "I2C_FUNC_SMBUS_READ_BYTE_DATA" },
+	std::pair{ I2C_FUNC_SMBUS_WRITE_BYTE_DATA, "I2C_FUNC_SMBUS_WRITE_BYTE_DATA" },
+	std::pair{ I2C_FUNC_SMBUS_READ_WORD_DATA, "I2C_FUNC_SMBUS_READ_WORD_DATA" },
+	std::pair{ I2C_FUNC_SMBUS_WRITE_WORD_DATA, "I2C_FUNC_SMBUS_WRITE_WORD_DATA" },
+	std::pair{ I2C_FUNC_SMBUS_PROC_CALL, "I2C_FUNC_SMBUS_PROC_CALL" },
+	std::pair{ I2C_FUNC_SMBUS_READ_BLOCK_DATA, "I2C_FUNC_SMBUS_READ_BLOCK_DATA" },
+	std::pair{ I2C_FUNC_SMBUS_WRITE_BLOCK_DATA, "I2C_FUNC_SMBUS_WRITE_BLOCK_DATA" },
+	std::pair{ I2C_FUNC_SMBUS_READ_I2C_BLOCK, "I2C_FUNC_SMBUS_READ_I2C_BLOCK" },
+	std::pair{ I2C_FUNC_SMBUS_WRITE_I2C_BLOCK, "I2C_FUNC_SMBUS_WRITE_I2C_BLOCK" },
+	std::pair{ I2C_FUNC_SMBUS_HOST_NOTIFY, "I2C_FUNC_SMBUS_HOST_NOTIFY" } };
+
 } // namespace
 
 BusController::BusController( const std::string& busName )
@@ -245,26 +273,16 @@ void BusController::checkFunc()
 	}
 
 	std::cerr << "Supported funcions are: " << std::hex << funcs << std::endl;
-	check( funcs, I2C_FUNC_I2C, "I2C_FUNC_I2C" );
-	check( funcs, I2C_FUNC_10BIT_ADDR, "I2C_FUNC_10BIT_ADDR" );
-	check( funcs, I2C_FUNC_PROTOCOL_MANGLING, "I2C_FUNC_PROTOCOL_MANGLING" );
-	check( funcs, I2C_FUNC_SMBUS_PEC, "I2C_FUNC_SMBUS_PEC" );
-	check( funcs, I2C_FUNC_NOSTART, "I2C_FUNC_NOSTART" );
-	check( funcs, I2C_FUNC_SLAVE, "I2C_FUNC_SLAVE" );
-	check( funcs, I2C_FUNC_SMBUS_BLOCK_PROC_CALL, "I2C_FUNC_SMBUS_BLOCK_PROC_CALL" );
-	check( funcs, I2C_FUNC_SMBUS_QUICK, "I2C_FUNC_SMBUS_QUICK" );
-	check( funcs, I2C_FUNC_SMBUS_READ_BYTE, "I2C_FUNC_SMBUS_READ_BYTE" );
-	check( funcs, I2C_FUNC_SMBUS_WRITE_BYTE, "I2C_FUNC_SMBUS_WRITE_BYTE" );
-	check( funcs, I2C_FUNC_SMBUS_READ_BYTE_DATA, "I2C_FUNC_SMBUS_READ_BYTE_DATA" );
-	check( funcs, I2C_FUNC_SMBUS_WRITE_BYTE_DATA, "I2C_FUNC_SMBUS_WRITE_BYTE_DATA" );
-	check( funcs, I2C_FUNC_SMBUS_READ_WORD_DATA, "I2C_FUNC_SMBUS_READ_WORD_DATA" );
-	check( funcs, I2C_FUNC_SMBUS_WRITE_WORD_DATA, "I2C_FUNC_SMBUS_WRITE_WORD_DATA" );
-	check( funcs, I2C_FUNC_SMBUS_PROC_CALL, "I2C_FUNC_SMBUS_PROC_CALL" );
-	check( funcs, I2C_FUNC_SMBUS_READ_BLOCK_DATA, "I2C_FUNC_SMBUS_READ_BLOCK_DATA" );
-	check( funcs, I2C_FUNC_SMBUS_WRITE_BLOCK_DATA, "I2C_FUNC_SMBUS_WRITE_BLOCK_DATA" );
-	check( funcs, I2C_FUNC_SMBUS_READ_I2C_BLOCK, "I2C_FUNC_SMBUS_READ_I2C_BLOCK" );
-	check( funcs, I2C_FUNC_SMBUS_WRITE_I2C_BLOCK, "I2C_FUNC_SMBUS_WRITE_I2C_BLOCK" );
-	check( funcs, I2C_FUNC_SMBUS_HOST_NOTIFY, "I2C_FUNC_SMBUS_HOST_NOTIFY" );
+	// std::ranges::for_each( kFuncsToCheck, [] (const auto& e) {} );
+	bool rslt = std::ranges::all_of( kFuncsToCheck, [ &funcs ]( const auto& element ) {
+		const auto& [ functionFlag, functionName ] = element;
+		return check( funcs, functionFlag, functionName );
+	} );
+
+	if( !rslt )
+	{
+		std::cerr << "Some functions are not supported" << std::endl;
+	}
 }
 
 static_assert( std::is_same_v< __u8, std::uint8_t >, "__u8 definition differs from std::uint8_t definition." );
