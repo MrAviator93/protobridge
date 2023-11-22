@@ -24,14 +24,16 @@ extern "C" {
 
 namespace PBL::I2C
 {
+
 namespace
 {
-bool check( std::uint64_t fs, std::uint64_t f, std::string_view what )
+
+[[nodiscard]] bool check( std::uint64_t fs, const std::pair< std::uint64_t, std::string_view >& element )
 {
-	if( fs & f )
+	if( fs & element.first )
 	{
 		std::ostringstream oss;
-		oss << what << " SUPPORTED" << std::endl;
+		oss << element.second << " SUPPORTED" << std::endl;
 		return true;
 	}
 
@@ -273,11 +275,9 @@ void BusController::checkFunc()
 	}
 
 	std::cerr << "Supported funcions are: " << std::hex << funcs << std::endl;
-	// std::ranges::for_each( kFuncsToCheck, [] (const auto& e) {} );
-	bool rslt = std::ranges::all_of( kFuncsToCheck, [ &funcs ]( const auto& element ) {
-		const auto& [ functionFlag, functionName ] = element;
-		return check( funcs, functionFlag, functionName );
-	} );
+
+	auto checkLambda = [ &funcs ]( const auto& element ) { return check( funcs, element ); };
+	bool rslt = std::ranges::all_of( kFuncsToCheck, checkLambda );
 
 	if( !rslt )
 	{
