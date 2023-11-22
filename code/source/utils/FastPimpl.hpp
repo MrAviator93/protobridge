@@ -53,9 +53,7 @@ public:
 	~FastPimpl() noexcept
 	{
 		validate< sizeof( T ), alignof( T ) >();
-
-		// TODO: Use std::destroy_at(reinterpret_cast< T* >( &m_storage));
-		reinterpret_cast< T* >( &m_storage )->~T();
+		std::destroy_at( reinterpret_cast< T* >( &m_storage ) );
 	}
 
 	/// Gets the pointer to the internal object.
