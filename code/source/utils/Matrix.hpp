@@ -7,6 +7,7 @@
 
 // C++
 #include <array>
+#include <format>
 #include <type_traits>
 
 namespace PBL::Utils
@@ -35,4 +36,20 @@ private:
 };
 
 } // namespace PBL::Utils
+
+template <>
+struct std::formatter< PBL::Utils::Matrix2x2 >
+{
+	// Parses format specifications of the form ['f' | 'e']
+	constexpr auto parse( std::format_parse_context& ctx ) { return ctx.begin(); }
+
+	// Formats the point p using the parsed format
+	template < typename FormatContext >
+	auto format( const PBL::Utils::Matrix2x2& mt, FormatContext& ctx ) const
+	{
+		return format_to(
+			ctx.out(), "Matrix2x2 [{}, {}, {}, {}] ", mt.data[ 0 ], mt.data[ 1 ], mt.data[ 2 ], mt.data[ 3 ] );
+	}
+};
+
 #endif //I2C_UTILS_MATRIX_HPP__
