@@ -1,6 +1,6 @@
 
-#ifndef I2C_UTILS_VECTORS_HPP__
-#define I2C_UTILS_VECTORS_HPP__
+#ifndef I2C_UTILS_LINEAR_HPP__
+#define I2C_UTILS_LINEAR_HPP__
 
 #include "Math.hpp"
 
@@ -41,4 +41,4 @@ using Vector4f = Vector4< float >;
 using Vector4d = Vector4< double >;
 
 } // namespace PBL::Utils
-#endif // I2C_UTILS_VECTORS_HPP__
+#endif // I2C_UTILS_LINEAR_HPP__

@@ -3,7 +3,7 @@
 
 // I2C
 #include "ICBase.hpp"
-#include <utils/Vectors.hpp>
+#include <utils/Linear.hpp>
 
 namespace PBL::I2C
 {
