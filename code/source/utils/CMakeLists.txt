@@ -3,6 +3,7 @@ set(I2C_DEVICES_HEADERS
     Math.hpp
     Timer.hpp
     Linear.hpp
+    Matrix.hpp
     TimeStep.hpp
     SpinLock.hpp
     TimeTypes.hpp
