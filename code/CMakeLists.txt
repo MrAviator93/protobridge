@@ -14,7 +14,7 @@ project(I2CLib VERSION 1.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-include(CreateExecutable)
+include(CreateApplication)
 include(CreateStaticLibrary)
 
 set(CMAKE_CXX_STANDARD 20)

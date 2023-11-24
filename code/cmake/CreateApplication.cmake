@@ -1,5 +1,4 @@
-
-function(create_executable)
+function(create_application)
     set(options)
     set(oneValueArgs TARGET)
     set(multiValueArgs PRIVATE_DEPENDENCIES PUBLIC_DEPENDENCIES SRC_FILES)
@@ -18,7 +17,7 @@ function(create_executable)
     target_link_libraries(${ARG_TARGET} PUBLIC ${ARG_PUBLIC_DEPENDENCIES})
 endfunction()
 
-function(create_test_executable)
-    create_executable(${ARGN})
+function(create_test_application)
+    create_application(${ARGN})
     add_test(NAME ${ARGV0} COMMAND ${ARGV0})
 endfunction()
