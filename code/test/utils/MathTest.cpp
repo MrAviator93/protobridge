@@ -1,6 +1,6 @@
 
 // I2C
-#include <utils/Math.hpp>
+#include <math/Math.hpp>
 
 // 3rd Party
 #include <doctest/doctest.h>

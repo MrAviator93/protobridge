@@ -40,6 +40,7 @@ set(PBL_LIB_SOURCE
 
 set(PBL_LIB_PRIVATE_DEPS
     PBL::Utils
+    PBL::Math
 )
 
 set(PBL_LIB_PUBLIC_INCLUDE_DIRS

@@ -10,7 +10,7 @@
 
 #include "LM75Controller.hpp"
 #include "BusController.hpp"
-#include <utils/Math.hpp>
+#include <math/Math.hpp>
 
 // C++
 #include <array>

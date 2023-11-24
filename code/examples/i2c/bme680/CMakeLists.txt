@@ -1,6 +1,7 @@
 
 set(PRIVATE_DEPS
     PBL::I2C
+    PBL::Math
     PBL::Utils
 )
 

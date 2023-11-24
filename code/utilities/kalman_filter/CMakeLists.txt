@@ -1,6 +1,7 @@
 
 set(PRIVATE_DEPS
     PBL::Utils
+    PBL::Math
 )
 
 create_application(

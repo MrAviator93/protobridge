@@ -1,6 +1,8 @@
 #ifndef PBL_UTILS_PREDICTION_MODELS_HPP__
 #define PBL_UTILS_PREDICTION_MODELS_HPP__
 
+#include <utils/RandomGenerator.hpp>
+
 // C++
 #include <cmath>
 #include <tuple>

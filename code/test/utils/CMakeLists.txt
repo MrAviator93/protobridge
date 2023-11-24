@@ -1,5 +1,6 @@
 
 set(PRIVATE_DEPS
+    PBL::Math
     PBL::Utils
 )
 

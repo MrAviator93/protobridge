@@ -19,5 +19,5 @@ endfunction()
 
 function(create_test_application)
     create_application(${ARGN})
-    add_test(NAME ${ARGV0} COMMAND ${ARGV0})
+    add_test(NAME ${ARGV1} COMMAND ${ARGV1})
 endfunction()
