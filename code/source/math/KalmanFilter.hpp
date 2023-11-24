@@ -1,10 +1,10 @@
-#ifndef PBL_UTILS_KALMAN_FILTER_HPP__
-#define PBL_UTILS_KALMAN_FILTER_HPP__
+#ifndef PBL_MATH_KALMAN_FILTER_HPP__
+#define PBL_MATH_KALMAN_FILTER_HPP__
 
 #include "PredictionModels.hpp"
 #include <utils/RandomGenerator.hpp>
 
-namespace PBL::Utils
+namespace PBL::Math
 {
 
 /**
@@ -160,5 +160,5 @@ private:
 using KalmanFilter1Df = KalmanFilter1D< float >;
 using KalmanFilter1Dd = KalmanFilter1D< double >;
 
-} // namespace PBL::Utils
-#endif // PBL_UTILS_KALMAN_FILTER_HPP__
+} // namespace PBL::Math
+#endif // PBL_MATH_KALMAN_FILTER_HPP__

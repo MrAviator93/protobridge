@@ -1,5 +1,5 @@
-#ifndef PBL_UTILS_PREDICTION_MODELS_HPP__
-#define PBL_UTILS_PREDICTION_MODELS_HPP__
+#ifndef PBL_MATH_PREDICTION_MODELS_HPP__
+#define PBL_MATH_PREDICTION_MODELS_HPP__
 
 #include <utils/RandomGenerator.hpp>
 
@@ -10,7 +10,7 @@
 #include <concepts>
 #include <type_traits>
 
-namespace PBL::Utils
+namespace PBL::Math
 {
 
 template < typename T >
@@ -67,7 +67,7 @@ struct RandomWalkModel final : PredictionModelBase< T >
 	}
 
 private:
-	RandomGenerator< T > m_generator;
+	Utils::RandomGenerator< T > m_generator;
 };
 
 /// Model for systems affected by an external force
@@ -151,5 +151,5 @@ concept PredictionModelType =
 	requires { typename ModelType::ValueType; } && std::is_floating_point_v< typename ModelType::ValueType > &&
 	CheckInvocableRecursiveV< typename ModelType::ValueType, ModelType >;
 
-} // namespace PBL::Utils
-#endif // PBL_UTILS_PREDICTION_MODELS_HPP__
+} // namespace PBL::Math
+#endif // PBL_MATH_PREDICTION_MODELS_HPP__

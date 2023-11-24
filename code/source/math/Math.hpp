@@ -1,5 +1,5 @@
-#ifndef PBL_UTILS_MATH_HPP__
-#define PBL_UTILS_MATH_HPP__
+#ifndef PBL_MATH_MATH_HPP__
+#define PBL_MATH_MATH_HPP__
 
 #include <cmath>
 #include <type_traits>
@@ -178,4 +178,4 @@ template < std::floating_point T >
 }
 
 } // namespace PBL::Utils
-#endif // PBL_UTILS_MATH_HPP__
+#endif // PBL_MATH_MATH_HPP__

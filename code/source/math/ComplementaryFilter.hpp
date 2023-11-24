@@ -1,10 +1,10 @@
-#ifndef PBL_UTILS_COMPLEMENTARY_FILTER_HPP__
-#define PBL_UTILS_COMPLEMENTARY_FILTER_HPP__
+#ifndef PBL_MATH_COMPLEMENTARY_FILTER_HPP__
+#define PBL_MATH_COMPLEMENTARY_FILTER_HPP__
 
 // C++
 #include <concepts>
 
-namespace PBL::Utils
+namespace PBL::Math
 {
 
 /**
@@ -141,5 +141,5 @@ private:
 	T m_alphaVelocity{}; //!< Weight factor for the velocity data in the filter calculation
 };
 
-} // namespace PBL::Utils
-#endif // PBL_UTILS_COMPLEMENTARY_FILTER_HPP__
+} // namespace PBL::Math
+#endif // PBL_MATH_COMPLEMENTARY_FILTER_HPP__

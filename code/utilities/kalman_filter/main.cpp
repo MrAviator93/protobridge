@@ -31,7 +31,7 @@ int main()
 	// Constant system, prediction model omitted
 	{
 		// Create a Kalman filter instance
-		PBL::Utils::KalmanFilter1Dd kf{ initialValue, processNoise, measurementNoise, error };
+		PBL::Math::KalmanFilter1Dd kf{ initialValue, processNoise, measurementNoise, error };
 
 		// Simulated measurements
 
@@ -47,7 +47,7 @@ int main()
 	{
 		double dt{ 0.1 }; // Time step between measurements
 		double rate{ 0.1 };
-		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::LinearMotionModel > kf{
+		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::LinearMotionModel > kf{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - Linear Motion Model" << std::endl;
@@ -64,7 +64,7 @@ int main()
 		double circularSpeed{ 1.0 }; // Speed of the circular motion
 		double circularRadius{ 5.0 }; // Radius of the circular path
 
-		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::CircularMotionModel > kfCircular{
+		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::CircularMotionModel > kfCircular{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - Circular Motion Model:" << std::endl;
@@ -83,7 +83,7 @@ int main()
 		double externalForce = 10.0; // The external force applied to the system
 		double mass = 2.0; // Mass of the object subjected to the external force
 
-		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::ExternalForceModel > kfExternal{
+		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::ExternalForceModel > kfExternal{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - External Force Model:" << std::endl;
@@ -97,8 +97,8 @@ int main()
 	}
 
 	{
-		PBL::Utils::KalmanFilterAdvanced1D< double, PBL::Utils::RandomWalkModel > kfRandom{
-			initialValue, processNoise, measurementNoise, error, 0.0,  processNoise };
+		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::RandomWalkModel > kfRandom{
+			initialValue, processNoise, measurementNoise, error, 0.0, processNoise };
 
 		std::cout << "Results - Random Walk Model:" << std::endl;
 		for( const auto& measurement : measurements )

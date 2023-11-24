@@ -1,16 +1,15 @@
 
-#ifndef I2C_UTILS_MATRIX_HPP__
-#define I2C_UTILS_MATRIX_HPP__
+#ifndef I2C_MATH_MATRIX_HPP__
+#define I2C_MATH_MATRIX_HPP__
 
 #include "Math.hpp"
 #include "Linear.hpp"
 
 // C++
 #include <array>
-#include <format>
 #include <type_traits>
 
-namespace PBL::Utils
+namespace PBL::Math
 {
 
 template < typename T >
@@ -35,21 +34,5 @@ private:
 	std::array< T, 4 > m_data;
 };
 
-} // namespace PBL::Utils
-
-template <>
-struct std::formatter< PBL::Utils::Matrix2x2 >
-{
-	// Parses format specifications of the form ['f' | 'e']
-	constexpr auto parse( std::format_parse_context& ctx ) { return ctx.begin(); }
-
-	// Formats the point p using the parsed format
-	template < typename FormatContext >
-	auto format( const PBL::Utils::Matrix2x2& mt, FormatContext& ctx ) const
-	{
-		return format_to(
-			ctx.out(), "Matrix2x2 [{}, {}, {}, {}] ", mt.data[ 0 ], mt.data[ 1 ], mt.data[ 2 ], mt.data[ 3 ] );
-	}
-};
-
-#endif //I2C_UTILS_MATRIX_HPP__
+} // namespace PBL::Math
+#endif //I2C_MATH_MATRIX_HPP__
