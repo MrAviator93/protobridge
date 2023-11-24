@@ -14,6 +14,25 @@
 namespace PBL::Math
 {
 
+// TODO: Actually matrixes could be also booleans,
+// integers, etc, etc.
+
+template < typename T, std::size_t Rows, std::size_t Columns >
+class MatrixBase
+{
+	inline constexpr std::size_t Size = Rows * Columns;
+
+public:
+	using ValueType = T;
+
+	static constexpr std::size_t size() const noexcept { return Size; }
+	static constexpr std::size_t rows() const noexcept { return Rows; }
+	static constexpr std::size_t columns() const noexcept { return Columns; }
+
+protected:
+	std::array< T, Size > m_data;
+};
+
 template < typename T >
 	requires std::is_floating_point_v< T >
 class Matrix2x2
@@ -120,6 +139,7 @@ private:
 };
 
 template < typename T, std::size_t Rows, std::size_t Columns >
+	requires std::is_floating_point_v< T >
 class Matrix
 {
 	inline constexpr std::size_t Size = Rows * Columns;
