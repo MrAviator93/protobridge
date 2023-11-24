@@ -25,6 +25,21 @@ class MatrixBase
 public:
 	using ValueType = T;
 
+	constexpr std::optional< T > at( std::size_t idx ) const noexcept
+	{
+		if( idx < Size )
+		{
+			return data[ idx ];
+		}
+
+		return {};
+	}
+
+	constexpr std::optional< T > at( std::size_t column, std::size_t row ) const noexcept { return at( column * row ); }
+
+	constexpr auto& data() noexcept { return m_data; }
+	constexpr auto& data() const noexcept { return m_data; }
+
 	static constexpr std::size_t size() const noexcept { return Size; }
 	static constexpr std::size_t rows() const noexcept { return Rows; }
 	static constexpr std::size_t columns() const noexcept { return Columns; }
