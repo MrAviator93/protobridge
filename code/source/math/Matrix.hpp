@@ -45,7 +45,7 @@ public:
 	{ }
 
 	constexpr Matrix2x2( T m00, T m01, T m10, T m11 ) noexcept
-		: m_data{ { m00, m01, m10, m11 } }
+		: m_data{ m00, m01, m10, m11 }
 	{ }
 
 	constexpr std::optional< T > at( std::size_t idx ) const noexcept
