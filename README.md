@@ -8,6 +8,8 @@ Built on the modern features of C++20, the ProtoBridge Library is an essential a
 
 Whether your aim is to configure an environmental sensor or manage an I/O expander, the ProtoBridge Library facilitates intuitive and direct interaction with devices. It opens up a realm of possibilities in embedded systems and IoT applications, making sophisticated device control accessible and manageable.
 
+![ProtoBridge](assets/image.png "ProtoBridge")
+
 ## Table of contents
 
 - [ProtoBridge Library](#protobridge-library)

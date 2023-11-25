@@ -14,16 +14,22 @@
 namespace PBL::Math
 {
 
-// TODO: Actually matrixes could be also booleans,
-// integers, etc, etc.
-
 template < typename T, std::size_t Rows, std::size_t Columns >
+	requires std::is_arithmetic_v< T >
 class MatrixBase
 {
-	inline constexpr std::size_t Size = Rows * Columns;
+	static constexpr std::size_t Size = Rows * Columns;
 
 public:
 	using ValueType = T;
+
+	constexpr MatrixBase() noexcept = default;
+
+	template < typename... Args >
+		requires( sizeof...( Args ) == Size )
+	constexpr MatrixBase( Args&&... args ) noexcept
+		: m_data{ std::forward< Args >( args )... }
+	{ }
 
 	constexpr std::optional< T > at( std::size_t idx ) const noexcept
 	{
@@ -40,136 +46,73 @@ public:
 	constexpr auto& data() noexcept { return m_data; }
 	constexpr auto& data() const noexcept { return m_data; }
 
-	static constexpr std::size_t size() const noexcept { return Size; }
-	static constexpr std::size_t rows() const noexcept { return Rows; }
-	static constexpr std::size_t columns() const noexcept { return Columns; }
+	static constexpr std::size_t size() noexcept { return Size; }
+	static constexpr std::size_t rows() noexcept { return Rows; }
+	static constexpr std::size_t columns() noexcept { return Columns; }
 
 protected:
 	std::array< T, Size > m_data;
 };
 
 template < typename T >
-	requires std::is_floating_point_v< T >
-class Matrix2x2
+class Matrix2x2 : public MatrixBase< T, 2u, 2u >
 {
-public:
-	Matrix2x2() = default;
+	using Parent = MatrixBase< T, 2u, 2u >;
 
+public:
+	using Parent::Parent;
+
+	/// Constructs a 2x2 matrix with all elements initialized to the same value
 	explicit constexpr Matrix2x2( T v ) noexcept
-		: m_data{ v, v, v, v }
+		: Parent{ v, v, v, v }
 	{ }
-
-	constexpr Matrix2x2( T m00, T m01, T m10, T m11 ) noexcept
-		: m_data{ m00, m01, m10, m11 }
-	{ }
-
-	constexpr std::optional< T > at( std::size_t idx ) const noexcept
-	{
-		if( idx < size() )
-		{
-			return data[ idx ];
-		}
-
-		return {};
-	}
-
-	constexpr std::optional< T > at( std::size_t column, std::size_t row ) const noexcept { return at( column * row ); }
-
-	constexpr auto& data() noexcept { return m_data; }
-	constexpr auto& data() const noexcept { return m_data; }
-
-	static constexpr std::size_t size() const noexcept { return 4; }
-	static constexpr std::size_t rows() const noexcept { return 2; }
-	static constexpr std::size_t columns() const noexcept { return 2; }
-
-private:
-	std::array< T, 4 > m_data;
 };
 
 template < typename T >
-	requires std::is_floating_point_v< T >
-class Matrix3x3
+class Matrix3x3 : public MatrixBase< T, 3u, 3u >
 {
-public:
-	Matrix3x3() noexcept = default;
+	using Parent = MatrixBase< T, 3u, 3u >;
 
+public:
+	using Parent::Parent;
+
+	/// Constructs a 3x3 matrix with all elements initialized to the same value
 	explicit constexpr Matrix3x3( T v ) noexcept
-		: m_data{ v, v, v, v, v, v, v, v, v }
+		: Parent{ v, v, v, v, v, v, v, v, v }
 	{ }
-
-	constexpr Matrix3x3( T m00, T m01, T m02, T m10, T m11, T m12, T m20, T m21, T m22 ) noexcept
-		: m_data{ m00, m01, m02, m10, m11, m12, m20, m21, m22 }
-	{ }
-
-	constexpr auto& data() noexcept { return m_data; }
-	constexpr auto& data() const noexcept { return m_data; }
-
-	static constexpr std::size_t size() const noexcept { return 9; }
-	static constexpr std::size_t rows() const noexcept { return 3; }
-	static constexpr std::size_t columns() const noexcept { return 3; }
-
-private:
-	std::array< T, 9 > m_data;
 };
 
 template < typename T >
-	requires std::is_floating_point_v< T >
-class Matrix4x4
+class Matrix4x4 : public MatrixBase< T, 4u, 4u >
 {
+	using Parent = MatrixBase< T, 4u, 4u >;
+
 public:
-	Matrix3x3() noexcept = default;
+	using Parent::Parent;
 
+	/// Constructs a 4x4 matrix with all elements initialized to the same value
 	explicit constexpr Matrix4x4( T v ) noexcept
-		: m_data{ v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v }
+		: Parent{ v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v }
 	{ }
-
-	constexpr Matrix4x4( T m00,
-						 T m01,
-						 T m02,
-						 T m03,
-						 T m10,
-						 T m11,
-						 T m12,
-						 T m13,
-						 T m20,
-						 T m21,
-						 T m22,
-						 T m23,
-						 T m30,
-						 T m31,
-						 T m32,
-						 T m33 ) noexcept
-		: m_data{ m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33 }
-	{ }
-
-	constexpr auto& data() noexcept { return m_data; }
-	constexpr auto& data() const noexcept { return m_data; }
-
-	static constexpr std::size_t size() const noexcept { return 16; }
-	static constexpr std::size_t rows() const noexcept { return 4; }
-	static constexpr std::size_t columns() const noexcept { return 4; }
-
-private:
-	std::array< T, 16 > m_data;
 };
 
+/**
+ * @brief Generic Matrix class
+ * 
+ * @tparam T The type of the elements in the matrix.
+ * @tparam Rows The number of rows in the matrix.
+ * @tparam Columns The number of columns in the matrix.
+ */
 template < typename T, std::size_t Rows, std::size_t Columns >
-	requires std::is_floating_point_v< T >
-class Matrix
+class Matrix : MatrixBase< T, Rows, Columns >
 {
-	inline constexpr std::size_t Size = Rows * Columns;
+	using Parent = MatrixBase< T, Rows, Columns >;
 
 public:
-	Matrix() noexcept = default;
+	using Parent::MatrixBase;
 
-	explicit constexpr Matrix( T v ) noexcept { std::ranges::fill( m_data, v ); }
-
-	static constexpr std::size_t size() const noexcept { return Size; }
-	static constexpr std::size_t rows() const noexcept { return Rows; }
-	static constexpr std::size_t columns() const noexcept { return Columns; }
-
-private:
-	std::array< T, Size > m_data;
+	/// Constructs a matrix with all elements initialized to the same value
+	explicit constexpr Matrix( T v ) noexcept { std::ranges::fill( this->m_data, v ); }
 };
 
 } // namespace PBL::Math
