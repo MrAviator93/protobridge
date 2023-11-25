@@ -117,6 +117,10 @@ public:
 	constexpr T w() const noexcept { return this->m_data[ 3 ]; }
 };
 
+
+// Matrixes only operate with Row or Column Vector types.
+
+
 template < typename T >
 class RowVector : public T
 {
@@ -126,6 +130,8 @@ public:
 	// TODO
 };
 
+
+// TODO: Redefine behaviour for column vector
 template < typename T >
 class ColumnVector : public T
 {
