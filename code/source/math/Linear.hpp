@@ -95,7 +95,7 @@ public:
 	template < typename... Args >
 		requires( sizeof...( Args ) == 3u )
 	constexpr Vector3( Args&&... args ) noexcept
-		: Parent{ std::forward< Args >( args )..., {} }
+		: Parent{ std::forward< Args >( args )..., T{} }
 	{ }
 
 	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
