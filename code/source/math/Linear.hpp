@@ -46,6 +46,9 @@ struct AlignmentSelector< T >
 template < typename T >
 constexpr std::size_t AlignmentSelectorV = AlignmentSelector< T >::value;
 
+template < typename T >
+concept IsIntFloatOrDouble = std::is_same_v< T, int > || std::is_same_v< T, float > || std::is_same_v< T, double >;
+
 template < typename T, std::size_t Size >
 class VectorBase
 {
@@ -70,36 +73,66 @@ protected:
 };
 
 template < typename T >
-struct Vector2
+class Vector2 : public VectorBase< T, 2u >
 {
-	T x{};
-	T y{};
+	using Parent = VectorBase< T, 2u >;
+
+public:
+	using Parent::Parent;
+
+	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
 };
 
 template < typename T >
-struct Vector3
+class Vector3 : public VectorBase< T, 4u > // one extra for padding
 {
-	T x{};
-	T y{};
-	T z{};
-	// T padding{} ?
+	using Parent = VectorBase< T, 4u >;
+
+public:
+	using Parent::Parent;
+
+	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
 };
 
 template < typename T >
-struct Vector4
+class Vector4 : public VectorBase< T, 4u >
 {
-	T x{};
-	T y{};
-	T z{};
-	T w{};
+	using Parent = VectorBase< T, 4u >;
+
+public:
+	using Parent::Parent;
+
+	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
+	constexpr T w() const noexcept { return this->m_data[ 3 ]; }
+};
+
+template < typename T >
+class RowVector : public T
+{
+public:
+	using T::T;
+
+	// TODO
+};
+
+template < typename T >
+class ColumnVector : public T
+{
+public:
+	using T::T;
+
+	// TODO
 };
 
 using Vector2f = Vector2< float >;
 using Vector2d = Vector2< double >;
-
 using Vector3f = Vector3< float >;
 using Vector3d = Vector3< double >;
-
 using Vector4f = Vector4< float >;
 using Vector4d = Vector4< double >;
 

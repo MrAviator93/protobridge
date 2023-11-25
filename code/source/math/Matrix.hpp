@@ -19,9 +19,6 @@ extern "C" {
 namespace PBL::Math
 {
 
-template < typename T >
-concept IsIntFloatOrDouble = std::is_same_v< T, int > || std::is_same_v< T, float > || std::is_same_v< T, double >;
-
 template < typename T, std::size_t Rows, std::size_t Columns >
 	requires std::is_arithmetic_v< T >
 class MatrixBase
