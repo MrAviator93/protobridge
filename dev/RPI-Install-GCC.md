@@ -1,14 +1,7 @@
 
 # Raspberry Pi Related Notes
 
-This directory contains all the necessary scripts, tools, documents for the development environment.
-
-# Building & Installing GCC-13.2 Toolset
-
-## Usefull Resources
-
-https://iq.opengenus.org/build-gcc-from-source/
-https://www.linuxfromscratch.org/blfs/view/svn/general/gcc.html
+## Building & Installing GCC-13.2 Toolset
 
 ```sh
 sudo apt update
@@ -54,3 +47,8 @@ export LD_LIBRARY_PATH=/usr/local/gcc-13.1.0/lib64:$LD_LIBRARY_PATH
 ```
 
 As the new dynamic libraries are located in different location, the path needs to be provided for dynamic linker where to look for them.
+
+### Useful Resources
+
+https://iq.opengenus.org/build-gcc-from-source/
+https://www.linuxfromscratch.org/blfs/view/svn/general/gcc.html
