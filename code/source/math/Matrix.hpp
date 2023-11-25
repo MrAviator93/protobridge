@@ -19,6 +19,7 @@ template < typename T, std::size_t Rows, std::size_t Columns >
 class MatrixBase
 {
 	static constexpr std::size_t Size = Rows * Columns;
+	static constexpr std::size_t Alignment = AlignmentSelectorV< T >;
 
 public:
 	using ValueType = T;
@@ -51,7 +52,7 @@ public:
 	static constexpr std::size_t columns() noexcept { return Columns; }
 
 protected:
-	std::array< T, Size > m_data;
+	alignas( Alignment ) std::array< T, Size > m_data;
 };
 
 template < typename T >
@@ -66,6 +67,17 @@ public:
 	explicit constexpr Matrix2x2( T v ) noexcept
 		: Parent{ v, v, v, v }
 	{ }
+
+	/// Performs matrix by matrix multiplication
+	constexpr Matrix2x2 operator*( const Matrix2x2& other ) const noexcept
+	{
+		auto& self = *this; // Reference to the current matrix instance
+
+		return Matrix2x2( self.m_data[ 0 ] * other.m_data[ 0 ] + self.m_data[ 1 ] * other.m_data[ 2 ],
+						  self.m_data[ 0 ] * other.m_data[ 1 ] + self.m_data[ 1 ] * other.m_data[ 3 ],
+						  self.m_data[ 2 ] * other.m_data[ 0 ] + self.m_data[ 3 ] * other.m_data[ 2 ],
+						  self.m_data[ 2 ] * other.m_data[ 1 ] + self.m_data[ 3 ] * other.m_data[ 3 ] );
+	}
 };
 
 template < typename T >
