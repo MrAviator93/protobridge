@@ -1,7 +1,8 @@
 
-#ifndef I2C_EXAMPLES_EXAMPLE_APP_HPP__
-#define I2C_EXAMPLES_EXAMPLE_APP_HPP__
+#ifndef PBL_EXAMPLES_EXAMPLE_APP_HPP__
+#define PBL_EXAMPLES_EXAMPLE_APP_HPP__
 
+// C++
 #include <string>
 #include <vector>
 
@@ -40,4 +41,4 @@ private:
 };
 
 } // namespace PBL::Examples
-#endif // I2C_EXAMPLES_EXAMPLE_APP_HPP__
+#endif // PBL_EXAMPLES_EXAMPLE_APP_HPP__
