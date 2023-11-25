@@ -134,23 +134,25 @@ public:
 	template < typename... PredictionModelArgs >
 	[[nodiscard]] T operator()( T measurement, PredictionModelArgs&&... args )
 	{
+		auto& self = *this;
+
 		// Prediction step: Apply the user-defined prediction model to estimate the new state.
 		// This process may involve various real-world factors, encapsulated within the prediction model.
-		T predictedState = this->m_initial + m_predictionModel( std::forward< PredictionModelArgs >( args )... );
+		T predictedState = self.m_initial + m_predictionModel( std::forward< PredictionModelArgs >( args )... );
 
 		// Update estimation error covariance for the prediction
-		this->m_p += this->m_q;
+		self.m_p += self.m_q;
 
 		// Measurement update (correction)
-		this->m_k = this->m_p / ( this->m_p + this->m_r ); // Calculate Kalman gain
+		self.m_k = self.m_p / ( self.m_p + self.m_r ); // Calculate Kalman gain
 
 		// Correct the state estimate using the new measurement.
-		this->m_initial = predictedState + this->m_k * ( measurement - predictedState );
+		self.m_initial = predictedState + self.m_k * ( measurement - predictedState );
 
 		// Update error estimate
-		this->m_p = ( 1 - this->m_k ) * this->m_p;
+		self.m_p = ( 1 - self.m_k ) * self.m_p;
 
-		return this->m_initial;
+		return self.m_initial;
 	}
 
 private:
