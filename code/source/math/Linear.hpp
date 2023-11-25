@@ -92,6 +92,12 @@ class Vector3 : public VectorBase< T, 4u > // one extra for padding
 public:
 	using Parent::Parent;
 
+	template < typename... Args >
+		requires( sizeof...( Args ) == 3u )
+	constexpr Vector3( Args&&... args ) noexcept
+		: Parent{ std::forward< Args >( args )..., {} }
+	{ }
+
 	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
 	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
 	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
