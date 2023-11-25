@@ -52,3 +52,7 @@ As the new dynamic libraries are located in different location, the path needs t
 
 https://iq.opengenus.org/build-gcc-from-source/
 https://www.linuxfromscratch.org/blfs/view/svn/general/gcc.html
+
+### Notes
+
+Note that building GCC-13.2 for Raspberry Pi 5 takes a bit more than 2 hours, for Raspberry Pi 4 it will take even more.
