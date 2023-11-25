@@ -202,5 +202,14 @@ public:
 	explicit constexpr Matrix( T v ) noexcept { std::ranges::fill( this->m_data, v ); }
 };
 
+using Matrix2x2f = Matrix2x2< float >;
+using Matrix2x2d = Matrix2x2< double >;
+
+using Matrix3x3f = Matrix3x3< float >;
+using Matrix3x3d = Matrix3x3< double >;
+
+using Matrix4x4f = Matrix3x3< float >;
+using Matrix4x4d = Matrix3x3< double >;
+
 } // namespace PBL::Math
 #endif //I2C_MATH_MATRIX_HPP__
