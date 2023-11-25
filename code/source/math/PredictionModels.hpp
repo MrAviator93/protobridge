@@ -31,6 +31,8 @@ struct EmptyModel final : PredictionModelBase< T >
 	EmptyModel() = default;
 };
 
+// TODO: Add to all models 1D suffix, as those are all 1D models!
+
 /// Predicts the next state based on a constant rate of motion
 template < typename T >
 struct LinearMotionModel final : PredictionModelBase< T >
