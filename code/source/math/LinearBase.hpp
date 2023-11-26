@@ -73,4 +73,4 @@ protected:
 };
 
 } // namespace PBL::Math
-#endif I2C_MATH_LINEAR_BASE_HPP__
+#endif // I2C_MATH_LINEAR_BASE_HPP__
