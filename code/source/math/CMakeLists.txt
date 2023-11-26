@@ -1,5 +1,6 @@
 
 set(PBL_LIB_HEADERS
+    PID.hpp
     Math.hpp
     Linear.hpp
     Matrix.hpp
@@ -10,7 +11,6 @@ set(PBL_LIB_HEADERS
     MatrixBase.hpp
     MatrixFormat.hpp
     KalmanFilter.hpp
-    PIDControllers.hpp
     PredicionModels.hpp
     ComplementaryFilter.hpp
 )

@@ -1,5 +1,5 @@
-#ifndef PBL_MATH_PID_CONTROLLERS_HPP__
-#define PBL_MATH_PID_CONTROLLERS_HPP__
+#ifndef PBL_MATH_PID_HPP__
+#define PBL_MATH_PID_HPP__
 
 // C++
 #include <utility>
@@ -221,4 +221,4 @@ private:
 };
 
 } // namespace PBL::Math
-#endif // PBL_MATH_PID_CONTROLLERS_HPP__
+#endif // PBL_MATH_PID_HPP__
