@@ -11,6 +11,26 @@
 #include <iostream>
 #include <string_view>
 
+namespace
+{
+
+class PIDController
+{
+public:
+	[[nodiscard]] float update() noexcept { return 1; }
+};
+
+class ThermostatController
+{
+public:
+	std::expected< void, std::string > adjust( [[maybe_unused]] float value )
+	{
+		//
+	}
+};
+
+} // namespace
+
 int main( const int argc, const char* const* const argv )
 {
 	std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
@@ -36,23 +56,32 @@ int main( const int argc, const char* const* const argv )
 	// Create an LM75 controller, attached to the bus controller
 	PBL::I2C::LM75Controller lm75{ busController };
 
+	PIDController pidController;
+	ThermostatController thermostat;
+
 	while( true )
 	{
-		// Read the temperature in Celsius from the LM75 sensor
-		auto temp = lm75.getTemperatureC();
+		auto rslt =
+			lm75.getTemperatureC()
+				.and_then( [ &pidController ]( float temp ) {
+					std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
+					float controlOutput = pidController.update();
+					return std::expected< float, std::string >{ controlOutput };
+				} )
+				.and_then( [ &thermostat ]( float controlOutput ) { return thermostat.adjust( controlOutput ); } )
+				.or_else( []( const std::string& error ) {
+					// Do something with error?
 
-		// Check wether the reading is present (indication of successful read)
-		if( !temp.has_value() )
+					// Propagate the error
+					return std::expected< void, std::string >{ std::unexpect, error };
+				} );
+
+		if( !rslt )
 		{
-			// With C++ 23 we can retrieve exact error what caused the value not present
-			std::cerr << temp.error() << std::endl;
+			std::cerr << rslt.error() << std::endl;
 			return 1;
 		}
 
-		// Output the temperature to the console
-		std::cout << std::format( "Temperature: {}°C", temp.value() ) << std::endl;
-
-		// Sleep for half a second
 		std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
 	}
 
