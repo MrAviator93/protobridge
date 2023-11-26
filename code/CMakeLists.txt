@@ -11,6 +11,10 @@ option(PBL_BUILD_EXAMPLES "Build examples" ON)
 option(PBL_BUILD_UTILITIES "Build utilities" ON)
 option(PBL_CORE_GENERATE_DOC "Generate documentation." ON)
 
+# Build individual libraries
+option(PBL_BUILD_I2C_LIB "Build I2C library" ON)
+option(PBL_BUILD_SPI_LIB "Build I2C library" ON)
+
 project(protobridge VERSION 1.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -36,23 +40,24 @@ find_package(Threads REQUIRED)
 add_subdirectory(source)
 
 if (PBL_BUILD_BENCH)
-    
+    find_package(benchmark CONFIG REQUIRED)
+    add_subdirectory(bench)
 endif()
 
 if (PBL_BUILD_TESTS)
-        find_package(doctest CONFIG REQUIRED)
-        include(CTest)
-        set(BUILD_TESTING ON)
-        set(CMAKE_CTEST_ARGUMENTS "--verbose")
-        add_subdirectory(test)
+    find_package(doctest CONFIG REQUIRED)
+    include(CTest)
+    set(BUILD_TESTING ON)
+    set(CMAKE_CTEST_ARGUMENTS "--verbose")
+    add_subdirectory(test)
 endif()
 
 if (PBL_BUILD_EXAMPLES)
-        add_subdirectory(examples)
+    add_subdirectory(examples)
 endif()
 
 if (PBL_BUILD_UTILITIES)
-        add_subdirectory(utilities)
+    add_subdirectory(utilities)
 endif()
 
 if (PBL_CORE_GENERATE_DOC)
