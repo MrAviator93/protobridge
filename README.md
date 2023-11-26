@@ -26,6 +26,7 @@ Whether your aim is to configure an environmental sensor or manage an I/O expand
   - [Contributing](#contributing)
     - [Branch Naming Conventions](#branch-naming-conventions)
     - [Commit Message Guidelines](#commit-message-guidelines)
+    - [Example of a Commit Message](#example-of-a-commit-message)
   - [License](#license)
 
 ## Features
@@ -175,7 +176,7 @@ A good commit message should be clear and concise, yet descriptive enough to und
 
 3. Footer: This section is used for referencing issue tracker IDs and giving credits.
 
-Example of a Commit Message:
+### Example of a Commit Message
 
 ```txt
 Add support for BMP180 sensor
