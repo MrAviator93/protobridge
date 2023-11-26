@@ -43,8 +43,22 @@ sudo make install
 You also need to do the following operation:
 
 ```sh
-export LD_LIBRARY_PATH=/usr/local/gcc-13.1.0/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/gcc-13.2.0/lib64:$LD_LIBRARY_PATH
 ```
+
+```sh
+export PATH=/usr/local/gcc-13.2.0/bin:$PATH
+```
+
+```sh
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-13.2.0/bin/gcc 60 --slave /usr/bin/g++ g++ /usr/local/gcc-13.2.0/bin/g++
+```
+
+```sh
+gcc --version
+g++ --version
+```
+
 
 As the new dynamic libraries are located in different location, the path needs to be provided for dynamic linker where to look for them.
 
