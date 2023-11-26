@@ -40,15 +40,19 @@ Install the build (will install into /usr/local/gcc-13.2.0)
 sudo make install 
 ```
 
-You also need to do the following operation:
+Update the LD_LIBRARY_PATH environment variable to include the path to the newer libstdc++ and also update PATH to include the new compiler.
 
 ```sh
 export LD_LIBRARY_PATH=/usr/local/gcc-13.2.0/lib64:$LD_LIBRARY_PATH
-```
-
-```sh
 export PATH=/usr/local/gcc-13.2.0/bin:$PATH
 ```
+
+Update the dynamic linker run-time bindings
+
+```sh
+sudo ldconfig
+```
+
 
 ```sh
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-13.2.0/bin/gcc 60 --slave /usr/bin/g++ g++ /usr/local/gcc-13.2.0/bin/g++
