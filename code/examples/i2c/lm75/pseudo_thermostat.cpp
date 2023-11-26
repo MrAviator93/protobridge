@@ -154,10 +154,10 @@ int main( const int argc, const char* const* const argv )
 			lm75.getTemperatureC()
 				.and_then( [ &pidController ]( float temp ) {
 					std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
-					float controlOutput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
-					return std::expected< float, std::string >{ controlOutput };
+					float controlSignalInput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
+					return std::expected< float, std::string >{ controlSignalInput };
 				} )
-				.and_then( [ &thermostat ]( float controlOutput ) { return thermostat.adjust( controlOutput ); } )
+				.and_then( [ &thermostat ]( float controlSignalInput ) { return thermostat.adjust( controlSignalInput ); } )
 				.or_else( []( const std::string& error ) {
 					// Do something with error?
 
