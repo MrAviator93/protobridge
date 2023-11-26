@@ -4,6 +4,7 @@ set(PBL_LIB_HEADERS
     Linear.hpp
     Matrix.hpp
     KalmanFilter.hpp
+    PIDControllers.hpp
     PredicionModels.hpp
     ComplementaryFilter.hpp
 )

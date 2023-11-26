@@ -5,12 +5,13 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-option(I2C_BUILD_TESTS "Compile unit tests." ON)
-option(I2C_BUILD_EXAMPLES "Compile examples." ON)
-option(I2C_BUILD_UTILITIES "Compile utilities." ON)
-option(I2C_CORE_GENERATE_DOC "Generate documentation." ON)
+option(PBL_BUILD_BENCH "Build benchmarks", ON)
+option(PBL_BUILD_TESTS "Build unit tests" ON)
+option(PBL_BUILD_EXAMPLES "Build examples" ON)
+option(PBL_BUILD_UTILITIES "Build utilities" ON)
+option(PBL_CORE_GENERATE_DOC "Generate documentation." ON)
 
-project(I2CLib VERSION 1.0 LANGUAGES C CXX)
+project(protobridge VERSION 1.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -34,7 +35,11 @@ find_package(Threads REQUIRED)
 
 add_subdirectory(source)
 
-if (I2C_BUILD_TESTS)
+if (PBL_BUILD_BENCH)
+    
+endif()
+
+if (PBL_BUILD_TESTS)
         find_package(doctest CONFIG REQUIRED)
         include(CTest)
         set(BUILD_TESTING ON)
@@ -42,15 +47,15 @@ if (I2C_BUILD_TESTS)
         add_subdirectory(test)
 endif()
 
-if (I2C_BUILD_EXAMPLES)
+if (PBL_BUILD_EXAMPLES)
         add_subdirectory(examples)
 endif()
 
-if (I2C_BUILD_UTILITIES)
+if (PBL_BUILD_UTILITIES)
         add_subdirectory(utilities)
 endif()
 
-if (I2C_CORE_GENERATE_DOC)
+if (PBL_CORE_GENERATE_DOC)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         # Check for dot tool of Graphviz
