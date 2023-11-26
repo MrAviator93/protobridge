@@ -66,7 +66,7 @@ bool LM75Controller::setThermostatMode( ThermostatMode mode )
 	return false;
 }
 
-std::optional< LM75Controller::PowerMode > LM75Controller::getPowerMode()
+std::expected< LM75Controller::PowerMode, std::string > LM75Controller::getPowerMode()
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -80,10 +80,10 @@ std::optional< LM75Controller::PowerMode > LM75Controller::getPowerMode()
 		return PowerMode::NORMAL;
 	}
 
-	return std::nullopt;
+	return std::unexpected( std::string{ "Failed to read configuration" } );
 }
 
-std::optional< LM75Controller::ThermostatMode > LM75Controller::getThermostatMode()
+std::expected< LM75Controller::ThermostatMode, std::string > LM75Controller::getThermostatMode()
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -97,10 +97,10 @@ std::optional< LM75Controller::ThermostatMode > LM75Controller::getThermostatMod
 		return ThermostatMode::COMPARATOR;
 	}
 
-	return std::nullopt;
+	return std::unexpected( std::string{ "Failed to read configuration" } );
 }
 
-std::optional< bool > LM75Controller::getAlertStatus()
+std::expected< bool, std::string > LM75Controller::getAlertStatus()
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -109,10 +109,10 @@ std::optional< bool > LM75Controller::getAlertStatus()
 		return configBits.test( kAlertStatusBit );
 	}
 
-	return std::nullopt;
+	return std::unexpected( std::string{ "Failed to read alert status" } );
 }
 
-std::optional< float > LM75Controller::getTemperatureC()
+std::expected< float, std::string > LM75Controller::getTemperatureC()
 {
 	std::array< std::uint8_t, 2 > data{ 0x00, 0x00 };
 	if( auto size = read( kTempReadRegister, data.data(), data.size() ); size > 0 )
@@ -122,17 +122,18 @@ std::optional< float > LM75Controller::getTemperatureC()
 		return iTemp / 256.0f;
 	}
 
-	return std::nullopt;
+	return std::unexpected( std::string{ "Failed to read temperature" } );
 }
 
-std::optional< float > LM75Controller::getTemperatureF()
+std::expected< float, std::string > LM75Controller::getTemperatureF()
 {
-	if( auto temp = getTemperatureC(); temp.has_value() )
+	auto temp = getTemperatureC();
+	if( temp.has_value() )
 	{
 		return Utils::celsiusToFahrenheit( temp.value() );
 	}
 
-	return std::nullopt;
+	return temp;
 }
 
 } // namespace PBL::I2C

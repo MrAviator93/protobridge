@@ -14,7 +14,8 @@
 #include "ICBase.hpp"
 
 // C++
-#include <optional>
+#include <string>
+#include <expected>
 
 namespace PBL::I2C
 {
@@ -100,19 +101,19 @@ public:
 	bool setThermostatMode( ThermostatMode mode );
 
 	/// Retrieves the current state of the LM75's shutdown mode.
-	[[nodiscard]] std::optional< PowerMode > getPowerMode();
+	[[nodiscard]] std::expected< PowerMode, std::string > getPowerMode();
 
 	/// Retrieves the current thermostat mode of the LM75.
-	[[nodiscard]] std::optional< ThermostatMode > getThermostatMode();
+	[[nodiscard]] std::expected< ThermostatMode, std::string > getThermostatMode();
 
 	/// Checks the status of the LM75's alert flag.
-	[[nodiscard]] std::optional< bool > getAlertStatus();
+	[[nodiscard]] std::expected< bool, std::string > getAlertStatus();
 
 	/// Retrieves the temperature in degrees Celsius
-	[[nodiscard]] std::optional< float > getTemperatureC();
+	[[nodiscard]] std::expected< float, std::string > getTemperatureC();
 
 	/// Retrieves the temperature in Fahrenheit
-	[[nodiscard]] std::optional< float > getTemperatureF();
+	[[nodiscard]] std::expected< float, std::string > getTemperatureF();
 };
 
 } // namespace PBL::I2C

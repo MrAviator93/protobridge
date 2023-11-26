@@ -24,5 +24,5 @@ function(create_static_library)
     target_include_directories(${ARG_LIB_NAME_BASE} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>)
 
     # Set target compile features
-    target_compile_features(${ARG_LIB_NAME_BASE} PUBLIC cxx_std_20)
+    target_compile_features(${ARG_LIB_NAME_BASE} PUBLIC cxx_std_23)
 endfunction()
