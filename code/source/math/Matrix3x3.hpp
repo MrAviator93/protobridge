@@ -3,11 +3,6 @@
 
 #include "MatrixBase.hpp"
 
-// C
-extern "C" {
-#include <emmintrin.h>
-}
-
 namespace PBL::Math
 {
 
