@@ -91,7 +91,7 @@ For more detailed examples, including how to interact with other types of sensor
 ## Requirements
 
 - Doctest
-- CMake (version 3.22.0 or newer).
+- CMake (version 3.26.0 or newer).
 - A C++20 compliant compiler (GCC-13.2, Clang-17, etc.).
 - A single-board computer (e.g., Raspberry Pi, BeagleBone) running an OS that supports I2C ioctl system calls.
 
