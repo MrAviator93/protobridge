@@ -5,7 +5,7 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-option(PBL_BUILD_BENCH "Build benchmarks", ON)
+option(PBL_BUILD_BENCH "Build benchmarks" ON)
 option(PBL_BUILD_TESTS "Build unit tests" ON)
 option(PBL_BUILD_EXAMPLES "Build examples" ON)
 option(PBL_BUILD_UTILITIES "Build utilities" ON)
