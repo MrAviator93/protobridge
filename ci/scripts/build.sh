@@ -7,6 +7,6 @@ set -e
 set -x
 
 # Build for each target platform
-docker build -f ci/docker/Dockerfile.beaglebone -t yourproject/beaglebone .
-docker build -f ci/docker/Dockerfile.orangepi -t yourproject/orangepi .
-docker build -f ci/docker/Dockerfile.x86_64 -t yourproject/x86_64 .
+docker build -f ci/docker/Dockerfile.beaglebone -t pbl/beaglebone .
+docker build -f ci/docker/Dockerfile.orangepi -t pbl/orangepi .
+docker build -f ci/docker/Dockerfile.x86_64 -t pbl/x86_64 .
