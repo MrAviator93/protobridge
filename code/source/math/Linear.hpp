@@ -54,6 +54,22 @@ public:
 	constexpr T w() const noexcept { return this->m_data[ 3 ]; }
 };
 
+template < typename T >
+class Vector6 : public VectorBase< T, 6u >
+{
+	using Parent = VectorBase< T, 6u >;
+
+public:
+	using Parent::Parent;
+
+	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
+	constexpr T w() const noexcept { return this->m_data[ 3 ]; }
+	constexpr T u() const noexcept { return this->m_data[ 4 ]; }
+	constexpr T v() const noexcept { return this->m_data[ 5 ]; }
+};
+
 // Matrixes only operate with Row or Column Vector types.
 
 template < typename T >
