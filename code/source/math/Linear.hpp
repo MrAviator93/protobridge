@@ -97,6 +97,8 @@ using Vector3f = Vector3< float >;
 using Vector3d = Vector3< double >;
 using Vector4f = Vector4< float >;
 using Vector4d = Vector4< double >;
+using Vector6f = Vector6< float >;
+using Vector6d = Vector6< double >;
 
 } // namespace PBL::Math
 #endif // I2CMATHS_LINEAR_HPP__
