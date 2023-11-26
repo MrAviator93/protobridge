@@ -25,7 +25,9 @@ class Vector3 : public VectorBase< T, 4u > // one extra for padding
 	using Parent = VectorBase< T, 4u >;
 
 public:
-	using Parent::Parent;
+	constexpr Vector3()
+		: Parent{}
+	{ }
 
 	template < typename... Args >
 		requires( sizeof...( Args ) == 3u )
