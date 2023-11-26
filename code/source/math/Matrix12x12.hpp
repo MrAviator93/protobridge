@@ -14,7 +14,7 @@ class Matrix12x12 : public MatrixBase< T, 12u, 12u >
 public:
 	using Parent::Parent;
 
-	/// Constructs a 6x6 matrix with all elements initialized to the same value
+	/// Constructs a 12x12 matrix with all elements initialized to the same value
 	explicit constexpr Matrix12x12( T v ) noexcept
 		: Parent{ v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,
 				  v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,
