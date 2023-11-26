@@ -5,9 +5,10 @@
 #include "Math.hpp"
 
 // C++
+#include <array>
 #include <type_traits>
 
-namespace PBL::Utils
+namespace PBL::Math
 {
 
 template < typename T >
@@ -148,5 +149,5 @@ using Vector3d = Vector3< double >;
 using Vector4f = Vector4< float >;
 using Vector4d = Vector4< double >;
 
-} // namespace PBL::Utils
+} // namespace PBL::Math
 #endif // I2CMATHS_LINEAR_HPP__

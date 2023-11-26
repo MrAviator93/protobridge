@@ -49,7 +49,7 @@ public:
      * 
      * @return std::tuple<float, float, float> The tuple contains the roll, pitch, and yaw angles in degrees.
      */
-	[[nodiscard]] Utils::Vector3f angles();
+	[[nodiscard]] Math::Vector3f angles();
 
 	// [[nodiscard]] Vector3f getRawAccelValues();
 	// [[nodiscard]] Vector3f getRawGyroValues();

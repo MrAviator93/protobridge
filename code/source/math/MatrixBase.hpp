@@ -7,6 +7,7 @@
 
 // C++
 #include <array>
+#include <cstdint>
 #include <optional>
 #include <algorithm>
 #include <type_traits>
@@ -36,7 +37,7 @@ public:
 	{
 		if( idx < Size )
 		{
-			return data[ idx ];
+			return m_data[ idx ];
 		}
 
 		return {};
@@ -50,6 +51,9 @@ public:
 	static constexpr std::size_t size() noexcept { return Size; }
 	static constexpr std::size_t rows() noexcept { return Rows; }
 	static constexpr std::size_t columns() noexcept { return Columns; }
+
+	// Compile-time constant to check if the data is aligned
+	// static constexpr bool IsDataAligned = ( sizeof( std::array< T, Size > ) % Alignment == 0 );
 
 protected:
 	constexpr bool isAligned() const noexcept

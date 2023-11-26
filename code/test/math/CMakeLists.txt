@@ -7,6 +7,7 @@ set(PRIVATE_DEPS
 set(SRC
     main.cpp
     MathTest.cpp
+    Matrix2x2Test.cpp
 )
 
 create_test_application(

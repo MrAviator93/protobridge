@@ -144,7 +144,7 @@ void MPU6050Controller::calculateImuError()
 	GyroErrorZ = GyroErrorZ / static_cast< double >( kGyroCalibReadIterations );
 }
 
-Utils::Vector3f MPU6050Controller::angles()
+Math::Vector3f MPU6050Controller::angles()
 {
 	// TODO (AK)
 	return {};
