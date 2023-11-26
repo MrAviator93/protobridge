@@ -2,7 +2,13 @@
 set(PBL_LIB_HEADERS
     Math.hpp
     Linear.hpp
+    Matrix.hpp
+    Matrix2x2.hpp
+    Matrix3x3.hpp
+    Matrix4x4.hpp
+    Matrix6x6.hpp
     MatrixBase.hpp
+    MatrixFormat.hpp
     KalmanFilter.hpp
     PIDControllers.hpp
     PredicionModels.hpp
