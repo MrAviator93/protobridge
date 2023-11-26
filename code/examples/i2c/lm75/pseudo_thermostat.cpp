@@ -203,3 +203,38 @@ int main( const int argc, const char* const* const argv )
 
 	return 0;
 }
+
+// class Thermostat
+// {
+// public:
+// 	std::expected< void, std::string > update( float dt )
+// 	{
+// 		auto rslt = lm75.getTemperatureC()
+// 						.and_then( [ &pidController ]( float temp ) {
+// 							std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
+// 							float controlSignalInput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
+// 							return std::expected< float, std::string >{ controlSignalInput };
+// 						} )
+// 						.and_then( [ &thermostat ]( float controlSignalInput ) {
+// 							return thermostat.adjust( controlSignalInput );
+// 						} )
+// 						.or_else( []( const std::string& error ) {
+// 							// Do something with error?
+
+// 							// Propagate the error
+// 							return std::expected< void, std::string >{ std::unexpect, error };
+// 						} );
+
+// 		if( !rslt )
+// 		{
+// 			return std::unexpected{ rslt.error() };
+// 		}
+
+// 		return {};
+// 	}
+
+// private:
+// 	PBL::I2C::LM75Controller lm75;
+// 	PIDController pidController;
+// 	ThermostatController thermostat;
+// };
