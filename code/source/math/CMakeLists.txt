@@ -9,6 +9,7 @@ set(PBL_LIB_HEADERS
     Matrix4x4.hpp
     Matrix6x6.hpp
     MatrixBase.hpp
+    LinearBase.hpp
     MatrixFormat.hpp
     KalmanFilter.hpp
     PredicionModels.hpp
