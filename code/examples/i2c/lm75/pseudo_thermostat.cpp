@@ -148,22 +148,30 @@ int main( const int argc, const char* const* const argv )
 	PIDController pidController;
 	ThermostatController thermostat;
 
+	// auto check = CheckActive{ lm75, pidController, thermostat };
+	// if( !check )
+	// {
+	// 	std::cerr << check.error() << std::endl;
+	// 	return 1;
+	// }
+
 	while( true )
 	{
-		auto rslt =
-			lm75.getTemperatureC()
-				.and_then( [ &pidController ]( float temp ) {
-					std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
-					float controlSignalInput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
-					return std::expected< float, std::string >{ controlSignalInput };
-				} )
-				.and_then( [ &thermostat ]( float controlSignalInput ) { return thermostat.adjust( controlSignalInput ); } )
-				.or_else( []( const std::string& error ) {
-					// Do something with error?
+		auto rslt = lm75.getTemperatureC()
+						.and_then( [ &pidController ]( float temp ) {
+							std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
+							float controlSignalInput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
+							return std::expected< float, std::string >{ controlSignalInput };
+						} )
+						.and_then( [ &thermostat ]( float controlSignalInput ) {
+							return thermostat.adjust( controlSignalInput );
+						} )
+						.or_else( []( const std::string& error ) {
+							// Do something with error?
 
-					// Propagate the error
-					return std::expected< void, std::string >{ std::unexpect, error };
-				} );
+							// Propagate the error
+							return std::expected< void, std::string >{ std::unexpect, error };
+						} );
 
 		if( !rslt )
 		{
