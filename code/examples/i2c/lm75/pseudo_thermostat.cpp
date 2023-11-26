@@ -155,6 +155,25 @@ int main( const int argc, const char* const* const argv )
 	// 	return 1;
 	// }
 
+	// The CheckActive object could be even more complicated
+	// template < typename... Args >
+	// struct CheckActive
+	// {
+	// 	CheckActive( Args&... args )
+	// 		: m_objects( std::ref( args )... )
+	// 	{ }
+
+	// 	// Something like this:
+	// 	// bool check() const
+	// 	// {
+	// 	// 	// Implement the logic to check each object.
+	// 	// 	// This is just a placeholder for demonstration.
+	// 	// 	return std::apply( []( auto&&... args ) { return ( ... && args.get().isActive() ); }, m_objects );
+	// 	// }
+
+	// 	std::tuple< std::reference_wrapper< Args >... > m_objects;
+	// };
+
 	while( true )
 	{
 		auto rslt = lm75.getTemperatureC()
