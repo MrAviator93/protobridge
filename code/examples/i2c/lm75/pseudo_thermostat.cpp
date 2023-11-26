@@ -149,8 +149,7 @@ int main( const int argc, const char* const* const argv )
 	ThermostatController thermostat;
 
 	// This requires all controllers to implement std::expected<bool, std::string> isActive()
-	// auto check = CheckActive{ lm75, pidController, thermostat };
-	// if( !check )
+	// if(auto check = CheckActive{ lm75, pidController, thermostat }, !check )
 	// {
 	// 	std::cerr << check.error() << std::endl;
 	// 	return 1;
