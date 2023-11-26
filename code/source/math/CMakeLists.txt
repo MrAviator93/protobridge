@@ -2,7 +2,7 @@
 set(PBL_LIB_HEADERS
     Math.hpp
     Linear.hpp
-    Matrix.hpp
+    MatrixBase.hpp
     KalmanFilter.hpp
     PIDControllers.hpp
     PredicionModels.hpp
