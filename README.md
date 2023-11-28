@@ -10,6 +10,8 @@ Whether your aim is to configure an environmental sensor or manage an I/O expand
 
 ![ProtoBridge](assets/image.png "ProtoBridge")
 
+Please note that the ProtoBridge Library is currently a work in progress, and a stable release is not yet available.
+
 ## Table of contents
 
 - [ProtoBridge Library](#protobridge-library)
