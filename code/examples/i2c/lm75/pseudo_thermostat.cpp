@@ -24,9 +24,11 @@ namespace
 class ThermostatController
 {
 public:
+	ThermostatController( PBL::I2C::BusController& ) { }
+
 	std::expected< void, std::string > adjust( float value )
 	{
-		std::cout << "Adjust " << value << std::endl;
+		std::cout << std::format( "Adjust: {}", value ) << std::endl;
 		return {};
 	}
 };
@@ -37,6 +39,7 @@ public:
 	Thermostat( PBL::I2C::BusController& bus )
 		: m_lm75{ bus }
 		, m_pid{ 0.5, 0.2, 0.25 }
+		, m_thermostat{ bus }
 	{ }
 
 	std::expected< void, std::string > update( float dt )
@@ -142,7 +145,6 @@ int main( const int argc, const char* const* const argv )
 		// }
 
 		std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
-
 
 		timer.reset();
 	}
