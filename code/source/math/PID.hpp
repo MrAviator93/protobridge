@@ -210,6 +210,8 @@ private:
 	T m_signal{}; //!< TBW
 };
 
+// TODO: Add Min and Max
+
 template < std::floating_point T >
 struct Cap
 {
