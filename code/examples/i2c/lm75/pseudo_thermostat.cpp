@@ -2,6 +2,7 @@
 // Include I2C library files
 #include <i2c/BusController.hpp>
 #include <i2c/LM75Controller.hpp>
+#include <utils/Timer.hpp>
 #include <math/PID.hpp>
 
 // Output
@@ -90,11 +91,11 @@ int main( const int argc, const char* const* const argv )
 	PBL::I2C::BusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
-	if( !busController.isOpen() )
-	{
-		std::cerr << "Failed to open I2C device" << std::endl;
-		return 1;
-	}
+	// if( !busController.isOpen() )
+	// {
+	// 	std::cerr << "Failed to open I2C device" << std::endl;
+	// 	return 1;
+	// }
 
 	// This requires all controllers to implement std::expected<bool, std::string> isActive()
 	// if(auto check = CheckActive{ lm75, pidController, thermostat }, !check )
@@ -123,18 +124,27 @@ int main( const int argc, const char* const* const argv )
 	// };
 
 	Thermostat thermostat{ busController };
+	PBL::Utils::Timer timer;
+	timer.start();
 
 	while( true )
 	{
-		auto rslt = thermostat.update( 0.1 );
+		auto dt = static_cast< float >( timer.elapsedTimeS() );
 
-		if( !rslt )
-		{
-			std::cerr << rslt.error() << std::endl;
-			return 1;
-		}
+		std::cout << dt << std::endl;
 
-		std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+		auto rslt = thermostat.update( dt );
+
+		// if( !rslt )
+		// {
+		// 	std::cerr << rslt.error() << std::endl;
+		// 	return 1;
+		// }
+
+		std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
+
+
+		timer.reset();
 	}
 
 	return 0;
