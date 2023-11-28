@@ -143,11 +143,11 @@ int main( const int argc, const char* const* const argv )
 	PBL::I2C::BusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
-	// if( !busController.isOpen() )
-	// {
-	// 	std::cerr << "Failed to open I2C device" << std::endl;
-	// 	return 1;
-	// }
+	if( !busController.isOpen() )
+	{
+		std::cerr << "Failed to open I2C device" << std::endl;
+		return 1;
+	}
 
 	Thermostat thermostat{ busController };
 	PBL::Utils::Timer timer;
@@ -157,18 +157,20 @@ int main( const int argc, const char* const* const argv )
 	while( true )
 	{
 		timer.reset();
+
+		// Sleep simulates some work
+		std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
+
+		dt = static_cast< float >( timer.elapsedTimeS() );
 		auto rslt = thermostat.update( dt );
 
-		// if( !rslt )
-		// {
-		// 	std::cerr << rslt.error() << std::endl;
-		// 	break;
-		// }
-
-		// std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
-
-		auto dt = static_cast< float >( timer.elapsedTimeS() );
 		std::cout << std::format( "{:12f}", dt ) << std::endl;
+
+		if( !rslt )
+		{
+			std::cerr << rslt.error() << std::endl;
+			break;
+		}
 	}
 
 	return 0;
