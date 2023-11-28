@@ -14,12 +14,43 @@
 #include <utility>
 #include <concepts>
 #include <iostream>
+#include <functional>
 #include <string_view>
 
 #define unwrap( p ) p.first, p.second
 
 namespace
 {
+
+template < typename... Ts >
+class CheckActive
+{
+	template < typename... Args >
+	CheckActive( Args... args )
+		: m_args{ std::ref( args )... }
+	{ }
+
+	bool isActive() const
+	{
+		return std::apply(
+			[ & ]( const auto&... args ) {
+				auto isActive = []< typename T >( const T& arg ) -> bool {
+					if constexpr( requires { arg.isActive(); } )
+					{
+						return arg.isActive();
+					}
+
+					return true;
+				};
+
+				return ( ... && isActive( args.get() ) );
+			},
+			m_args );
+	}
+
+private:
+	std::tuple< std::reference_wrapper< Ts >... > m_args;
+};
 
 class ThermostatController
 {
@@ -99,32 +130,6 @@ int main( const int argc, const char* const* const argv )
 	// 	std::cerr << "Failed to open I2C device" << std::endl;
 	// 	return 1;
 	// }
-
-	// This requires all controllers to implement std::expected<bool, std::string> isActive()
-	// if(auto check = CheckActive{ lm75, pidController, thermostat }, !check )
-	// {
-	// 	std::cerr << check.error() << std::endl;
-	// 	return 1;
-	// }
-
-	// The CheckActive object could be even more complicated
-	// template < typename... Args >
-	// struct CheckActive
-	// {
-	// 	CheckActive( Args&... args )
-	// 		: m_objects( std::ref( args )... )
-	// 	{ }
-
-	// 	// Something like this:
-	// 	// bool check() const
-	// 	// {
-	// 	// 	// Implement the logic to check each object.
-	// 	// 	// This is just a placeholder for demonstration.
-	// 	// 	return std::apply( []( auto&&... args ) { return ( ... && args.get().isActive() ); }, m_objects );
-	// 	// }
-
-	// 	std::tuple< std::reference_wrapper< Args >... > m_objects;
-	// };
 
 	Thermostat thermostat{ busController };
 	PBL::Utils::Timer timer;
