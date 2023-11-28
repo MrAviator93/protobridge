@@ -162,7 +162,7 @@ int main( const int argc, const char* const* const argv )
 		// if( !rslt )
 		// {
 		// 	std::cerr << rslt.error() << std::endl;
-		// 	return 1;
+		// 	break;
 		// }
 
 		// std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
