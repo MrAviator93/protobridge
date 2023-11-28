@@ -2,6 +2,7 @@
 // Include I2C library files
 #include <i2c/BusController.hpp>
 #include <i2c/LM75Controller.hpp>
+#include <math/PID.hpp>
 
 // Output
 #include <cmath>
@@ -9,104 +10,15 @@
 #include <thread>
 #include <chrono>
 #include <format>
+#include <utility>
 #include <concepts>
 #include <iostream>
 #include <string_view>
 
+#define unwrap( p ) p.first, p.second
+
 namespace
 {
-
-template < std::floating_point T >
-struct cap
-{
-	T lower{};
-	T upper{};
-
-	T operator()( T value ) const { return std::clamp( value, lower, upper ); }
-};
-
-struct sqr
-{
-	template < std::floating_point T >
-	T operator()( T value ) const
-	{
-		return value * value;
-	}
-};
-
-template < std::floating_point T >
-struct dead_zone
-{
-	T threshold;
-	T operator()( T value ) const { return ( std::abs( value ) < threshold ) ? T{} : value; }
-};
-
-template < std::floating_point T >
-struct saturation
-{
-	T minVal;
-	T maxVal;
-	T operator()( T value ) const { return std::clamp( value, minVal, maxVal ); }
-};
-
-template < std::floating_point T >
-struct integral_windup_guard
-{
-	T maxIntegral;
-	T operator()( T integralComponent ) const { return std::clamp( integralComponent, -maxIntegral, maxIntegral ); }
-};
-
-template < std::floating_point T >
-struct rate_limiter
-{
-	T lastValue{};
-	T maxRate;
-	T operator()( T value )
-	{
-		T limitedValue = std::clamp( value, lastValue - maxRate, lastValue + maxRate );
-		lastValue = limitedValue;
-		return limitedValue;
-	}
-};
-
-template < std::floating_point T >
-struct exponential_scaling
-{
-	T exponent;
-	T operator()( T value ) const { return std::pow( value, exponent ); }
-};
-
-// Introduces a small oscillation or noise to the output,
-// useful in overcoming static friction in some mechanical systems
-template < std::floating_point T >
-struct dither
-{
-	T amplitude;
-	T operator()( T value ) { return value + ( ( std::rand() % 2 == 0 ? 1.0f : -1.0f ) * amplitude ); }
-};
-
-class PIDController
-{
-public:
-	[[nodiscard]] PIDController& update( float reading ) noexcept
-	{
-		// For example purposes
-		lastOutput = reading;
-		return *this;
-	}
-
-	template < typename Functor >
-	PIDController& operator|( Functor func )
-	{
-		lastOutput = func( lastOutput );
-		return *this;
-	}
-
-	operator float() const { return lastOutput; }
-
-private:
-	float lastOutput{};
-};
 
 class ThermostatController
 {
@@ -116,6 +28,48 @@ public:
 		std::cout << "Adjust " << value << std::endl;
 		return {};
 	}
+};
+
+class Thermostat
+{
+public:
+	Thermostat( PBL::I2C::BusController& bus )
+		: m_lm75{ bus }
+		, m_pid{ 0.5, 0.2, 0.25 }
+	{ }
+
+	std::expected< void, std::string > update( float dt )
+	{
+		return readDesiredTemp()
+			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, std::string > {
+				auto currTemp = m_lm75.getTemperatureC();
+				if( !currTemp )
+				{
+					return std::unexpected( currTemp.error() );
+				}
+
+				return std::pair{ desiredTemp, *currTemp };
+			} )
+			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, std::string > {
+				return ( m_pid.update( dt, unwrap( values ) ) | PBL::Math::Cap{ 0.0f, 10.0f } | PBL::Math::Sqr{} );
+			} )
+			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
+			.or_else( []( const std::string& error ) -> std::expected< void, std::string > {
+				return std::unexpected< std::string >( error );
+			} );
+	}
+
+private:
+	std::expected< float, std::string > readDesiredTemp()
+	{
+		// You would get it using I2C from
+		return 25.0f;
+	}
+
+private:
+	PBL::I2C::LM75Controller m_lm75;
+	PBL::Math::PIDController< float > m_pid;
+	ThermostatController m_thermostat;
 };
 
 } // namespace
@@ -141,12 +95,6 @@ int main( const int argc, const char* const* const argv )
 		std::cerr << "Failed to open I2C device" << std::endl;
 		return 1;
 	}
-
-	// Create an LM75 controller, attached to the bus controller
-	PBL::I2C::LM75Controller lm75{ busController };
-
-	PIDController pidController;
-	ThermostatController thermostat;
 
 	// This requires all controllers to implement std::expected<bool, std::string> isActive()
 	// if(auto check = CheckActive{ lm75, pidController, thermostat }, !check )
@@ -174,23 +122,11 @@ int main( const int argc, const char* const* const argv )
 	// 	std::tuple< std::reference_wrapper< Args >... > m_objects;
 	// };
 
+	Thermostat thermostat{ busController };
+
 	while( true )
 	{
-		auto rslt = lm75.getTemperatureC()
-						.and_then( [ &pidController ]( float temp ) {
-							std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
-							float controlSignalInput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
-							return std::expected< float, std::string >{ controlSignalInput };
-						} )
-						.and_then( [ &thermostat ]( float controlSignalInput ) {
-							return thermostat.adjust( controlSignalInput );
-						} )
-						.or_else( []( const std::string& error ) {
-							// Do something with error?
-
-							// Propagate the error
-							return std::expected< void, std::string >{ std::unexpect, error };
-						} );
+		auto rslt = thermostat.update( 0.1 );
 
 		if( !rslt )
 		{
@@ -203,38 +139,3 @@ int main( const int argc, const char* const* const argv )
 
 	return 0;
 }
-
-// class Thermostat
-// {
-// public:
-// 	std::expected< void, std::string > update( float dt )
-// 	{
-// 		auto rslt = lm75.getTemperatureC()
-// 						.and_then( [ &pidController ]( float temp ) {
-// 							std::cout << std::format( "Temperature: {}°C", temp ) << std::endl;
-// 							float controlSignalInput = pidController.update( temp ) | cap{ 0.0f, 10.0f } | sqr{};
-// 							return std::expected< float, std::string >{ controlSignalInput };
-// 						} )
-// 						.and_then( [ &thermostat ]( float controlSignalInput ) {
-// 							return thermostat.adjust( controlSignalInput );
-// 						} )
-// 						.or_else( []( const std::string& error ) {
-// 							// Do something with error?
-
-// 							// Propagate the error
-// 							return std::expected< void, std::string >{ std::unexpect, error };
-// 						} );
-
-// 		if( !rslt )
-// 		{
-// 			return std::unexpected{ rslt.error() };
-// 		}
-
-// 		return {};
-// 	}
-
-// private:
-// 	PBL::I2C::LM75Controller lm75;
-// 	PIDController pidController;
-// 	ThermostatController thermostat;
-// };

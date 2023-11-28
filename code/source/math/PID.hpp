@@ -1,6 +1,8 @@
 #ifndef PBL_MATH_PID_HPP__
 #define PBL_MATH_PID_HPP__
 
+#include "Math.hpp"
+
 // C++
 #include <utility>
 #include <concepts>
@@ -14,7 +16,7 @@ template < std::floating_point T >
 class ControllerBase
 {
 public:
-	using BaseType = T;
+	using ValueType = T;
 };
 
 /**
@@ -31,32 +33,37 @@ public:
 		: m_Kp{ Kp }
 	{ }
 
-	/**
-	 * @brief Calculates the output signal based on the proportional
-	 * controller theory.
-	 * 
-	 * @param desiredValue is the set-point
-	 * @param currentValue 
-	 * @return constexpr T 
-	 */
-	[[nodiscard]] constexpr T calculateControlSignal( T desiredValue, T currentValue ) const noexcept
+	/// Calculates the output signal based on the proportional controller theory.
+	[[nodiscard]] constexpr PController& update( T desiredValue, T currentValue ) noexcept
 	{
 		// Calculate error
 		T error = desiredValue - currentValue;
 
 		// Calculate proportional term
-		T proportionalTermOut = m_Kp * error;
+		m_signal = m_Kp * error;
 
-		return proportionalTermOut;
+		return *this;
 	}
 
-	[[nodiscard]] constexpr T operator()( T desiredValue, T currentValue ) const noexcept
+	[[nodiscard]] constexpr PController& operator()( T desiredValue, T currentValue ) noexcept
 	{
-		return calculateControlSignal( desiredValue, currentValue );
+		return update( desiredValue, currentValue );
 	}
+
+	/// TBW
+	template < typename Functor >
+	[[nodiscard]] PController& operator|( Functor func )
+	{
+		m_signal = func( m_signal );
+		return *this;
+	}
+
+	/// TBW
+	[[nodiscard]] operator T() const { return m_signal; }
 
 private:
 	T m_Kp; //!< Proportional term gain
+	T m_signal{}; //!< TBW
 };
 
 /**
@@ -69,22 +76,13 @@ template < std::floating_point T >
 class PIController : public ControllerBase< T >
 {
 public:
-	constexpr PIController( T dt, T Kp, T Ki ) noexcept
-		: m_dt{ dt }
-		, m_Kp{ Kp }
+	constexpr PIController( T Kp, T Ki ) noexcept
+		: m_Kp{ Kp }
 		, m_Ki{ Ki }
-		, m_integral{ static_cast< T >( 0.0 ) }
 	{ }
 
-	/**
-	 * @brief Calculates the output signal based on the proportional
-	 * and integral combined controller theory.
-	 * 
-	 * @param desiredValue is the set-point
-	 * @param currentValue 
-	 * @return T 
-	 */
-	[[nodiscard]] constexpr T calculateControlSignal( T desiredValue, T currentValue ) noexcept
+	/// Calculates the output signal based on the proportional and integral combined controller theory
+	[[nodiscard]] PIController& update( T dt, T desiredValue, T currentValue ) noexcept
 	{
 		// Calculate error
 		T error = desiredValue - currentValue;
@@ -93,28 +91,36 @@ public:
 		T proportionalTermOut = m_Kp * error;
 
 		// Calculate integral term
-		m_integral += error * m_dt;
+		m_integral += error * dt;
 		T integralTermOut = m_Ki * m_integral;
 
 		// Calculate total output
-		T controllerOutput = proportionalTermOut + integralTermOut;
+		m_signal = proportionalTermOut + integralTermOut;
 
-		return controllerOutput;
+		return *this;
 	}
 
-	[[nodiscard]] constexpr T operator()( T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIController& operator()( T desiredValue, T currentValue ) noexcept
 	{
-		return calculateControlSignal( desiredValue, currentValue );
+		return update( desiredValue, currentValue );
 	}
 
-	/// Update the integrals time-step, remember we are integrating over time.
-	constexpr void updateTimeStep( T timeStep ) noexcept { m_dt = timeStep; }
+	/// TBW
+	template < typename Functor >
+	[[nodiscard]] PIController& operator|( Functor func )
+	{
+		m_signal = func( m_signal );
+		return *this;
+	}
+
+	/// TBW
+	[[nodiscard]] operator T() const { return m_signal; }
 
 private:
-	T m_dt; //!< Loop interval time (regulation period)
 	T m_Kp; //!< Proportional controller gain
 	T m_Ki; //!< Integral controller gain
-	T m_integral; //!< TBW
+	T m_integral{}; //!< TBW
+	T m_signal{}; //!< TBW
 };
 
 /**
@@ -146,25 +152,14 @@ public:
 	 * @param Kd 
 	 * @param Ki 
 	 */
-	constexpr PIDController( T dt, T max, T min, T Kp, T Kd, T Ki ) noexcept
-		: m_dt{ dt }
-		, m_max{ max }
-		, m_min{ min }
-		, m_Kp{ Kp }
+	constexpr PIDController( T Kp, T Kd, T Ki ) noexcept
+		: m_Kp{ Kp }
 		, m_Kd{ Kd }
 		, m_Ki{ Ki }
-		, m_integral{ static_cast< T >( 0.0 ) }
-		, m_previousError{ static_cast< T >( 0.0 ) }
 	{ }
 
-	/**
-	 * @brief 
-	 * 
-	 * @param desiredValue is the set-point
-	 * @param currentValue 
-	 * @return T 
-	 */
-	[[nodiscard]] constexpr T calculateControlSignal( T desiredValue, T currentValue ) noexcept
+	/// TBW
+	[[nodiscard]] constexpr PIDController& update( T dt, T desiredValue, T currentValue ) noexcept
 	{
 		// Calculate error
 		T error = desiredValue - currentValue;
@@ -173,51 +168,116 @@ public:
 		T proportionalTermOut = m_Kp * error;
 
 		// Calculate integral term
-		m_integral += error * m_dt;
+		m_integral += error * dt;
 		T integralTermOut = m_Ki * m_integral;
 
-		// ****** NOTE: One of the anti-windup techniques is to cap the integral terms to some limits
-		// this->cap(integralTermOut, -400, 400); // also need to reset the previous error
-
 		// Calculate derivative term
-		T derivative = ( error - m_previousError ) / m_dt;
+		T derivative = ( error - m_previousError ) / dt;
 		T derivativeTermOut = m_Kd * derivative;
 
 		// Calculate total output
-		T controllerOutput = proportionalTermOut + integralTermOut + derivativeTermOut;
-
-		// Apply limits
-		cap( controllerOutput, m_min, m_max );
+		m_signal = proportionalTermOut + integralTermOut + derivativeTermOut;
 
 		// Note down the current error
 		m_previousError = error;
 
-		return controllerOutput;
+		return *this;
 	}
 
-	[[nodiscard]] constexpr T operator()( T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIDController& operator()( T desiredValue, T currentValue ) noexcept
 	{
-		return calculateControlSignal( desiredValue, currentValue );
+		return update( desiredValue, currentValue );
 	}
 
-	/// Update the integrals time-step, remember we are integrating over time.
-	constexpr void updateTimeStep( T timeStep ) noexcept { m_dt = timeStep; }
+	/// TBW
+	template < typename Functor >
+	[[nodiscard]] PIDController& operator|( Functor func )
+	{
+		m_signal = func( m_signal );
+		return *this;
+	}
 
-	/// Cap clamp value between min and max values
-	constexpr void cap( T& value, T min, T max ) noexcept { value = std::clamp( value, min, max ); }
+	/// TBW
+	[[nodiscard]] operator T() const { return m_signal; }
 
 private:
-	T m_dt; //!< Loop interval time
-
-	T m_max; //!< TBW, do we need them here ???
-	T m_min; //!< TBW, do we need them here ???
-
 	T m_Kp; //!< Proportional controller gain
 	T m_Kd; //!< Derivative controller gain
 	T m_Ki; //!< Integral controller gain
 
-	T m_previousError; //!< TBW
-	T m_integral; //!< TBW
+	T m_previousError{}; //!< TBW
+	T m_integral{}; //!< TBW
+	T m_signal{}; //!< TBW
+};
+
+template < std::floating_point T >
+struct Cap
+{
+	T lower{};
+	T upper{};
+
+	T operator()( T value ) const { return std::clamp( value, lower, upper ); }
+};
+
+struct Sqr
+{
+	template < std::floating_point T >
+	T operator()( T value ) const
+	{
+		return value * value;
+	}
+};
+
+template < std::floating_point T >
+struct DeadZone
+{
+	T threshold;
+	T operator()( T value ) const { return ( std::abs( value ) < threshold ) ? T{} : value; }
+};
+
+template < std::floating_point T >
+struct Saturation
+{
+	T minVal;
+	T maxVal;
+	T operator()( T value ) const { return std::clamp( value, minVal, maxVal ); }
+};
+
+template < std::floating_point T >
+struct IntegralWindupGuard
+{
+	T maxIntegral;
+	T operator()( T integralComponent ) const { return std::clamp( integralComponent, -maxIntegral, maxIntegral ); }
+};
+
+template < std::floating_point T >
+struct RateLimiter
+{
+	T lastValue{};
+	T maxRate;
+
+	T operator()( T value )
+	{
+		T limitedValue = std::clamp( value, lastValue - maxRate, lastValue + maxRate );
+		lastValue = limitedValue;
+		return limitedValue;
+	}
+};
+
+template < std::floating_point T >
+struct ExponentialScaling
+{
+	T exponent;
+	T operator()( T value ) const { return std::pow( value, exponent ); }
+};
+
+// Introduces a small oscillation or noise to the output,
+// useful in overcoming static friction in some mechanical systems
+template < std::floating_point T >
+struct Sither
+{
+	T amplitude;
+	T operator()( T value ) { return value + ( ( std::rand() % 2 == 0 ? 1.0f : -1.0f ) * amplitude ); }
 };
 
 } // namespace PBL::Math
