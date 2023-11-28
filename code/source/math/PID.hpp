@@ -213,15 +213,31 @@ private:
 // TODO: Add Min and Max
 
 template < std::floating_point T >
+struct Min
+{
+	T min;
+
+	T operator()( T value ) const { return std::min( min, value ); }
+};
+
+template < std::floating_point T >
+struct Max
+{
+	T max;
+
+	T operator()( T value ) const { return std::max( max, value ); }
+};
+
+template < std::floating_point T >
 struct Cap
 {
-	T lower{};
-	T upper{};
+	T lower;
+	T upper;
 
 	T operator()( T value ) const { return std::clamp( value, lower, upper ); }
 };
 
-struct Sqr
+struct Pow2
 {
 	template < std::floating_point T >
 	T operator()( T value ) const

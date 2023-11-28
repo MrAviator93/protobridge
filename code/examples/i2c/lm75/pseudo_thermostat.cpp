@@ -19,6 +19,40 @@
 
 #define unwrap( p ) p.first, p.second
 
+namespace PBL::I2C
+{
+
+namespace
+{
+
+class ThermostatController
+{
+public:
+	ThermostatController( PBL::I2C::BusController& ) { }
+
+	std::expected< void, std::string > adjust( float value )
+	{
+		std::cout << std::format( "Adjust: {}", value ) << std::endl;
+		return {};
+	}
+};
+
+class ADCController
+{
+public:
+	ADCController( PBL::I2C::BusController& ) { }
+
+	std::expected< float, std::string > readDesiredTemp()
+	{
+		// You would get it using I2C from
+		return 25.0f;
+	}
+};
+
+} // namespace
+
+} // namespace PBL::I2C
+
 namespace
 {
 
@@ -52,30 +86,20 @@ private:
 	std::tuple< std::reference_wrapper< Ts >... > m_args;
 };
 
-class ThermostatController
-{
-public:
-	ThermostatController( PBL::I2C::BusController& ) { }
-
-	std::expected< void, std::string > adjust( float value )
-	{
-		std::cout << std::format( "Adjust: {}", value ) << std::endl;
-		return {};
-	}
-};
-
 class Thermostat
 {
 public:
-	Thermostat( PBL::I2C::BusController& bus )
-		: m_lm75{ bus }
-		, m_pid{ 0.5, 0.2, 0.25 }
-		, m_thermostat{ bus }
+	Thermostat( PBL::I2C::BusController& busController )
+		: m_pid{ 0.5, 0.2, 0.25 }
+		, m_adc{ busController }
+		, m_lm75{ busController }
+		, m_thermostat{ busController }
+
 	{ }
 
 	std::expected< void, std::string > update( float dt )
 	{
-		return readDesiredTemp()
+		return m_adc.readDesiredTemp()
 			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, std::string > {
 				auto currTemp = m_lm75.getTemperatureC();
 				if( !currTemp )
@@ -86,7 +110,7 @@ public:
 				return std::pair{ desiredTemp, *currTemp };
 			} )
 			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, std::string > {
-				return ( m_pid.update( dt, unwrap( values ) ) | PBL::Math::Cap{ 0.0f, 10.0f } | PBL::Math::Sqr{} );
+				return ( m_pid.update( dt, unwrap( values ) ) | PBL::Math::Cap{ 0.0f, 10.0f } | PBL::Math::Pow2{} );
 			} )
 			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
 			.or_else( []( const std::string& error ) -> std::expected< void, std::string > {
@@ -95,16 +119,10 @@ public:
 	}
 
 private:
-	std::expected< float, std::string > readDesiredTemp()
-	{
-		// You would get it using I2C from
-		return 25.0f;
-	}
-
-private:
-	PBL::I2C::LM75Controller m_lm75;
 	PBL::Math::PIDController< float > m_pid;
-	ThermostatController m_thermostat;
+	PBL::I2C::ADCController m_adc;
+	PBL::I2C::LM75Controller m_lm75;
+	PBL::I2C::ThermostatController m_thermostat;
 };
 
 } // namespace
@@ -134,13 +152,11 @@ int main( const int argc, const char* const* const argv )
 	Thermostat thermostat{ busController };
 	PBL::Utils::Timer timer;
 	timer.start();
+	float dt{ 0.0001 };
 
 	while( true )
 	{
-		auto dt = static_cast< float >( timer.elapsedTimeS() );
-
-		std::cout << dt << std::endl;
-
+		timer.reset();
 		auto rslt = thermostat.update( dt );
 
 		// if( !rslt )
@@ -149,9 +165,10 @@ int main( const int argc, const char* const* const argv )
 		// 	return 1;
 		// }
 
-		std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
+		// std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
 
-		timer.reset();
+		auto dt = static_cast< float >( timer.elapsedTimeS() );
+		std::cout << std::format( "{:12f}", dt ) << std::endl;
 	}
 
 	return 0;

@@ -20,7 +20,7 @@ void Timer::reset()
 
 double Timer::elapsedTimeS() const
 {
-	return static_cast< double >( elapsedTimeUs() ) / 1000000.0;
+	return static_cast< double >( elapsedTimeUs() ) / 1'000'000.0;
 }
 
 std::int64_t Timer::elapsedTimeMs() const
