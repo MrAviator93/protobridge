@@ -91,6 +91,100 @@ int main(int, char**)
 
 This simple program initializes the I2C bus, sets up the LM75 sensor, reads the temperature, and outputs it to the console. By following this structure, you can easily read from other sensors and devices using their respective controller classes provided by the library.
 
+### Advanced - Pseudo Thermostat Imlementation Example
+
+```cpp
+class Thermostat
+{
+public:
+	Thermostat( PBL::I2C::BusController& busController )
+		: m_pid{ 0.5, 0.2, 0.25 }
+		, m_adc{ busController }
+		, m_lm75{ busController }
+		, m_thermostat{ busController }
+
+	{ }
+
+	std::expected< void, std::string > update( float dt )
+	{
+		return m_adc.readDesiredTemp()
+			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, std::string > {
+				auto currTemp = m_lm75.getTemperatureC();
+				if( !currTemp )
+				{
+					return std::unexpected( currTemp.error() );
+				}
+
+				return std::pair{ desiredTemp, *currTemp };
+			} )
+			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, std::string > {
+				return ( m_pid.update( dt, unwrap( values ) ) | PBL::Math::Cap{ 0.0f, 10.0f } | PBL::Math::Pow2{} );
+			} )
+			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
+			.or_else( []( const std::string& error ) -> std::expected< void, std::string > {
+				return std::unexpected< std::string >( error );
+			} );
+	}
+
+private:
+	PBL::Math::PIDController< float > m_pid;
+	PBL::I2C::ADCController m_adc;
+	PBL::I2C::LM75Controller m_lm75;
+	PBL::I2C::ThermostatController m_thermostat;
+};
+```
+
+```cpp
+int main( const int argc, const char* const* const argv )
+{
+	std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
+
+	// Default name of i2c bus on RPI 4
+	std::string deviceName{ "/dev/i2c-1" };
+
+	if( args.size() >= 2 )
+	{
+		deviceName = args[ 1 ];
+	}
+
+	// Create a bus controller for the I2C bus
+	PBL::I2C::BusController busController{ deviceName };
+
+	// Check if the I2C bus is open and accessible
+	if( !busController.isOpen() )
+	{
+		std::cerr << "Failed to open I2C device" << std::endl;
+		return 1;
+	}
+
+	Thermostat thermostat{ busController };
+	PBL::Utils::Timer timer;
+	timer.start();
+	float dt{ 0.0001 };
+
+	while( true )
+	{
+		timer.reset();
+
+		// Sleep simulates some work
+		std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
+
+		dt = static_cast< float >( timer.elapsedTimeS() );
+		auto rslt = thermostat.update( dt );
+
+		std::cout << std::format( "{:12f}", dt ) << std::endl;
+
+		if( !rslt )
+		{
+			std::cerr << rslt.error() << std::endl;
+			break;
+		}
+	}
+
+	return 0;
+}
+```
+
 For more detailed examples, including how to interact with other types of sensors and devices, please check out the Code/Examples directory in the project repository. These examples provide a broader range of use cases and more complex scenarios, helping you to get the most out of this library.
 
 ## Requirements
