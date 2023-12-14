@@ -5,7 +5,7 @@ set(PRIVATE_DEPS
 )
 
 create_application(
-    TARGET lm75_example
+    TARGET pseudo_thermostat_controller
     PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
     SRC_FILES main.cpp
 )
