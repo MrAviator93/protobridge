@@ -42,7 +42,7 @@ RUN cd gcc-13.2.0/build && make -j$(nproc) && make check
 # Install & set-up the new GCC into the system
 RUN cd gcc-13.2.0/build && make install
 
-FROM pbl-base AS pbl-deb-base
+FROM pbl-base AS pbl-dev-base
 COPY --from=pbl-gcc-base /usr/local/gcc-13.2.0 /usr/local/gcc-13.2.0
 
 # Configure the environment, update the LD_LIBRARY_PATH environment variable to include
