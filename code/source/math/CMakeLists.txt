@@ -13,6 +13,7 @@ set(PBL_LIB_HEADERS
     Matrix12x12.hpp
     MatrixFormat.hpp
     KalmanFilter.hpp
+    PIDModifiers.hpp
     PredicionModels.hpp
     ComplementaryFilter.hpp
 )
