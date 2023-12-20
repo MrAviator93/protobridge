@@ -46,9 +46,41 @@ docker ps -a
 ```
 
 ```bash
+docker system prune
+```
+
+```bash
 docker build -t <docker-image-name> .
 ```
 
 ```bash
 docker run -it <docker-image-name> /bin/bash
+```
+
+Backup
+
+Create a backup that can then be used with docker load docker <https://docs.docker.com/engine/reference/commandline/save/>
+
+```bash
+ docker save busybox > busybox.tar
+ ls -sh busybox.tar
+ docker save --output busybox.tar busybox
+ ls -sh busybox.tar
+ docker save -o fedora-all.tar fedora
+ docker save -o fedora-latest.tar fedora:latest
+```
+
+Or another way of doing the above would be to use gzip. You can use gzip to save the image file and make the backup smaller.
+
+```bash
+docker save myimage:latest | gzip > myimage_latest.tar.gz
+```
+
+Load
+
+To load the image refer to the following documentdocker load for details. <https://docs.docker.com/engine/reference/commandline/load/>
+
+```bash
+docker image ls
+docker load < busybox.tar.gz
 ```
