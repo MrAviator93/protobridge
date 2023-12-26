@@ -15,7 +15,7 @@ class CheckActive
 		: m_args{ std::ref( args )... }
 	{ }
 
-	bool isActive() const
+	[[nodiscard]] bool isActive() const
 	{
 		return std::apply(
 			[ & ]( const auto&... args ) {

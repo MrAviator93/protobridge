@@ -22,7 +22,7 @@ class ThermostatController
 public:
 	ThermostatController( PBL::I2C::BusController& ) { }
 
-	std::expected< void, std::string > adjust( float value )
+	[[nodiscard]] std::expected< void, std::string > adjust( float value )
 	{
 		std::cout << std::format( "Adjust: {}", value ) << std::endl;
 		return {};
@@ -34,7 +34,7 @@ class ADCController
 public:
 	ADCController( PBL::I2C::BusController& ) { }
 
-	std::expected< float, std::string > readDesiredTemp()
+	[[nodiscard]] std::expected< float, std::string > readDesiredTemp()
 	{
 		// You would get it using I2C from
 		return 25.0f;
@@ -57,7 +57,7 @@ public:
 
 	{ }
 
-	std::expected< void, std::string > update( float dt )
+	[[nodiscard]] std::expected< void, std::string > update( float dt )
 	{
 		return m_adc.readDesiredTemp()
 			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, std::string > {
