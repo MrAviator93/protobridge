@@ -33,7 +33,7 @@ public:
 		: m_data{ std::forward< Args >( args )... }
 	{ }
 
-	constexpr std::optional< T > at( std::size_t idx ) const noexcept
+	[[nodiscard]] constexpr std::optional< T > at( std::size_t idx ) const noexcept
 	{
 		if( idx < Size )
 		{
@@ -43,20 +43,20 @@ public:
 		return {};
 	}
 
-	constexpr std::optional< T > at( std::size_t column, std::size_t row ) const noexcept { return at( column * row ); }
+	[[nodiscard]] constexpr std::optional< T > at( std::size_t column, std::size_t row ) const noexcept { return at( column * row ); }
 
-	constexpr auto& data() noexcept { return m_data; }
-	constexpr auto& data() const noexcept { return m_data; }
+	[[nodiscard]] constexpr auto& data() noexcept { return m_data; }
+	[[nodiscard]] constexpr auto& data() const noexcept { return m_data; }
 
-	static constexpr std::size_t size() noexcept { return Size; }
-	static constexpr std::size_t rows() noexcept { return Rows; }
-	static constexpr std::size_t columns() noexcept { return Columns; }
+	[[nodiscard]] static constexpr std::size_t size() noexcept { return Size; }
+	[[nodiscard]] static constexpr std::size_t rows() noexcept { return Rows; }
+	[[nodiscard]] static constexpr std::size_t columns() noexcept { return Columns; }
 
 	// Compile-time constant to check if the data is aligned
 	// static constexpr bool IsDataAligned = ( sizeof( std::array< T, Size > ) % Alignment == 0 );
 
 protected:
-	constexpr bool isAligned() const noexcept
+	[[nodiscard]] constexpr bool isAligned() const noexcept
 	{
 		auto ptr = reinterpret_cast< std::uintptr_t >( m_data.data() );
 		return ptr % Alignment == 0;

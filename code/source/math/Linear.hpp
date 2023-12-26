@@ -15,8 +15,8 @@ class Vector2 : public VectorBase< T, 2u >
 public:
 	using Parent::Parent;
 
-	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
-	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	[[nodiscard]] constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	[[nodiscard]] constexpr T y() const noexcept { return this->m_data[ 1 ]; }
 };
 
 template < typename T >
@@ -35,9 +35,9 @@ public:
 		: Parent{ std::forward< Args >( args )..., T{} }
 	{ }
 
-	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
-	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
-	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
+	[[nodiscard]] constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	[[nodiscard]] constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	[[nodiscard]] constexpr T z() const noexcept { return this->m_data[ 2 ]; }
 };
 
 template < typename T >
@@ -48,10 +48,10 @@ class Vector4 : public VectorBase< T, 4u >
 public:
 	using Parent::Parent;
 
-	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
-	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
-	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
-	constexpr T w() const noexcept { return this->m_data[ 3 ]; }
+	[[nodiscard]] constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	[[nodiscard]] constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	[[nodiscard]] constexpr T z() const noexcept { return this->m_data[ 2 ]; }
+	[[nodiscard]] constexpr T w() const noexcept { return this->m_data[ 3 ]; }
 };
 
 template < typename T >
@@ -62,12 +62,12 @@ class Vector6 : public VectorBase< T, 6u >
 public:
 	using Parent::Parent;
 
-	constexpr T x() const noexcept { return this->m_data[ 0 ]; }
-	constexpr T y() const noexcept { return this->m_data[ 1 ]; }
-	constexpr T z() const noexcept { return this->m_data[ 2 ]; }
-	constexpr T w() const noexcept { return this->m_data[ 3 ]; }
-	constexpr T u() const noexcept { return this->m_data[ 4 ]; }
-	constexpr T v() const noexcept { return this->m_data[ 5 ]; }
+	[[nodiscard]] constexpr T x() const noexcept { return this->m_data[ 0 ]; }
+	[[nodiscard]] constexpr T y() const noexcept { return this->m_data[ 1 ]; }
+	[[nodiscard]] constexpr T z() const noexcept { return this->m_data[ 2 ]; }
+	[[nodiscard]] constexpr T w() const noexcept { return this->m_data[ 3 ]; }
+	[[nodiscard]] constexpr T u() const noexcept { return this->m_data[ 4 ]; }
+	[[nodiscard]] constexpr T v() const noexcept { return this->m_data[ 5 ]; }
 };
 
 // Matrixes only operate with Row or Column Vector types.

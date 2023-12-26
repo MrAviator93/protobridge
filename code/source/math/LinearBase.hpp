@@ -65,8 +65,8 @@ public:
 		: m_data{ std::forward< Args >( args )... }
 	{ }
 
-	constexpr auto& data() noexcept { return m_data; }
-	constexpr auto& data() const noexcept { return m_data; }
+	[[nodiscard]] constexpr auto& data() noexcept { return m_data; }
+	[[nodiscard]] constexpr auto& data() const noexcept { return m_data; }
 
 protected:
 	alignas( Alignment ) std::array< T, Size > m_data;
