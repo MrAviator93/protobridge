@@ -5,7 +5,7 @@ function(create_static_library)
 
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    # set( LIB_VERSION "${I2C_UTILS_LIB_MAJOR.I2C_UTILS_LIB_MINOR.I2C_UTILS_LIB_PATCH}" )
+    # set(LIB_VERSION "${LIB_MAJOR.LIB_MINOR.LIB_PATCH}")
 
     # Create the library
     add_library(${ARG_LIB_NAME_BASE} STATIC ${ARG_LIB_SOURCES})
