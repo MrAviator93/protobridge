@@ -119,7 +119,7 @@ std::expected< float, std::string > LM75Controller::getTemperatureC()
 	{
 		// Calculate temperature in Celsius
 		std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
-		return iTemp / 256.0f;
+		return static_cast< float >( iTemp ) / 256.0f;
 	}
 
 	return std::unexpected( std::string{ "Failed to read temperature" } );
