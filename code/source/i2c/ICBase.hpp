@@ -1,4 +1,3 @@
-
 #ifndef PBL_I2C_IC_BASE_HPP__
 #define PBL_I2C_IC_BASE_HPP__
 
@@ -69,8 +68,8 @@ protected:
 	void sleep( std::chrono::milliseconds sleepTimeMs );
 	void sleep( std::chrono::microseconds sleepTimeUs );
 
-	auto& controller() { return m_busController; }
-	auto& controller() const { return m_busController; }
+	[[nodiscard]] auto& controller() { return m_busController; }
+	[[nodiscard]] auto& controller() const { return m_busController; }
 
 private:
 	BusController& m_busController;
