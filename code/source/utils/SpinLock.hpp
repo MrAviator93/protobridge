@@ -35,10 +35,10 @@ public:
 	inline void unlock() noexcept { m_locked.clear( std::memory_order::release ); }
 
 	/// Returns wether the spinlock is locked
-	inline bool isLocked() const noexcept { return m_locked.test( std::memory_order::consume ); }
+	[[nodiscard]] inline bool isLocked() const noexcept { return m_locked.test( std::memory_order::consume ); }
 
 	/// Attempts to lock the spinlock, returns the result of the attempt
-	inline bool tryLock() noexcept { return !m_locked.test_and_set( std::memory_order::acquire ); }
+	[[nodiscard]] inline bool tryLock() noexcept { return !m_locked.test_and_set( std::memory_order::acquire ); }
 
 private:
 	void deepLock() noexcept;
