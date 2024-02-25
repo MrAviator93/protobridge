@@ -1,7 +1,7 @@
 
 #include "Timer.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 Timer::Timer()
@@ -20,7 +20,7 @@ void Timer::reset()
 
 double Timer::elapsedTimeS() const
 {
-	return static_cast< double >( elapsedTimeUs() ) / 1000000.0;
+	return static_cast< double >( elapsedTimeUs() ) / 1'000'000.0;
 }
 
 std::int64_t Timer::elapsedTimeMs() const
@@ -39,4 +39,4 @@ std::int64_t Timer::elapsedTimeNs() const
 	return std::chrono::duration_cast< Nanoseconds >( m_clock.now() - m_startTP ).count();
 }
 
-} // namespace I2C
+} // namespace PBL::Utils

@@ -1,11 +1,11 @@
 
 // I2C
-#include <devices/MCP23017Controller.hpp>
-#include <devices/I2CBusController.hpp>
-#include <devices/BMP180Controller.hpp>
-#include <devices/LM75Controller.hpp>
-#include <devices/BME680Controller.hpp>
-#include <devices/BME680ControllerV2.hpp>
+#include <i2c/MCP23017Controller.hpp>
+#include <i2c/BusController.hpp>
+#include <i2c/BMP180Controller.hpp>
+#include <i2c/LM75Controller.hpp>
+#include <i2c/BME680Controller.hpp>
+#include <i2c/BME680ControllerV2.hpp>
 
 // C++
 #include <vector>
@@ -25,8 +25,8 @@ int main( const int argc, const char* const* const argv )
 		deviceName = args[ 1 ];
 	}
 
-	I2C::I2CBusController busController{ deviceName };
-	I2C::LM75Controller lm75{ busController };
+	PBL::I2C::BusController busController{ deviceName };
+	PBL::I2C::LM75Controller lm75{ busController };
 
 	if( const auto temp = lm75.getTemperatureC(); temp.has_value() )
 	{
@@ -34,15 +34,15 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// We will use MCP here to control LED's, configure ports A & B as output
-	I2C::MCP23017Controller mcp23017{ busController, 0x00, 0x00 };
+	PBL::I2C::MCP23017Controller mcp23017{ busController, 0x00, 0x00 };
 
-	mcp23017.setOnPortA( I2C::MCP23017Controller::Pins::PIN_8,
-						 I2C::MCP23017Controller::Pins::PIN_7,
-						 I2C::MCP23017Controller::Pins::PIN_6 );
+	mcp23017.setOnPortA( PBL::I2C::MCP23017Controller::Pins::PIN_8,
+						 PBL::I2C::MCP23017Controller::Pins::PIN_7,
+						 PBL::I2C::MCP23017Controller::Pins::PIN_6 );
 
-	mcp23017.setOffPortA( I2C::MCP23017Controller::Pins::PIN_8 );
+	mcp23017.setOffPortA( PBL::I2C::MCP23017Controller::Pins::PIN_8 );
 
-	I2C::BMP180Controller bmp180{ busController, I2C::BMP180Controller::ULTRA_HIGH_RESOLUTION };
+	PBL::I2C::BMP180Controller bmp180{ busController, PBL::I2C::BMP180Controller::ULTRA_HIGH_RESOLUTION };
 
 	if( const auto temp = bmp180.getTrueTemperatureC(); temp.has_value() )
 	{
@@ -59,7 +59,7 @@ int main( const int argc, const char* const* const argv )
 		std::cout << std::format( "Absolute altitude: {} m", alt.value() ) << std::endl;
 	}
 
-	I2C::BME680ControllerV2 bme680{ busController };
+	PBL::I2C::BME680ControllerV2 bme680{ busController };
 
 	while( true )
 	{

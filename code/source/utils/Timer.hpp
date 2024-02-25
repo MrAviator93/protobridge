@@ -1,10 +1,9 @@
-
-#ifndef I2C_UTILS_TIMER_HPP__
-#define I2C_UTILS_TIMER_HPP__
+#ifndef PBL_UTILS_TIMER_HPP__
+#define PBL_UTILS_TIMER_HPP__
 
 #include "TimeTypes.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -45,5 +44,5 @@ private:
 	TimePointNs m_startTP; //!< Starting time stamp
 };
 
-} // namespace I2C
-#endif // I2C_UTILS_TIMER_HPP__
+} // namespace PBL::Utils
+#endif // PBL_UTILS_TIMER_HPP__

@@ -4,40 +4,48 @@ Unlock the full potential of your single-board computer with the ProtoBridge Lib
 
 Ideal for both hobbyists and professionals, the ProtoBridge Library simplifies the process of setting up and initiating communication with devices like the LM75 temperature sensor. This enables efficient reading and management of data, ensuring a smooth and streamlined workflow for your projects.
 
-Built on the modern features of C++20, the ProtoBridge Library is an essential asset for reliable and effective device control. It offers broad compatibility and versatility, perfectly aligning with various single-board computer models and brands.
+Built on the modern features of C++23, the ProtoBridge Library is an essential asset for reliable and effective device control. It offers broad compatibility and versatility, perfectly aligning with various single-board computer models and brands.
 
 Whether your aim is to configure an environmental sensor or manage an I/O expander, the ProtoBridge Library facilitates intuitive and direct interaction with devices. It opens up a realm of possibilities in embedded systems and IoT applications, making sophisticated device control accessible and manageable.
+
+![ProtoBridge](assets/image.png "ProtoBridge")
+
+Please note that the ProtoBridge Library is currently a work in progress, and a stable release is not yet available.
 
 ## Table of contents
 
 - [ProtoBridge Library](#protobridge-library)
-  - [Table of contents](#table-of-contents)
-  - [Features](#features)
-  - [Examples](#examples)
-    - [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
-  - [Requirements](#requirements)
-    - [I2C Tools](#i2c-tools)
-  - [Quick Start](#quick-start)
-    - [Building from Source](#building-from-source)
-  - [Generating documentation](#generating-documentation)
-  - [Motivation](#motivation)
-  - [Contributing](#contributing)
-  - [License](#license)
+	- [Table of contents](#table-of-contents)
+	- [Features](#features)
+	- [Examples](#examples)
+		- [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
+		- [Advanced - Pseudo Thermostat Implementation Example](#advanced---pseudo-thermostat-implementation-example)
+	- [Requirements](#requirements)
+		- [I2C Tools](#i2c-tools)
+	- [Quick Start](#quick-start)
+		- [Building from Source](#building-from-source)
+	- [Generating documentation](#generating-documentation)
+	- [Motivation](#motivation)
+	- [Contributing](#contributing)
+		- [Branch Naming Conventions](#branch-naming-conventions)
+		- [Commit Message Guidelines](#commit-message-guidelines)
+		- [Example of a Commit Message](#example-of-a-commit-message)
+	- [License](#license)
 
 ## Features
 
 - Multi-Protocol Device Control: Facilitates efficient and low-level communication across various protocols (I2C, SPI, Serial, and GPIO).
 - Compatibility with various single-board computers.
-- Modern C++20 Features.
+- Modern C++23 Features.
 - Customizable and Expandable.
 - User-Friendly Device Management.
 - Comprehensive documentation support.
 - Support for a range of popular ICs, including:
-  - [MCP23017 - I/O Expander](./code/examples/mcp23017/main.cpp)
-  - [LM75 - Temperature Sensor](./code/examples/lm75/main.cpp)
-  - [BMP180 - Barometric Pressure Sensor](./code/examples/bmp180/main.cpp)
-  - [BME680 - Environmental Sensor (temperature, humidity, pressure, and gas)](./code/examples/bme680/main.cpp)
-  - [MPU6050 - Inertial Measurement Unit](./code/examples/mcp23017/main.cpp)
+  - [MCP23017 - I/O Expander](./code/examples/i2c/mcp23017/main.cpp)
+  - [LM75 - Temperature Sensor](./code/examples/i2c/lm75/main.cpp)
+  - [BMP180 - Barometric Pressure Sensor](./code/examples/i2c/bmp180/main.cpp)
+  - [BME680 - Environmental Sensor (temperature, humidity, pressure, and gas)](./code/examples/i2c/bme680/main.cpp)
+  - [MPU6050 - Inertial Measurement Unit](./code/examples/i2c/mcp23017/main.cpp)
 
 ## Examples
 
@@ -49,32 +57,31 @@ This example shows you how to initialize communication with the LM75 sensor and 
 
 ```cpp
 // Include I2C library files
-#include <devices/Controllers.hpp>
+#include <i2c/Controllers.hpp>
 
 // Output
-#include <format>
-#include <iostream>
+#include <print>
 
 int main(int, char**)
 {
     // Create a bus controller for the I2C bus (Raspberry Pi 4)
-    I2C::I2CBusController busController{"/dev/i2c-1"};
+    PBL::I2C::BusController busController{"/dev/i2c-1"};
 
     // Check if the I2C bus is open and accessible
     if (busController.isOpen()) 
     {
       // Create an LM75 controller, attached to the bus controller,
       // using the default device address
-      I2C::LM75Controller lm75{busController};
+      PBL::I2C::LM75Controller lm75{busController};
 
       // Read the temperature in Celsius from the LM75 sensor
-      auto temp = lm75.getTemperatureC();
+      const auto temp = lm75.getTemperatureC();
 
       // Check wether the reading is present (indication of successful read)
       if (temp.has_value())
       {
         // Output the temperature to the console
-        std::cout << std::format( "Temperature: {}°C", temp.value() ) << std::endl;
+        std::println("Temperature: {}°C", temp.value());
       }
     }
  
@@ -84,13 +91,112 @@ int main(int, char**)
 
 This simple program initializes the I2C bus, sets up the LM75 sensor, reads the temperature, and outputs it to the console. By following this structure, you can easily read from other sensors and devices using their respective controller classes provided by the library.
 
+### Advanced - Pseudo Thermostat Implementation Example
+
+```cpp
+class Thermostat
+{
+public:
+	Thermostat(PBL::I2C::BusController& busController)
+		: m_pid{0.5, 0.2, 0.25}
+		, m_adc{busController}
+		, m_lm75{busController}
+		, m_thermostat{busController}
+
+	{ }
+
+	std::expected<void, std::string> update(float dt)
+	{
+		return m_adc.readDesiredTemp()
+			.and_then([this](float desiredTemp) -> std::expected<std::pair<float, float>, std::string> {
+				auto currTemp = m_lm75.getTemperatureC();
+				if(!currTemp)
+				{
+					return std::unexpected(currTemp.error());
+				}
+
+				return std::pair{ desiredTemp, *currTemp };
+			} )
+			.and_then([this, dt]( std::pair<float, float> values) -> std::expected<float, std::string> {
+				return (m_pid.update(dt, unwrap(values)) | PBL::Math::Cap{0.0f, 10.0f} | PBL::Math::Pow2{});
+			} )
+			.and_then([this](float controlSignal) { return m_thermostat.adjust(controlSignal); } )
+			.or_else([](const std::string& error) -> std::expected<void, std::string> {
+				return std::unexpected<std::string>(error);
+			});
+	}
+
+private:
+	PBL::Math::PIDController<float> m_pid;
+	PBL::I2C::ADCController m_adc;
+	PBL::I2C::LM75Controller m_lm75;
+	PBL::I2C::ThermostatController m_thermostat;
+};
+```
+
+```cpp
+#include "Thermostat.hpp"
+
+// Output
+#include <print>
+#include <cstdio>
+
+int main(const int argc, const char* const* const argv)
+{
+	std::vector<std::string_view> args(argv, std::next( argv, static_cast<std::ptrdiff_t>(argc)));
+
+	// Default name of i2c bus on RPI 4
+	std::string deviceName{"/dev/i2c-1"};
+
+	if(args.size() >= 2)
+	{
+		deviceName = args[1];
+	}
+
+	// Create a bus controller for the I2C bus
+	PBL::I2C::BusController busController{ deviceName };
+
+	// Check if the I2C bus is open and accessible
+	if(!busController.isOpen())
+	{
+		std::println(stderr, "Failed to open I2C device");
+		return 1;
+	}
+
+	Thermostat thermostat{busController};
+	PBL::Utils::Timer timer;
+	timer.start();
+	float dt{0.0001};
+
+	while(true)
+	{
+		timer.reset();
+
+		// Sleep simulates some work
+		std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
+
+		dt = static_cast< float >( timer.elapsedTimeS() );
+		auto rslt = thermostat.update( dt );
+		std::println(stderr, "{:12f}", dt);
+
+		if(!rslt)
+		{
+			std::println(stderr, rslt.error());
+			break;
+		}
+	}
+
+	return 0;
+}
+```
+
 For more detailed examples, including how to interact with other types of sensors and devices, please check out the Code/Examples directory in the project repository. These examples provide a broader range of use cases and more complex scenarios, helping you to get the most out of this library.
 
 ## Requirements
 
 - Doctest
-- CMake (version 3.22.0 or newer).
-- A C++20 compliant compiler (GCC-13.2, Clang-17, etc.).
+- CMake (version 3.28.0 or newer).
+- A C++23 compliant compiler (GCC-13.2, Clang-17, etc.).
 - A single-board computer (e.g., Raspberry Pi, BeagleBone) running an OS that supports I2C ioctl system calls.
 
 ### I2C Tools
@@ -112,16 +218,16 @@ The i2c-tools package contains a collection of utilities for I2C, and libi2c-dev
 Clone the repository into your local machine using the following command:
 
 ```bash
-git clone git@github.com:MrAviator93/I2CDeviceLibrary.git
+git clone git@github.com:MrAviator93/protobridge.git
 ```
 
 Standard build procedure, navigate to the project directory and build the library using CMake and make:
 
 ```bash
-mkdir Build
-cd Build
-cmake ../Code/ -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
+mkdir build && cd build
+cmake ../code/ -DCMAKE_BUILD_TYPE=Release
+cmake --build . --parallel $(nproc)
+sudo cmake --install .
 ```
 
 This will compile the source code and create the necessary output directories and files.
@@ -131,7 +237,7 @@ This will compile the source code and create the necessary output directories an
 The project is configured to generate documentation through Doxygen. You can create a comprehensive set of documentation by following these steps:
 
 ```bash
-cd Build
+cd build
 make docs
 ```
 
@@ -143,13 +249,46 @@ Diving into embedded systems and single-board computers opened a whole new world
 
 What I sought was something clean, something elegant—a single library, written in a consistent style, harnessing the full power of modern C++. I dreamt of something cleaner, more intuitive. A tool that didn't force us to get lost in the weeds with every new IC, but rather, one that cleared the path, making device interaction almost second nature.
 
-That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++20's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for I2C communication, accommodating numerous configurations for various ICs all under one roof.
+That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++23's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for I2C communication, accommodating numerous configurations for various ICs all under one roof.
 
 This library is the fruit of that ambition: a testament to a belief in a world where sophisticated development doesn't have to be synonymous with complexity. It's here to provide a seamless, enjoyable experience for fellow developers, helping them bring their inventive projects to life with less hassle and more confidence.
 
 ## Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check issues page. For major changes, please open an issue first to discuss what you would like to change.
+
+### Branch Naming Conventions
+
+When creating a new branch, please use the following naming conventions:
+
+- For new features: feature/your-new-feature (e.g., feature/i2c-error-handling)
+- For bug fixes: bugfix/your-bug-fix (e.g., bugfix/temperature-reading-error)
+- For hotfixes: hotfix/your-hotfix (e.g., hotfix/memory-leak-fix)
+
+Please ensure that the branch names are plural, reflecting that they may include multiple changes or updates related to the same feature or fix.
+
+### Commit Message Guidelines
+
+A good commit message should be clear and concise, yet descriptive enough to understand the change without having to look at the code. Here's a suggested format for commit messages:
+
+1. Subject Line: This should be a brief summary of the change, ideally not exceeding 50 characters. It should be written in imperative mood, as if commanding the codebase to change. Example: "Add temperature conversion feature."
+
+2. Body: Following a blank line after the subject, the body should provide a detailed description of the change. You should explain the problem being addressed, the changes made to address it, and any other relevant information. The body is wrapped at 72 characters.
+
+3. Footer: This section is used for referencing issue tracker IDs and giving credits.
+
+### Example of a Commit Message
+
+```txt
+Add support for BMP180 sensor
+
+- Implement BMP180 read functionality in I2C library.
+- Update documentation to include BMP180 usage instructions.
+- Add unit tests for BMP180 sensor readings.
+
+Resolves: #123
+Credit: @MrAviator93 for initial implementation
+```
 
 ## License
 

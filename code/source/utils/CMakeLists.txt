@@ -1,35 +1,32 @@
 
-set(I2C_UTILS_SOURCES
-    Timer.cpp
-)
-
-set(I2C_UTILS_HEADERS
-    Math.hpp
+set(PBL_LIB_HEADERS
     Timer.hpp
-    Vectors.hpp
     TimeStep.hpp
+    SpinLock.hpp
     TimeTypes.hpp
     FastPimpl.hpp
-    KalmanFilter.hpp
     StaticString.hpp
     CompactBitset.hpp
-    PredicionModel.hpp
     RandomGenerator.hpp
-    ComplementaryFilter.hpp
 )
 
-set(I2C_UTILS_PRIVATE_LINK_LIBS)
+set(PBL_LIB_SOURCE
+    Timer.cpp
+    SpinLock.cpp
+)
 
-set(I2C_UTILS_PUBLIC_INCLUDE_DIRS
+set(PBL_LIB_PRIVATE_DEPS)
+
+set(PBL_LIB_PUBLIC_INCLUDE_DIRS
     $<INSTALL_INTERFACE:include/utils>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>
 )
 
 create_static_library(
-    I2C
-    I2CUtils
-    I2C_UTILS_SOURCES
-    I2C_UTILS_HEADERS
-    I2C_UTILS_PRIVATE_LINK_LIBS
-    I2C_UTILS_PUBLIC_INCLUDE_DIRS
+    LIB_NAMESPACE PBL
+    LIB_NAME_BASE Utils
+    LIB_PUBLIC_HEADERS ${PBL_LIB_HEADERS}
+    LIB_SOURCES ${PBL_LIB_SOURCE}
+    LIB_PRIVATE_LINK_LIBS ${PBL_LIB_PRIVATE_DEPS}
+    LIB_PUBLIC_INCLUDE_DIRS ${PBL_LIB_PUBLIC_INCLUDE_DIRS}
 )

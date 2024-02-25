@@ -1,11 +1,12 @@
 
-#ifndef I2C_EXAMPLES_EXAMPLE_APP_HPP__
-#define I2C_EXAMPLES_EXAMPLE_APP_HPP__
+#ifndef PBL_EXAMPLES_EXAMPLE_APP_HPP__
+#define PBL_EXAMPLES_EXAMPLE_APP_HPP__
 
+// C++
 #include <string>
 #include <vector>
 
-namespace I2C::Examples
+namespace PBL::Examples
 {
 
 /**
@@ -39,5 +40,5 @@ private:
 	I2CControllerBusType m_busController;
 };
 
-} // namespace I2C::Examples
-#endif // I2C_EXAMPLES_EXAMPLE_APP_HPP__
+} // namespace PBL::Examples
+#endif // PBL_EXAMPLES_EXAMPLE_APP_HPP__

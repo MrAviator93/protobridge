@@ -1,10 +1,9 @@
-
-#ifndef I2C_UTILS_TIME_STEP_HPP__
-#define I2C_UTILS_TIME_STEP_HPP__
+#ifndef PBL_UTILS_TIME_STEP_HPP__
+#define PBL_UTILS_TIME_STEP_HPP__
 
 #include "TimeTypes.hpp"
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -100,5 +99,5 @@ private:
 	T m_duration;
 };
 
-} // namespace I2C
-#endif // I2C_UTILS_TIME_STEP_HPP__
+} // namespace PBL::Utils
+#endif // PBL_UTILS_TIME_STEP_HPP__

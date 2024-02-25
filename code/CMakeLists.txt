@@ -1,23 +1,28 @@
-cmake_minimum_required(VERSION "3.26.0")
+cmake_minimum_required(VERSION "3.28.0")
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-option(I2C_BUILD_TESTS "Compile unit tests." ON)
-option(I2C_BUILD_EXAMPLES "Compile examples." ON)
-option(I2C_BUILD_UTILITIES "Compile utilities." ON)
-option(I2C_CORE_GENERATE_DOC "Generate documentation." ON)
+option(PBL_BUILD_BENCH "Build benchmarks" ON)
+option(PBL_BUILD_TESTS "Build unit tests" ON)
+option(PBL_BUILD_EXAMPLES "Build examples" ON)
+option(PBL_BUILD_UTILITIES "Build utilities" ON)
+option(PBL_CORE_GENERATE_DOC "Generate documentation." ON)
 
-project(I2CLib VERSION 1.0 LANGUAGES C CXX)
+# Build individual libraries
+option(PBL_BUILD_I2C_LIB "Build I2C library" ON)
+option(PBL_BUILD_SPI_LIB "Build I2C library" ON)
+
+project(protobridge VERSION 1.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-include(CreateExecutable)
+include(CreateApplication)
 include(CreateStaticLibrary)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 set(CMAKE_C_STANDARD 11)
@@ -30,25 +35,32 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options("-Wall" "-Wextra" "-Wcast-align" "-Wunused" "-O2" "-fexceptions" "-pedantic")
 endif()
 
+find_package(Threads REQUIRED)
+
 add_subdirectory(source)
 
-if (I2C_BUILD_TESTS)
-        find_package(doctest CONFIG REQUIRED)
-        include(CTest)
-        set(BUILD_TESTING ON)
-        set(CMAKE_CTEST_ARGUMENTS "--verbose")
-        add_subdirectory(test)
+if (PBL_BUILD_BENCH)
+    find_package(benchmark CONFIG REQUIRED)
+    add_subdirectory(bench)
 endif()
 
-if (I2C_BUILD_EXAMPLES)
-        add_subdirectory(examples)
+if (PBL_BUILD_TESTS)
+    find_package(doctest CONFIG REQUIRED)
+    include(CTest)
+    set(BUILD_TESTING ON)
+    set(CMAKE_CTEST_ARGUMENTS "--verbose")
+    add_subdirectory(test)
 endif()
 
-if (I2C_BUILD_UTILITIES)
-        add_subdirectory(utilities)
+if (PBL_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
 
-if (I2C_CORE_GENERATE_DOC)
+if (PBL_BUILD_UTILITIES)
+    add_subdirectory(utilities)
+endif()
+
+if (PBL_CORE_GENERATE_DOC)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         # Check for dot tool of Graphviz

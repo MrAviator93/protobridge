@@ -1,12 +1,12 @@
+#ifndef PBL_UTILS_FAST_PIMPL_HPP__
+#define PBL_UTILS_FAST_PIMPL_HPP__
 
-#ifndef I2C_UTILS_FAST_PIMPL_HPP__
-#define I2C_UTILS_FAST_PIMPL_HPP__
-
-#include <cstddef>
+// C++
 #include <memory>
+#include <cstddef>
 #include <utility>
 
-namespace I2C
+namespace PBL::Utils
 {
 
 /**
@@ -53,7 +53,7 @@ public:
 	~FastPimpl() noexcept
 	{
 		validate< sizeof( T ), alignof( T ) >();
-		reinterpret_cast< T* >( &m_storage )->~T();
+		std::destroy_at( reinterpret_cast< T* >( &m_storage ) );
 	}
 
 	/// Gets the pointer to the internal object.
@@ -87,5 +87,5 @@ private:
 	alignas( Alignment ) std::byte m_storage[ Size ]; //!< Aligned storage for the type T.
 };
 
-} // namespace I2C
-#endif // I2C_UTILS_FAST_PIMPL_HPP__
+} // namespace PBL::Utils
+#endif // PBL_UTILS_FAST_PIMPL_HPP__

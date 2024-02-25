@@ -1,6 +1,3 @@
-add_subdirectory(lm75)
+add_subdirectory(i2c)
 add_subdirectory(common)
-add_subdirectory(bmp180)
-add_subdirectory(mpu6050)
-add_subdirectory(mpu9250)
-add_subdirectory(mcp23017)
+add_subdirectory(general)
