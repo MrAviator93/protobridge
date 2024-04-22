@@ -5,7 +5,7 @@ set(PBL_LIB_HEADERS
     SpinLock.hpp
     TimeTypes.hpp
     FastPimpl.hpp
-    StaticString.hpp
+    FixedString.hpp
     CompactBitset.hpp
     RandomGenerator.hpp
 )
