@@ -65,14 +65,14 @@ This example shows you how to initialize communication with the LM75 sensor and 
 int main(int, char**)
 {
     // Create a bus controller for the I2C bus (Raspberry Pi 4)
-    PBL::I2C::BusController busController{"/dev/i2c-1"};
+    pbl::i2c::BusController busController{"/dev/i2c-1"};
 
     // Check if the I2C bus is open and accessible
     if (busController.isOpen()) 
     {
       // Create an LM75 controller, attached to the bus controller,
       // using the default device address
-      PBL::I2C::LM75Controller lm75{busController};
+      pbl::i2c::LM75Controller lm75{busController};
 
       // Read the temperature in Celsius from the LM75 sensor
       const auto temp = lm75.getTemperatureC();
@@ -97,7 +97,7 @@ This simple program initializes the I2C bus, sets up the LM75 sensor, reads the 
 class Thermostat
 {
 public:
-	Thermostat(PBL::I2C::BusController& busController)
+	Thermostat(pbl::i2c::BusController& busController)
 		: m_pid{0.5, 0.2, 0.25}
 		, m_adc{busController}
 		, m_lm75{busController}
@@ -118,7 +118,7 @@ public:
 				return std::pair{ desiredTemp, *currTemp };
 			} )
 			.and_then([this, dt]( std::pair<float, float> values) -> std::expected<float, std::string> {
-				return (m_pid.update(dt, unwrap(values)) | PBL::Math::Cap{0.0f, 10.0f} | PBL::Math::Pow2{});
+				return (m_pid.update(dt, unwrap(values)) | pbl::math::Cap{0.0f, 10.0f} | pbl::math::Pow2{});
 			} )
 			.and_then([this](float controlSignal) { return m_thermostat.adjust(controlSignal); } )
 			.or_else([](const std::string& error) -> std::expected<void, std::string> {
@@ -127,10 +127,10 @@ public:
 	}
 
 private:
-	PBL::Math::PIDController<float> m_pid;
-	PBL::I2C::ADCController m_adc;
-	PBL::I2C::LM75Controller m_lm75;
-	PBL::I2C::ThermostatController m_thermostat;
+	pbl::math::PIDController<float> m_pid;
+	pbl::i2c::ADCController m_adc;
+	pbl::i2c::LM75Controller m_lm75;
+	pbl::i2c::ThermostatController m_thermostat;
 };
 ```
 
@@ -154,7 +154,7 @@ int main(const int argc, const char* const* const argv)
 	}
 
 	// Create a bus controller for the I2C bus
-	PBL::I2C::BusController busController{ deviceName };
+	pbl::i2c::BusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
 	if(!busController.isOpen())
@@ -164,7 +164,7 @@ int main(const int argc, const char* const* const argv)
 	}
 
 	Thermostat thermostat{busController};
-	PBL::Utils::Timer timer;
+	pbl::utils::Timer timer;
 	timer.start();
 	float dt{0.0001};
 

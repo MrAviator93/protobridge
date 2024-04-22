@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <utility>
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 /**
@@ -87,5 +87,5 @@ private:
 	alignas( Alignment ) std::byte m_storage[ Size ]; //!< Aligned storage for the type T.
 };
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 #endif // PBL_UTILS_FAST_PIMPL_HPP__

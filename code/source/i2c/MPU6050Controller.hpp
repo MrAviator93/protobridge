@@ -5,7 +5,7 @@
 #include "ICBase.hpp"
 #include <math/Linear.hpp>
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -47,7 +47,7 @@ public:
      * 
      * @return std::tuple<float, float, float> The tuple contains the roll, pitch, and yaw angles in degrees.
      */
-	[[nodiscard]] Math::Vector3f angles();
+	[[nodiscard]] math::Vector3f angles();
 
 	// [[nodiscard]] Vector3f getRawAccelValues();
 	// [[nodiscard]] Vector3f getRawGyroValues();
@@ -65,5 +65,5 @@ private:
 	void calculateImuError();
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif //!PBL_I2C_MPU6050_CONTROLLER_HPP__

@@ -1,7 +1,7 @@
 #include "ICBase.hpp"
 #include "BusController.hpp"
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 bool ICBase::write( std::uint8_t reg, std::uint8_t value )
@@ -39,4 +39,4 @@ void ICBase::sleep( std::chrono::microseconds sleepTimeUs )
 	m_busController.sleep( sleepTimeUs );
 }
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

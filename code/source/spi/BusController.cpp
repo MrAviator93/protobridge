@@ -14,7 +14,7 @@ extern "C" {
 #include <linux/spi/spidev.h>
 }
 
-namespace PBL::SPI
+namespace pbl::spi
 {
 
 BusController::BusController( const std::string& busName )
@@ -46,4 +46,4 @@ void BusController::reportError()
 	m_lastError = ::strerror_r( e, err.data(), err.size() );
 }
 
-} // namespace PBL::SPI
+} // namespace pbl::spi

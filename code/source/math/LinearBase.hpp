@@ -7,7 +7,7 @@
 #include <array>
 #include <type_traits>
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < typename T >
@@ -72,5 +72,5 @@ protected:
 	alignas( Alignment ) std::array< T, Size > m_data;
 };
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // I2C_MATH_LINEAR_BASE_HPP__

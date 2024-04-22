@@ -31,7 +31,7 @@ int main()
 	// Constant system, prediction model omitted
 	{
 		// Create a Kalman filter instance
-		PBL::Math::KalmanFilter1Dd kf{ initialValue, processNoise, measurementNoise, error };
+		pbl::math::KalmanFilter1Dd kf{ initialValue, processNoise, measurementNoise, error };
 
 		// Simulated measurements
 
@@ -47,7 +47,7 @@ int main()
 	{
 		double dt{ 0.1 }; // Time step between measurements
 		double rate{ 0.1 };
-		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::LinearMotionModel > kf{
+		pbl::math::KalmanFilterAdvanced1D< double, pbl::math::LinearMotionModel > kf{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - Linear Motion Model" << std::endl;
@@ -64,7 +64,7 @@ int main()
 		double circularSpeed{ 1.0 }; // Speed of the circular motion
 		double circularRadius{ 5.0 }; // Radius of the circular path
 
-		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::CircularMotionModel > kfCircular{
+		pbl::math::KalmanFilterAdvanced1D< double, pbl::math::CircularMotionModel > kfCircular{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - Circular Motion Model:" << std::endl;
@@ -83,7 +83,7 @@ int main()
 		double externalForce = 10.0; // The external force applied to the system
 		double mass = 2.0; // Mass of the object subjected to the external force
 
-		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::ExternalForceModel > kfExternal{
+		pbl::math::KalmanFilterAdvanced1D< double, pbl::math::ExternalForceModel > kfExternal{
 			initialValue, processNoise, measurementNoise, error };
 
 		std::cout << "Results - External Force Model:" << std::endl;
@@ -97,7 +97,7 @@ int main()
 	}
 
 	{
-		PBL::Math::KalmanFilterAdvanced1D< double, PBL::Math::RandomWalkModel > kfRandom{
+		pbl::math::KalmanFilterAdvanced1D< double, pbl::math::RandomWalkModel > kfRandom{
 			initialValue, processNoise, measurementNoise, error, 0.0, processNoise };
 
 		std::cout << "Results - Random Walk Model:" << std::endl;
@@ -112,7 +112,7 @@ int main()
 
 	// Won't compile
 	// {
-	// 	PBL::Utils::KalmanFilterAdvanced1D< double, NonInvocable > kfNonInvocable{
+	// 	pbl::utils::KalmanFilterAdvanced1D< double, NonInvocable > kfNonInvocable{
 	// 		initialValue, processNoise, measurementNoise, error };
 	// }
 

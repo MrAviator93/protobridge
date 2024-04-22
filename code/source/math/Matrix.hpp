@@ -8,7 +8,7 @@ extern "C" {
 #include <emmintrin.h>
 }
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 /**
@@ -30,5 +30,5 @@ public:
 	explicit constexpr Matrix( T v ) noexcept { std::ranges::fill( this->m_data, v ); }
 };
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // I2C_MATH_MATRIX_HPP__

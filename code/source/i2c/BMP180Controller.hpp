@@ -7,7 +7,7 @@
 // C++
 #include <optional>
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -93,8 +93,8 @@ public:
 
 private:
 	SamplingAccuracy m_samplingAccuracy;
-	Utils::FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
+	utils::FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif // I2C_DEVICES_BMP180_CONTROLLER_HPP__

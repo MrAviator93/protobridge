@@ -4,7 +4,7 @@
 
 #include "LinearBase.hpp"
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < typename T >
@@ -100,5 +100,5 @@ using Vector4d = Vector4< double >;
 using Vector6f = Vector6< float >;
 using Vector6d = Vector6< double >;
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // I2CMATHS_LINEAR_HPP__

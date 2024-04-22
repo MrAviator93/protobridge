@@ -3,7 +3,7 @@
 
 #include "ICBase.hpp"
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -212,5 +212,5 @@ private:
 	std::uint8_t m_portBPinStates{}; //!< Current pin states for port B
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif // PBL_I2C_MCP23017_CONTROLLER_HPP__

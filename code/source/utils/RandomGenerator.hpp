@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 template < typename T >
@@ -200,6 +200,6 @@ private:
 	RandomGenerator< Rep > m_randomGenerator;
 };
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 
 #endif // PBL_UTILS_RANDOM_GENERATOR_HPP__

@@ -3,7 +3,7 @@
 
 #include "ICBase.hpp"
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -21,5 +21,5 @@ public:
 	explicit MPU9250Controller(class BusController& busController, Address address);
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif // PBL_I2C_MPU9250_CONTROLLER_HPP__

@@ -7,7 +7,7 @@
 // C++
 #include <utility>
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < std::floating_point T >
@@ -208,5 +208,5 @@ private:
 	T m_signal{}; //!< TBW
 };
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // PBL_MATH_PID_HPP__

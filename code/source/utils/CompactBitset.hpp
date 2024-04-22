@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 /**
@@ -293,5 +293,5 @@ constexpr std::size_t CompactBitset< N >::countBitsInByte( std::uint8_t byte ) n
 	return count;
 }
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 #endif // PBL_COMPACT_BITSET_HPP__

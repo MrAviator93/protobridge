@@ -9,7 +9,7 @@ SCENARIO( "Testing the functionalities of CompactBitset" )
 {
 	GIVEN( "A CompactBitset of 2 bits" )
 	{
-		PBL::Utils::CompactBitset< 2 > bitset;
+		pbl::utils::CompactBitset< 2 > bitset;
 
 		THEN( "All bits are initially unset" )
 		{
@@ -71,7 +71,7 @@ SCENARIO( "Testing the functionalities of CompactBitset" )
 
 		WHEN( "Comparing two bitsets" )
 		{
-			PBL::Utils::CompactBitset< 2 > otherBitset;
+			pbl::utils::CompactBitset< 2 > otherBitset;
 
 			// Initially, both should be equal because both are unset
 			CHECK( bitset == otherBitset );

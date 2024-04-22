@@ -16,7 +16,7 @@
 #include <array>
 #include <bitset>
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 namespace
@@ -130,10 +130,10 @@ std::expected< float, std::string > LM75Controller::getTemperatureF()
 	auto temp = getTemperatureC();
 	if( temp.has_value() )
 	{
-		return Utils::celsiusToFahrenheit( temp.value() );
+		return utils::celsiusToFahrenheit( temp.value() );
 	}
 
 	return temp;
 }
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

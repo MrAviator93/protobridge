@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < typename T, std::size_t Rows, std::size_t Columns >
@@ -66,5 +66,5 @@ protected:
 	alignas( Alignment ) std::array< T, Size > m_data;
 };
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif //I2C_MATH_MATRIX_BASE_HPP__

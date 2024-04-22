@@ -1,8 +1,8 @@
 #include "ICError.hpp"
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 // TODO
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

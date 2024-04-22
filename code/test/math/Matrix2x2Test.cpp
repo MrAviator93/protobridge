@@ -7,7 +7,7 @@ SCENARIO( "Testing element access" )
 {
 	GIVEN( "A 2x2 matrix" )
 	{
-		PBL::Math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
+		pbl::math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
 
 		THEN( "Accessing elements should return the correct values" )
 		{
@@ -23,8 +23,8 @@ SCENARIO( "Testing matrix addition" )
 {
 	GIVEN( "Two 2x2 matrices" )
 	{
-		PBL::Math::Matrix2x2< float > matrix1{ 1.0f, 2.0f, 3.0f, 4.0f };
-		PBL::Math::Matrix2x2< float > matrix2{ 5.0f, 6.0f, 7.0f, 8.0f };
+		pbl::math::Matrix2x2< float > matrix1{ 1.0f, 2.0f, 3.0f, 4.0f };
+		pbl::math::Matrix2x2< float > matrix2{ 5.0f, 6.0f, 7.0f, 8.0f };
 
 		WHEN( "We add the two matrices" )
 		{
@@ -45,8 +45,8 @@ SCENARIO( "Testing matrix subtraction" )
 {
 	GIVEN( "Two 2x2 matrices" )
 	{
-		PBL::Math::Matrix2x2< float > matrix1{ 5.0f, 6.0f, 7.0f, 8.0f };
-		PBL::Math::Matrix2x2< float > matrix2{ 1.0f, 2.0f, 3.0f, 4.0f };
+		pbl::math::Matrix2x2< float > matrix1{ 5.0f, 6.0f, 7.0f, 8.0f };
+		pbl::math::Matrix2x2< float > matrix2{ 1.0f, 2.0f, 3.0f, 4.0f };
 
 		WHEN( "We subtract the second matrix from the first" )
 		{
@@ -67,8 +67,8 @@ SCENARIO( "Testing matrix multiplication" )
 {
 	GIVEN( "Two 2x2 matrices" )
 	{
-		PBL::Math::Matrix2x2< float > matrix1{ 1.0f, 2.0f, 3.0f, 4.0f };
-		PBL::Math::Matrix2x2< float > matrix2{ 2.0f, 0.0f, 1.0f, 2.0f };
+		pbl::math::Matrix2x2< float > matrix1{ 1.0f, 2.0f, 3.0f, 4.0f };
+		pbl::math::Matrix2x2< float > matrix2{ 2.0f, 0.0f, 1.0f, 2.0f };
 
 		WHEN( "We multiply the two matrices" )
 		{
@@ -89,7 +89,7 @@ SCENARIO( "Testing matrix multiplication" )
 // {
 // 	GIVEN( "A 2x2 matrix and a scalar value" )
 // 	{
-// 		PBL::Math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
+// 		pbl::math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
 // 		float scalar = 2.0f;
 
 // 		WHEN( "We add the scalar to the matrix" )
@@ -111,7 +111,7 @@ SCENARIO( "Testing scalar multiplication" )
 {
 	GIVEN( "A 2x2 matrix and a scalar value" )
 	{
-		PBL::Math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
+		pbl::math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
 
 		WHEN( "We multiply the scalar to the matrix" )
 		{

@@ -7,7 +7,7 @@
 #include <cstring>
 #include <algorithm>
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 /**
@@ -81,5 +81,5 @@ struct StaticString final
 template < std::size_t N >
 StaticString( const char ( &str )[ N ] ) -> StaticString< N - 1 >;
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 #endif // PBL_UTILS_STATIC_STRING_HPP__

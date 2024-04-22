@@ -22,7 +22,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	PBL::I2C::BusController busController{ deviceName };
+	pbl::i2c::BusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )
@@ -31,8 +31,8 @@ int main( const int argc, const char* const* const argv )
 		return 1;
 	}
 
-	PBL::Examples::Thermostat thermostat{ busController };
-	PBL::Utils::Timer timer;
+	pbl::examples::Thermostat thermostat{ busController };
+	pbl::utils::Timer timer;
 	timer.start();
 	float dt{ 0.0001 };
 

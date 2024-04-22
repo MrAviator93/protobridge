@@ -4,7 +4,7 @@
 // C++
 #include <atomic>
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 /**
@@ -53,5 +53,5 @@ private:
 	mutable std::atomic_flag m_locked{ ATOMIC_FLAG_INIT };
 };
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 #endif // PBL_UTILS_SPIN_LOCK_HPP__

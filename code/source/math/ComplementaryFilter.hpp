@@ -4,7 +4,7 @@
 // C++
 #include <concepts>
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 /**
@@ -141,5 +141,5 @@ private:
 	T m_alphaVelocity{}; //!< Weight factor for the velocity data in the filter calculation
 };
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // PBL_MATH_COMPLEMENTARY_FILTER_HPP__

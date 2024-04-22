@@ -1,7 +1,7 @@
 
 #include "Timer.hpp"
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 Timer::Timer()
@@ -39,4 +39,4 @@ std::int64_t Timer::elapsedTimeNs() const
 	return std::chrono::duration_cast< Nanoseconds >( m_clock.now() - m_startTP ).count();
 }
 
-} // namespace PBL::Utils
+} // namespace pbl::utils

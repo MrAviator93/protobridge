@@ -24,7 +24,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	PBL::I2C::BusController busController{ deviceName };
+	pbl::i2c::BusController busController{ deviceName };
 
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )
@@ -34,7 +34,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create an LM75 controller, attached to the bus controller
-	PBL::I2C::LM75Controller lm75{ busController };
+	pbl::i2c::LM75Controller lm75{ busController };
 
 	while( true )
 	{

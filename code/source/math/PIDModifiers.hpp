@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < std::floating_point T >
@@ -120,5 +120,5 @@ struct Sither
 	[[nodiscard]] T operator()( T value ) { return value + ( ( std::rand() % 2 == 0 ? 1.0f : -1.0f ) * amplitude ); }
 };
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // PBL_MATH_PID_MODIFIERS_HPP__

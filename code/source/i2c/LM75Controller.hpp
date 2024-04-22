@@ -17,7 +17,7 @@
 #include <string>
 #include <expected>
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -114,5 +114,5 @@ public:
 	[[nodiscard]] std::expected< float, std::string > getTemperatureF();
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif // PBL_I2C_LM75_CONTROLLER_HPP__

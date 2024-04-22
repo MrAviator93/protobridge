@@ -14,7 +14,7 @@
 
 // https://os.mbed.com/users/onehorse/code/BMP180/file/06dc60296e6e/BMP180.h/
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 namespace
@@ -159,7 +159,7 @@ std::optional< float > BMP180Controller::getTemperatureF()
 {
 	if( auto temp = getTrueTemperatureC(); temp.has_value() )
 	{
-		return Utils::celsiusToFahrenheit( temp.value() );
+		return utils::celsiusToFahrenheit( temp.value() );
 	}
 
 	return std::nullopt;
@@ -272,4 +272,4 @@ std::optional< float > BMP180Controller::getAbsoluteAltitude()
 	return std::nullopt;
 }
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <shared_mutex>
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -162,5 +162,5 @@ private:
 	std::string m_lastError; //<! TBW
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif // PBL_I2C_BUS_CONTROLLER_HPP__

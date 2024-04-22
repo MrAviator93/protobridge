@@ -3,7 +3,7 @@
 
 #include "MatrixBase.hpp"
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < typename T >
@@ -23,5 +23,5 @@ public:
 using Matrix3x3f = Matrix3x3< float >;
 using Matrix3x3d = Matrix3x3< double >;
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // I2C_MATH_MATRIX_3X3_HPP__

@@ -10,7 +10,7 @@
 #include <concepts>
 #include <type_traits>
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < typename T >
@@ -69,7 +69,7 @@ struct RandomWalkModel final : PredictionModelBase< T >
 	}
 
 private:
-	Utils::RandomGenerator< T > m_generator;
+	utils::RandomGenerator< T > m_generator;
 };
 
 /// Model for systems affected by an external force
@@ -153,5 +153,5 @@ concept PredictionModelType =
 	requires { typename ModelType::ValueType; } && std::is_floating_point_v< typename ModelType::ValueType > &&
 	CheckInvocableRecursiveV< typename ModelType::ValueType, ModelType >;
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // PBL_MATH_PREDICTION_MODELS_HPP__

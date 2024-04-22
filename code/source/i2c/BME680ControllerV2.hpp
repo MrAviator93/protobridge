@@ -8,7 +8,7 @@
 
 struct bme680_dev;
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 class BusController;
@@ -28,10 +28,10 @@ private:
 	BusController& m_busController;
 	const std::uint8_t m_bme680Address;
 
-	Utils::FastPimpl< bme680_dev, 112, kPointerSize > m_pBme680;
+	utils::FastPimpl< bme680_dev, 112, kPointerSize > m_pBme680;
 	
 	uint16_t min_sampling_period{};
 };
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c
 #endif // PBL_I2C__BME680_CONTROLLER_V2_HPP__

@@ -3,7 +3,7 @@
 
 #include "TimeTypes.hpp"
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 /**
@@ -99,5 +99,5 @@ private:
 	T m_duration;
 };
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 #endif // PBL_UTILS_TIME_STEP_HPP__

@@ -1,7 +1,7 @@
 #include "MCP23017Controller.hpp"
 #include "BusController.hpp"
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 /**
@@ -151,4 +151,4 @@ bool MCP23017Controller::retrieve()
 	return rslt;
 }
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

@@ -3,7 +3,7 @@
 
 #include "TimeTypes.hpp"
 
-namespace PBL::Utils
+namespace pbl::utils
 {
 
 /**
@@ -44,5 +44,5 @@ private:
 	TimePointNs m_startTP; //!< Starting time stamp
 };
 
-} // namespace PBL::Utils
+} // namespace pbl::utils
 #endif // PBL_UTILS_TIMER_HPP__

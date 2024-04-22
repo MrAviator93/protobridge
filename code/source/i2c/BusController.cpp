@@ -22,7 +22,7 @@ extern "C" {
 #include <linux/i2c.h>
 }
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 namespace
@@ -289,4 +289,4 @@ static_assert( std::is_same_v< __u8, std::uint8_t >, "__u8 definition differs fr
 static_assert( std::is_same_v< unsigned int, std::uint32_t >,
 			   "unsigned int definition differs from std::uint32_t definition." );
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

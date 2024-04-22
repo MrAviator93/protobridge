@@ -6,7 +6,7 @@
 #include <thread>
 #include <iostream>
 
-namespace PBL::I2C
+namespace pbl::i2c
 {
 
 // https://github.com/boschsensortec/BME680_driver/blob/master/bme680.c
@@ -1007,4 +1007,4 @@ bool BME680Controller::setRegs( std::uint8_t* regAddr, std::uint8_t* regData, st
 	return false;
 }
 
-} // namespace PBL::I2C
+} // namespace pbl::i2c

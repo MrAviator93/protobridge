@@ -10,7 +10,7 @@
 // #include <xmmintrin.h>
 // }
 
-namespace PBL::Math
+namespace pbl::math
 {
 
 template < typename T >
@@ -214,5 +214,5 @@ constexpr Matrix2x2< T > Matrix2x2< T >::operator*=( const T scalar ) noexcept
 	return *this;
 }
 
-} // namespace PBL::Math
+} // namespace pbl::math
 #endif // I2C_MATH_MATRIX_2X2_HPP__

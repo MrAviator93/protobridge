@@ -11,16 +11,16 @@
 
 #define unwrap( p ) p.first, p.second
 
-namespace PBL
+namespace pbl
 {
 
-namespace I2C
+namespace i2c
 {
 
 class ThermostatController
 {
 public:
-	ThermostatController( PBL::I2C::BusController& ) { }
+	ThermostatController( pbl::i2c::BusController& ) { }
 
 	[[nodiscard]] std::expected< void, std::string > adjust( float value )
 	{
@@ -32,7 +32,7 @@ public:
 class ADCController
 {
 public:
-	ADCController( PBL::I2C::BusController& ) { }
+	ADCController( pbl::i2c::BusController& ) { }
 
 	[[nodiscard]] std::expected< float, std::string > readDesiredTemp()
 	{
@@ -41,15 +41,15 @@ public:
 	}
 };
 
-} // namespace I2C
+} // namespace i2c
 
-namespace Examples
+namespace examples
 {
 
 class Thermostat
 {
 public:
-	Thermostat( PBL::I2C::BusController& busController )
+	Thermostat( pbl::i2c::BusController& busController )
 		: m_pid{ 0.5, 0.2, 0.25 }
 		, m_adc{ busController }
 		, m_lm75{ busController }
@@ -70,7 +70,7 @@ public:
 				return std::pair{ desiredTemp, *currTemp };
 			} )
 			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, std::string > {
-				return ( m_pid.update( dt, unwrap( values ) ) | PBL::Math::Cap{ 0.0f, 10.0f } | PBL::Math::Pow2{} );
+				return ( m_pid.update( dt, unwrap( values ) ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
 			} )
 			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
 			.or_else( []( const std::string& error ) -> std::expected< void, std::string > {
@@ -79,13 +79,12 @@ public:
 	}
 
 private:
-	PBL::Math::PIDController< float > m_pid;
-	PBL::I2C::ADCController m_adc;
-	PBL::I2C::LM75Controller m_lm75;
-	PBL::I2C::ThermostatController m_thermostat;
+	pbl::math::PIDController< float > m_pid;
+	pbl::i2c::ADCController m_adc;
+	pbl::i2c::LM75Controller m_lm75;
+	pbl::i2c::ThermostatController m_thermostat;
 };
 
-} // namespace Examples
-
-} // namespace PBL
+} // namespace examples
+} // namespace pbl
 #endif // PBL_EXAMPLES_GENERAL_THERMOSTAT_HPP__

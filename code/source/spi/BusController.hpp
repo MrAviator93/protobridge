@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <shared_mutex>
 
-namespace PBL::SPI
+namespace pbl::spi
 {
 
 class BusController
@@ -47,5 +47,5 @@ private:
 	std::string m_lastError; //<! Stores the string of the last occurred error.
 };
 
-} // namespace PBL::SPI
+} // namespace pbl::spi
 #endif // PBL_SPI_BUS_CONTROLLER_HPP__
