@@ -85,7 +85,7 @@ BusController::~BusController()
 	m_open = false;
 }
 
-bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t& result )
+bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result )
 {
 	if( !isOpen() )
 	{
@@ -128,7 +128,7 @@ bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t
 	return true;
 }
 
-bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 2 >& result )
+bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 2 >& result )
 {
 	if( !isOpen() )
 	{
@@ -167,7 +167,7 @@ bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< 
 	return true;
 }
 
-bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 4 >& result )
+bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 4 >& result )
 {
 	if( !isOpen() )
 	{
@@ -207,7 +207,7 @@ bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< 
 }
 
 std::int16_t
-BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
+BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
 {
 	if( !isOpen() )
 	{
@@ -246,7 +246,7 @@ BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* pDa
 	return dataSize;
 }
 
-bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t data )
+bool BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )
 {
 	if( !isOpen() )
 	{
@@ -279,12 +279,17 @@ bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_
 	return true;
 }
 
-bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::span< std::uint8_t > data )
+bool BusController::write( const std::uint8_t slaveAddr,
+						   const std::uint8_t reg,
+						   const std::span< const std::uint8_t > data )
 {
 	return write( slaveAddr, reg, data.data(), data.size() );
 }
 
-bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
+bool BusController::write( const std::uint8_t slaveAddr,
+						   const std::uint8_t reg,
+						   const std::uint8_t* data,
+						   const std::uint8_t size )
 {
 	if( !isOpen() )
 	{
@@ -324,12 +329,12 @@ bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_
 	return true;
 }
 
-void BusController::sleep( std::chrono::milliseconds sleepTimeMs )
+void BusController::sleep( const std::chrono::milliseconds sleepTimeMs )
 {
 	std::this_thread::sleep_for( sleepTimeMs );
 }
 
-void BusController::sleep( std::chrono::microseconds sleepTimeUs )
+void BusController::sleep( const std::chrono::microseconds sleepTimeUs )
 {
 	std::this_thread::sleep_for( sleepTimeUs );
 }
@@ -354,8 +359,8 @@ void BusController::checkFunc()
 
 	std::cerr << "Supported funcions are: " << std::hex << funcs << std::endl;
 
-	auto checkLambda = [ &funcs ]( const auto& element ) { return check( funcs, element ); };
-	bool rslt = std::ranges::all_of( kFuncsToCheck, checkLambda );
+	const auto checkLambda = [ &funcs ]( const auto& element ) { return check( funcs, element ); };
+	const bool rslt = std::ranges::all_of( kFuncsToCheck, checkLambda );
 
 	if( !rslt )
 	{

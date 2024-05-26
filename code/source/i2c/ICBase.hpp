@@ -44,12 +44,12 @@ public:
 	/// The address of the IC on the I2C bus.
 	[[nodiscard]] auto address() const noexcept { return m_icAddress; }
 
-	[[nodiscard]] bool write( std::uint8_t reg, std::uint8_t value );
-	[[nodiscard]] bool write( std::uint8_t reg, std::span< std::uint8_t > data );
-	[[nodiscard]] bool write( std::uint8_t reg, std::uint8_t* pData, std::uint8_t size );
+	[[nodiscard]] bool write( const std::uint8_t reg, const std::uint8_t value );
+	[[nodiscard]] bool write( const std::uint8_t reg, const std::span< const std::uint8_t > data );
+	[[nodiscard]] bool write( const std::uint8_t reg, const std::uint8_t* pData, const std::uint8_t size );
 
-	[[nodiscard]] bool read( std::uint8_t reg, std::uint8_t& result );
-	[[nodiscard]] std::int16_t read( std::uint8_t reg, std::uint8_t* pData, std::uint16_t size );
+	[[nodiscard]] bool read( const std::uint8_t reg, std::uint8_t& result );
+	[[nodiscard]] std::int16_t read( const std::uint8_t reg, std::uint8_t* pData, std::uint16_t size );
 
 protected:
 	/**
@@ -65,10 +65,10 @@ protected:
 		, m_icAddress{ static_cast< std::uint8_t >( icAddress ) }
 	{ }
 
-	void sleep( std::chrono::milliseconds sleepTimeMs );
-	void sleep( std::chrono::microseconds sleepTimeUs );
+	void sleep( const std::chrono::milliseconds sleepTimeMs );
+	void sleep( const std::chrono::microseconds sleepTimeUs );
 
-	[[nodiscard]] auto& controller(this auto& self) noexcept { return self.m_busController; }
+	[[nodiscard]] auto& controller( this auto& self ) noexcept { return self.m_busController; }
 
 private:
 	BusController& m_busController;

@@ -51,7 +51,7 @@ public:
      * @return true 
      * @return false 
      */
-	[[nodiscard]] bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t& result );
+	[[nodiscard]] bool read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result );
 
 	/**
      * @brief Read a two byte array from specified register
@@ -62,7 +62,8 @@ public:
      * @return true 
      * @return false 
      */
-	[[nodiscard]] bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 2 >& result );
+	[[nodiscard]] bool
+	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 2 >& result );
 
 	/**
      * @brief Read a four byte array from specified register
@@ -73,7 +74,8 @@ public:
      * @return true 
      * @return false 
      */
-	[[nodiscard]] bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 4 >& result );
+	[[nodiscard]] bool
+	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 4 >& result );
 
 	/**
      * @brief Read a data buffer from specified register (raw pointer version)
@@ -88,7 +90,7 @@ public:
      * @return std::int16_t 
      */
 	[[nodiscard]] std::int16_t
-	read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize );
+	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize );
 
 	/**
      * @brief Read a data buffer from specified register (std::vector version)
@@ -98,7 +100,8 @@ public:
 	 * @param data 
 	 * @return std::int16_t 
 	 */
-	[[nodiscard]] std::int16_t read( std::uint8_t slaveAdd, std::uint8_t reg, std::vector< std::uint8_t >& data )
+	[[nodiscard]] std::int16_t
+	read( const std::uint8_t slaveAdd, const std::uint8_t reg, std::vector< std::uint8_t >& data )
 	{
 		return read( slaveAdd, reg, data.data(), static_cast< std::uint16_t >( data.size() ) );
 	}
@@ -112,7 +115,7 @@ public:
      * @return true 
      * @return false 
      */
-	bool write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t data );
+	bool write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data );
 
 	/**
 	 * @brief Write a data buffer to specified register
@@ -123,7 +126,8 @@ public:
 	 * @return true 
 	 * @return false 
 	 */
-	virtual bool write( std::uint8_t slaveAddr, std::uint8_t reg, std::span< std::uint8_t > data );
+	virtual bool
+	write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::span< const std::uint8_t > data );
 
 	/**
      * @brief Write a data buffer to specified register
@@ -135,7 +139,8 @@ public:
      * @return true 
      * @return false 
      */
-	bool write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size );
+	bool
+	write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t* data, const std::uint8_t size );
 
 	/// An accessor to the last error
 	[[nodiscard]] std::string lastError() const
@@ -145,10 +150,10 @@ public:
 	}
 
 	/// Puts asleep calling thread for specified sleep time in milliseconds
-	void sleep( std::chrono::milliseconds sleepTimeMs );
+	void sleep( const std::chrono::milliseconds sleepTimeMs );
 
 	/// Puts asleep calling thread for specified sleep time in microseconds
-	void sleep( std::chrono::microseconds sleepTimeUs );
+	void sleep( const std::chrono::microseconds sleepTimeUs );
 
 private:
 	// This class is non-copyable and non-movable
