@@ -85,7 +85,7 @@ BusController::~BusController()
 	m_open = false;
 }
 
-bool BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t& result )
+bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t& result )
 {
 	if( !isOpen() )
 	{
@@ -99,12 +99,12 @@ bool BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_
 	std::uint8_t inbuf[ 1 ];
 
 	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slave_addr;
+	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
 	msgs[ 0 ].buf = &outbuf[ 0 ];
 
-	msgs[ 1 ].addr = slave_addr;
+	msgs[ 1 ].addr = slaveAddr;
 	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
 	msgs[ 1 ].len = 1;
 	msgs[ 1 ].buf = inbuf;
@@ -128,8 +128,86 @@ bool BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_
 	return true;
 }
 
+bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 2 >& result )
+{
+	if( !isOpen() )
+	{
+		setLastError( "I2C bus is closed" );
+		return false;
+	}
+
+	std::lock_guard _{ m_fdMtx };
+
+	std::uint8_t outbuf[ 2 ];
+	outbuf[ 0 ] = reg;
+
+	i2c_msg msgs[ 2 ];
+	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].flags = 0;
+	msgs[ 0 ].len = 1;
+	msgs[ 0 ].buf = outbuf;
+
+	msgs[ 1 ].addr = slaveAddr;
+	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
+	msgs[ 1 ].len = 2;
+	msgs[ 1 ].buf = result.data();
+
+	i2c_rdwr_ioctl_data msgset[ 1 ];
+	msgset[ 0 ].msgs = msgs;
+	msgset[ 0 ].nmsgs = 2;
+
+	::memset( result.data(), 0x00, 2 );
+
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	{
+		reportError();
+		return -1;
+	}
+
+	return true;
+}
+
+bool BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 4 >& result )
+{
+	if( !isOpen() )
+	{
+		setLastError( "I2C bus is closed" );
+		return false;
+	}
+
+	std::lock_guard _{ m_fdMtx };
+
+	std::uint8_t outbuf[ 2 ];
+	outbuf[ 0 ] = reg;
+
+	i2c_msg msgs[ 2 ];
+	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].flags = 0;
+	msgs[ 0 ].len = 1;
+	msgs[ 0 ].buf = outbuf;
+
+	msgs[ 1 ].addr = slaveAddr;
+	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
+	msgs[ 1 ].len = 2;
+	msgs[ 1 ].buf = result.data();
+
+	i2c_rdwr_ioctl_data msgset[ 1 ];
+	msgset[ 0 ].msgs = msgs;
+	msgset[ 0 ].nmsgs = 4;
+
+	::memset( result.data(), 0x00, 4 );
+
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	{
+		reportError();
+		return -1;
+	}
+
+	return true;
+}
+
 std::int16_t
-BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
+BusController::read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
 {
 	if( !isOpen() )
 	{
@@ -143,12 +221,12 @@ BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* pD
 	outbuf[ 0 ] = reg;
 
 	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slave_addr;
+	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
 	msgs[ 0 ].buf = outbuf;
 
-	msgs[ 1 ].addr = slave_addr;
+	msgs[ 1 ].addr = slaveAddr;
 	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
 	msgs[ 1 ].len = dataSize;
 	msgs[ 1 ].buf = pData;
@@ -168,7 +246,7 @@ BusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* pD
 	return dataSize;
 }
 
-bool BusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t data )
+bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t data )
 {
 	if( !isOpen() )
 	{
@@ -183,7 +261,7 @@ bool BusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8
 	outbuf[ 1 ] = data;
 
 	i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = slave_addr;
+	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 2;
 	msgs[ 0 ].buf = outbuf;
@@ -206,7 +284,7 @@ bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::span< 
 	return write( slaveAddr, reg, data.data(), data.size() );
 }
 
-bool BusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
+bool BusController::write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
 {
 	if( !isOpen() )
 	{
@@ -228,7 +306,7 @@ bool BusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8
 	}
 
 	i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = slave_addr;
+	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = dataBuffer.size();
 	msgs[ 0 ].buf = dataBuffer.data();

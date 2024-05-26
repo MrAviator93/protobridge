@@ -3,6 +3,7 @@
 
 // C++
 #include <span>
+#include <array>
 #include <mutex>
 #include <vector>
 #include <atomic>
@@ -51,6 +52,28 @@ public:
      * @return false 
      */
 	[[nodiscard]] bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t& result );
+
+	/**
+     * @brief Read a two byte array from specified register
+     * 
+     * @param slaveAddr 
+     * @param reg 
+     * @param result 
+     * @return true 
+     * @return false 
+     */
+	[[nodiscard]] bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 2 >& result );
+
+	/**
+     * @brief Read a four byte array from specified register
+     * 
+     * @param slaveAddr 
+     * @param reg 
+     * @param result 
+     * @return true 
+     * @return false 
+     */
+	[[nodiscard]] bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::array< std::uint8_t, 4 >& result );
 
 	/**
      * @brief Read a data buffer from specified register (raw pointer version)
