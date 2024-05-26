@@ -68,11 +68,7 @@ protected:
 	void sleep( std::chrono::milliseconds sleepTimeMs );
 	void sleep( std::chrono::microseconds sleepTimeUs );
 
-	[[nodiscard]] auto& controller() { return m_busController; }
-	[[nodiscard]] auto& controller() const { return m_busController; }
-
-	// TODO: GCC 14
-	// [[nodiscard]] auto& controller(this auto&& self) { return self.m_busController; }
+	[[nodiscard]] auto& controller(this auto& self) noexcept { return self.m_busController; }
 
 private:
 	BusController& m_busController;

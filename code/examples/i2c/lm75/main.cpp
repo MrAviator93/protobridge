@@ -4,6 +4,7 @@
 #include <i2c/LM75Controller.hpp>
 
 // Output
+#include <print>
 #include <vector>
 #include <thread>
 #include <chrono>
@@ -13,7 +14,7 @@
 
 int main( const int argc, const char* const* const argv )
 {
-	std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
+	const std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
 
 	// Default name of i2c bus on RPI 4
 	std::string deviceName{ "/dev/i2c-1" };
@@ -29,7 +30,7 @@ int main( const int argc, const char* const* const argv )
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )
 	{
-		std::cerr << "Failed to open I2C device" << std::endl;
+		std::print( "Failed to open I2C device\n" );
 		return 1;
 	}
 
@@ -45,12 +46,12 @@ int main( const int argc, const char* const* const argv )
 		if( !temp.has_value() )
 		{
 			// With C++ 23 we can retrieve exact error what caused the value not present
-			std::cerr << temp.error() << std::endl;
+			std::print( "{}\n", temp.error() );
 			return 1;
 		}
 
 		// Output the temperature to the console
-		std::cout << std::format( "Temperature: {}°C", temp.value() ) << std::endl;
+		std::print( "Temperature: {}°C\n", temp.value() );
 
 		// Sleep for half a second
 		std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
