@@ -39,7 +39,7 @@ int main( const int argc, const char* const* const argv )
 	{
 		if( timer.hasElapsed() )
 		{
-			float dt{ 0.1f };
+			auto dt = timer.elapsedSinceSetInSeconds();
 			auto rslt = thermostat.update( dt );
 
 			std::print( "{:12f}\n", dt );

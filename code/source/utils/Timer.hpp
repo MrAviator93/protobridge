@@ -35,6 +35,19 @@ public:
 	/// Returns the remaining time before the duration elapses.
 	[[nodiscard]] Duration remainingTime() const;
 
+	/// Returns the time elapsed since the timer was last set.
+	[[nodiscard]] Duration elapsedSinceSet() const
+	{
+		return std::chrono::duration_cast< Duration >( Clock::now() - m_startTime );
+	}
+
+	/// Returns the time elapsed since the timer was last set in seconds float.
+	[[nodiscard]] float elapsedSinceSetInSeconds() const
+	{
+		const auto elapsedTime = Clock::now() - m_startTime;
+		return std::chrono::duration< float >( elapsedTime ).count();
+	}
+
 private:
 	Clock::time_point m_startTime;
 	Duration m_elapsedDuration;
