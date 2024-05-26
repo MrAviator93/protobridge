@@ -75,7 +75,7 @@ public:
 	 * @param data 
 	 * @return std::int16_t 
 	 */
-	[[nodiscard]] std::int16_t read( std::uint8_t slaveAdd, std::uint8_t reg, std::vector< std::uint8_t > data )
+	[[nodiscard]] std::int16_t read( std::uint8_t slaveAdd, std::uint8_t reg, std::vector< std::uint8_t >& data )
 	{
 		return read( slaveAdd, reg, data.data(), static_cast< std::uint16_t >( data.size() ) );
 	}
