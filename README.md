@@ -75,7 +75,7 @@ int main(int, char**)
       pbl::i2c::LM75Controller lm75{busController};
 
       // Read the temperature in Celsius from the LM75 sensor
-      const auto temp = lm75.getTemperatureC();
+      auto temp = lm75.getTemperatureC();
 
       // Check wether the reading is present (indication of successful read)
       if (temp.has_value())
@@ -164,25 +164,24 @@ int main(const int argc, const char* const* const argv)
 	}
 
 	Thermostat thermostat{busController};
-	pbl::utils::Timer timer;
-	timer.start();
-	float dt{0.0001};
+	pbl::utils::Timer timer{std::chrono::milliseconds(100)}
 
 	while(true)
 	{
-		timer.reset();
-
-		// Sleep simulates some work
-		std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
-
-		dt = static_cast< float >( timer.elapsedTimeS() );
-		auto rslt = thermostat.update( dt );
-		std::println(stderr, "{:12f}", dt);
-
-		if(!rslt)
+		if (timer.hasElapsed())
 		{
-			std::println(stderr, rslt.error());
-			break;
+			auto dt = timer.elapsedSinceSet();
+			auto rslt = thermostat.update( dt );
+			std::println(stderr, "{:12f}", dt);
+
+			if(!rslt)
+			{
+				std::println(stderr, rslt.error());
+				break;
+			}
+			
+			// Reset the timer
+			timer.set();
 		}
 	}
 
