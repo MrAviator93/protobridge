@@ -6,7 +6,7 @@
 #include <i2c/LM75Controller.hpp>
 
 // C++
-#include <iostream>
+#include <print>
 #include <expected>
 
 #define unwrap( p ) p.first, p.second
@@ -24,7 +24,7 @@ public:
 
 	[[nodiscard]] std::expected< void, std::string > adjust( float value )
 	{
-		std::cout << std::format( "Adjust: {}", value ) << std::endl;
+		std::println( "Adjust: {}", value );
 		return {};
 	}
 };

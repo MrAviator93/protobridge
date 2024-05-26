@@ -172,11 +172,11 @@ int main(const int argc, const char* const* const argv)
 		{
 			auto dt = timer.elapsedSinceSet();
 			auto rslt = thermostat.update( dt );
-			std::println(stderr, "{:12f}", dt);
+			std::println("{:12f}", dt);
 
 			if(!rslt)
 			{
-				std::println(stderr, rslt.error());
+				std::println(stderr, "{}", rslt.error());
 				break;
 			}
 			

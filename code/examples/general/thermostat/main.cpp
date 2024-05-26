@@ -28,7 +28,7 @@ int main( const int argc, const char* const* const argv )
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )
 	{
-		std::print( "Failed to open I2C device\n" );
+		std::println( "Failed to open I2C device" );
 		return 1;
 	}
 
@@ -42,11 +42,11 @@ int main( const int argc, const char* const* const argv )
 			auto dt = timer.elapsedSinceSetInSeconds();
 			auto rslt = thermostat.update( dt );
 
-			std::print( "{:12f}\n", dt );
+			std::println( "{:12f}", dt );
 
 			if( !rslt )
 			{
-				std::print( "{}\n", rslt.error() );
+				std::println( "{}", rslt.error() );
 				break;
 			}
 
