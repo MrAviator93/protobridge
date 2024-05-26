@@ -49,6 +49,8 @@ int main( const int argc, const char* const* const argv )
 				std::print( "{}\n", rslt.error() );
 				break;
 			}
+
+			timer.set();
 		}
 	}
 
