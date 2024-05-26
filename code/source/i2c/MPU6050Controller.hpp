@@ -19,7 +19,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class MPU6050Controller final : public ICBase, utils::Counter< MPU6050Controller >
+class MPU6050Controller final : public ICBase, public utils::Counter< MPU6050Controller >
 {
 	static constexpr std::size_t kAccelCalibReadIterations{ 1'000 };
 	static constexpr std::size_t kGyroCalibReadIterations{ 1'000 };

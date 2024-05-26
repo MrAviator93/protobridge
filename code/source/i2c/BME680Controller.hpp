@@ -13,7 +13,7 @@ namespace pbl::i2c
 {
 class BusController;
 
-class BME680Controller final : utils::Counter< BME680Controller >
+class BME680Controller final : public utils::Counter< BME680Controller >
 {
 	struct BME680Device;
 

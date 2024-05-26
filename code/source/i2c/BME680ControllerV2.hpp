@@ -16,7 +16,7 @@ namespace pbl::i2c
 class BusController;
 
 // A wrapper around bme680 library
-class BME680ControllerV2 final : utils::Counter< BME680ControllerV2 >
+class BME680ControllerV2 final : public utils::Counter< BME680ControllerV2 >
 {
 	static constexpr std::size_t kPointerSize{ sizeof( void* ) };
 

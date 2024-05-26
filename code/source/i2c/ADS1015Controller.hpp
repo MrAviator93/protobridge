@@ -11,7 +11,7 @@ namespace pbl::i2c
  * @brief Controller for the ADS1015 12-bit ADC with I2C interface.
  * 
  */
-class ADS1015Controller final : public ICBase, utils::Counter< ADS1015Controller >
+class ADS1015Controller final : public ICBase, public utils::Counter< ADS1015Controller >
 {
 public:
 	enum class Address : std::uint8_t

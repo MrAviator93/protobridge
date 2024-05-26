@@ -49,7 +49,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class BMP180Controller final : public ICBase, utils::Counter< BMP180Controller >
+class BMP180Controller final : public ICBase, public utils::Counter< BMP180Controller >
 {
 	struct CalibrationConstants;
 	static constexpr std::size_t kCalibConstSize = 22;

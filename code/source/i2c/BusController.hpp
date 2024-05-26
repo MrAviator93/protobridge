@@ -30,7 +30,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class BusController : utils::Counter< BusController >
+class BusController : public utils::Counter< BusController >
 {
 public:
 	/// Default ctor opens a file descriptor.

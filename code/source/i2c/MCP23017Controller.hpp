@@ -53,7 +53,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class MCP23017Controller final : public ICBase, utils::Counter< MCP23017Controller >
+class MCP23017Controller final : public ICBase, public utils::Counter< MCP23017Controller >
 {
 public:
 	enum class Address : std::uint8_t

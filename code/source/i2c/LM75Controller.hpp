@@ -55,7 +55,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class LM75Controller final : public ICBase, utils::Counter< LM75Controller >
+class LM75Controller final : public ICBase, public utils::Counter< LM75Controller >
 {
 public:
 	template < typename T >

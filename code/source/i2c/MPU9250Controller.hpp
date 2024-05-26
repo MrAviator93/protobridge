@@ -11,7 +11,7 @@ namespace pbl::i2c
  * @brief TBW
  * 
  */
-class MPU9250Controller final : public ICBase, utils::Counter< MPU9250Controller >
+class MPU9250Controller final : public ICBase, public utils::Counter< MPU9250Controller >
 {
 public:
 	enum class Address : std::uint8_t
