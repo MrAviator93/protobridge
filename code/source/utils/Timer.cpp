@@ -4,39 +4,25 @@
 namespace pbl::utils
 {
 
-Timer::Timer()
-	: m_startTP( m_clock.now() )
+Timer::Timer( const std::chrono::microseconds duration )
+	: m_startTime{ Clock::now() }
+	, m_elapsedDuration{ duration }
 { }
 
-void Timer::start()
+bool Timer::hasElapsed() const
 {
-	m_startTP = m_clock.now();
+	return ( Clock::now() - m_startTime ) >= m_elapsedDuration;
 }
 
-void Timer::reset()
+auto Timer::remainingTime() const -> Duration
 {
-	start();
-}
-
-double Timer::elapsedTimeS() const
-{
-	return static_cast< double >( elapsedTimeUs() ) / 1'000'000.0;
-}
-
-std::int64_t Timer::elapsedTimeMs() const
-{
-	return std::chrono::duration_cast< Milliseconds >( m_clock.now() - m_startTP ).count();
-}
-
-std::int64_t Timer::elapsedTimeUs() const
-{
-	return std::chrono::duration_cast< Microseconds >( m_clock.now() - m_startTP ).count();
-	// return std::chrono::time_point_cast< std::chrono::microseconds >( m_endTP ).time_since_epoch().count;
-}
-
-std::int64_t Timer::elapsedTimeNs() const
-{
-	return std::chrono::duration_cast< Nanoseconds >( m_clock.now() - m_startTP ).count();
+	const auto elapsedTime = Clock::now() - m_startTime;
+	if( elapsedTime >= m_elapsedDuration )
+	{
+		return Duration::zero();
+	}
+	
+	return std::chrono::duration_cast< Duration >( m_elapsedDuration - elapsedTime );
 }
 
 } // namespace pbl::utils

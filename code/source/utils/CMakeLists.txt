@@ -5,6 +5,7 @@ set(PBL_LIB_HEADERS
     SpinLock.hpp
     TimeTypes.hpp
     FastPimpl.hpp
+    TimeStamp.hpp
     FixedString.hpp
     CompactBitset.hpp
     RandomGenerator.hpp
@@ -13,6 +14,7 @@ set(PBL_LIB_HEADERS
 set(PBL_LIB_SOURCE
     Timer.cpp
     SpinLock.cpp
+    TimeStamp.cpp
 )
 
 set(PBL_LIB_PRIVATE_DEPS)

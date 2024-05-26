@@ -4,6 +4,7 @@
 #include <utils/Timer.hpp>
 
 // Output
+#include <print>
 #include <vector>
 #include <thread>
 #include <chrono>
@@ -11,7 +12,7 @@
 
 int main( const int argc, const char* const* const argv )
 {
-	std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
+	const std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
 
 	// Default name of i2c bus on RPI 4
 	std::string deviceName{ "/dev/i2c-1" };
@@ -27,31 +28,27 @@ int main( const int argc, const char* const* const argv )
 	// Check if the I2C bus is open and accessible
 	if( !busController.isOpen() )
 	{
-		std::cerr << "Failed to open I2C device" << std::endl;
+		std::print( "Failed to open I2C device\n" );
 		return 1;
 	}
 
 	pbl::examples::Thermostat thermostat{ busController };
-	pbl::utils::Timer timer;
-	timer.start();
-	float dt{ 0.0001 };
+	pbl::utils::Timer timer{ std::chrono::milliseconds( 100 ) };
 
 	while( true )
 	{
-		timer.reset();
-
-		// Sleep simulates some work
-		std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
-
-		dt = static_cast< float >( timer.elapsedTimeS() );
-		auto rslt = thermostat.update( dt );
-
-		std::cout << std::format( "{:12f}", dt ) << std::endl;
-
-		if( !rslt )
+		if( timer.hasElapsed() )
 		{
-			std::cerr << rslt.error() << std::endl;
-			break;
+			float dt{ 0.1f };
+			auto rslt = thermostat.update( dt );
+
+			std::print( "{:12f}\n", dt );
+
+			if( !rslt )
+			{
+				std::print( "{}\n", rslt.error() );
+				break;
+			}
 		}
 	}
 

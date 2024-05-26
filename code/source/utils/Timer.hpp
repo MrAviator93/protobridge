@@ -7,41 +7,37 @@ namespace pbl::utils
 {
 
 /**
- * @class Timer
- * @brief Based on high_resolution_clock clock.
+ * @brief A simple timer class to manage time intervals.
  * 
- * @note Conversion units:
- * 1s = 1000ms 		(milli-seconds)
- * 1s = 1000000us 	(micro-seconds)
- * 1s = 1e+9ns		(nano-seconds)
+ * Allows setting a duration and checking if the duration has elapsed.
  */
 class Timer final
 {
 public:
-	/// Default ctor, starts the timer.
-	Timer();
+	using Duration = std::chrono::microseconds;
 
-	/// Explicit call to start the timer.
-	void start();
+	/**
+     * @brief Constructs a Timer with an optional duration.
+     * 
+     * @param duration The duration for the timer (default is 1 minute).
+     */
+	Timer( const std::chrono::microseconds duration = std::chrono::minutes( 1 ) );
 
-	/// Resets the timer ( calls start() internally )
-	void reset();
+	/// Sets the elapsed duration for the timer.
+	void setElapsed( Duration duration ) { m_elapsedDuration = duration; }
 
-	/// Returns elapsed time from the "start() call or timer object construction" in seconds.
-	[[nodiscard]] double elapsedTimeS() const;
+	// Resets the start time to the current time.
+	void set() { m_startTime = Clock::now(); }
 
-	/// Returns elapsed time from the "start() call or timer object construction" in milliseconds.
-	[[nodiscard]] std::int64_t elapsedTimeMs() const;
+	/// Returns true if the elapsed duration has passed since the start time.
+	[[nodiscard]] bool hasElapsed() const;
 
-	/// Returns elapsed time from the "start() call or timer object construction" in microseconds.
-	[[nodiscard]] std::int64_t elapsedTimeUs() const;
-
-	/// Returns elapsed time from the "start() call or timer object construction" in nanoseconds.
-	[[nodiscard]] std::int64_t elapsedTimeNs() const;
+	/// Returns the remaining time before the duration elapses.
+	[[nodiscard]] Duration remainingTime() const;
 
 private:
-	Clock m_clock; //!< high_resolution_clock
-	TimePointNs m_startTP; //!< Starting time stamp
+	Clock::time_point m_startTime;
+	Duration m_elapsedDuration;
 };
 
 } // namespace pbl::utils
