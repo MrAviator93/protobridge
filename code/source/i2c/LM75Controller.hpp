@@ -57,6 +57,9 @@ namespace pbl::i2c
 class LM75Controller final : public ICBase
 {
 public:
+	template < typename T >
+	using Result = std::expected< T, std::string >;
+
 	enum class Address : std::uint8_t
 	{
 		H48 = 0x48, // A2=0, A1=0, A0=0
@@ -99,19 +102,19 @@ public:
 	bool setThermostatMode( ThermostatMode mode );
 
 	/// Retrieves the current state of the LM75's shutdown mode.
-	[[nodiscard]] std::expected< PowerMode, std::string > getPowerMode();
+	[[nodiscard]] Result< PowerMode > getPowerMode();
 
 	/// Retrieves the current thermostat mode of the LM75.
-	[[nodiscard]] std::expected< ThermostatMode, std::string > getThermostatMode();
+	[[nodiscard]] Result< ThermostatMode > getThermostatMode();
 
 	/// Checks the status of the LM75's alert flag.
-	[[nodiscard]] std::expected< bool, std::string > getAlertStatus();
+	[[nodiscard]] Result< bool > getAlertStatus();
 
 	/// Retrieves the temperature in degrees Celsius
-	[[nodiscard]] std::expected< float, std::string > getTemperatureC();
+	[[nodiscard]] Result< float > getTemperatureC();
 
 	/// Retrieves the temperature in Fahrenheit
-	[[nodiscard]] std::expected< float, std::string > getTemperatureF();
+	[[nodiscard]] Result< float > getTemperatureF();
 };
 
 } // namespace pbl::i2c

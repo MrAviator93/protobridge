@@ -101,6 +101,7 @@ public:
 		PIN_8 = 0x80
 	};
 
+	using enum Port;
 	using enum Address;
 	using enum PinMode;
 	using enum PinState;

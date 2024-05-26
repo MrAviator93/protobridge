@@ -66,7 +66,7 @@ bool LM75Controller::setThermostatMode( ThermostatMode mode )
 	return false;
 }
 
-auto LM75Controller::getPowerMode() -> std::expected< PowerMode, std::string >
+auto LM75Controller::getPowerMode() -> Result< PowerMode >
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -83,7 +83,7 @@ auto LM75Controller::getPowerMode() -> std::expected< PowerMode, std::string >
 	return std::unexpected( std::string{ "Failed to read configuration" } );
 }
 
-auto LM75Controller::getThermostatMode() -> std::expected< ThermostatMode, std::string >
+auto LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -100,7 +100,7 @@ auto LM75Controller::getThermostatMode() -> std::expected< ThermostatMode, std::
 	return std::unexpected( std::string{ "Failed to read configuration" } );
 }
 
-std::expected< bool, std::string > LM75Controller::getAlertStatus()
+auto LM75Controller::getAlertStatus() -> Result< bool >
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -112,10 +112,10 @@ std::expected< bool, std::string > LM75Controller::getAlertStatus()
 	return std::unexpected( std::string{ "Failed to read alert status" } );
 }
 
-std::expected< float, std::string > LM75Controller::getTemperatureC()
+auto LM75Controller::getTemperatureC() -> Result< float >
 {
 	std::array< std::uint8_t, 2 > data{ 0x00, 0x00 };
-	if( auto size = read( kTempReadRegister, data.data(), data.size() ); size > 0 )
+	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size > 0 )
 	{
 		// Calculate temperature in Celsius
 		std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
@@ -125,7 +125,7 @@ std::expected< float, std::string > LM75Controller::getTemperatureC()
 	return std::unexpected( std::string{ "Failed to read temperature" } );
 }
 
-std::expected< float, std::string > LM75Controller::getTemperatureF()
+auto LM75Controller::getTemperatureF() -> Result< float >
 {
 	auto temp = getTemperatureC();
 	if( temp.has_value() )
