@@ -4,6 +4,7 @@
 // I2C
 #include "ICBase.hpp"
 #include <math/Linear.hpp>
+#include <utils/Counter.hpp>
 
 namespace pbl::i2c
 {
@@ -18,7 +19,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class MPU6050Controller final : public ICBase
+class MPU6050Controller final : public ICBase, utils::Counter< MPU6050Controller >
 {
 	static constexpr std::size_t kAccelCalibReadIterations{ 1'000 };
 	static constexpr std::size_t kGyroCalibReadIterations{ 1'000 };

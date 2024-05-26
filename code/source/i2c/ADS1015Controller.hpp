@@ -2,6 +2,7 @@
 #define PBL_I2C_ADS1015_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+#include <utils/Counter.hpp>
 
 namespace pbl::i2c
 {
@@ -10,7 +11,7 @@ namespace pbl::i2c
  * @brief Controller for the ADS1015 12-bit ADC with I2C interface.
  * 
  */
-class ADS1015Controller final : public ICBase
+class ADS1015Controller final : public ICBase, utils::Counter< ADS1015Controller >
 {
 public:
 	enum class Address : std::uint8_t

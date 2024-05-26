@@ -2,6 +2,7 @@
 #define I2C_DEVICES_BMP180_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+#include <utils/Counter.hpp>
 #include <utils/FastPimpl.hpp>
 
 // C++
@@ -48,7 +49,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class BMP180Controller final : public ICBase
+class BMP180Controller final : public ICBase, utils::Counter< BMP180Controller >
 {
 	struct CalibrationConstants;
 	static constexpr std::size_t kCalibConstSize = 22;
@@ -80,16 +81,16 @@ public:
 	~BMP180Controller();
 
 	/// Retrieves the temperature in degrees Celsius
-	[[nodiscard]] std::optional<float> getTrueTemperatureC();
+	[[nodiscard]] std::optional< float > getTrueTemperatureC();
 
 	/// Retrieves the temperature in Fahrenheit
-	[[nodiscard]] std::optional<float> getTemperatureF();
+	[[nodiscard]] std::optional< float > getTemperatureF();
 
 	/// Retrieves the true pressure in pascals
-	[[nodiscard]] std::optional<float> getTruePressurePa();
+	[[nodiscard]] std::optional< float > getTruePressurePa();
 
 	/// Calculates the absolute altitude using international barometric formula
-	[[nodiscard]] std::optional<float> getAbsoluteAltitude();
+	[[nodiscard]] std::optional< float > getAbsoluteAltitude();
 
 private:
 	SamplingAccuracy m_samplingAccuracy;

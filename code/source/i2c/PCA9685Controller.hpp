@@ -2,6 +2,7 @@
 #define PBL_I2C_PCA9658_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+#include <utils/Counter.hpp>
 
 namespace pbl::i2c
 {
@@ -10,7 +11,7 @@ namespace pbl::i2c
  * @brief Controller for the PCA9685 16-channel, 12-bit PWM Fm+ I2C-bus LED controller.
  * 
  */
-class PCA9685Controller final : public ICBase
+class PCA9685Controller final : public ICBase, utils::Counter< PCA9685Controller >
 {
 public:
 	enum class Address : std::uint8_t

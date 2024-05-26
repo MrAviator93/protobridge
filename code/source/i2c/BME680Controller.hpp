@@ -1,6 +1,9 @@
 #ifndef PBL_I2C_BME680_CONTROLLER_HPP__
 #define PBL_I2C_BME680_CONTROLLER_HPP__
 
+#include "ICBase.hpp"
+#include <utils/Counter.hpp>
+
 // C++
 #include <memory>
 #include <string>
@@ -10,7 +13,7 @@ namespace pbl::i2c
 {
 class BusController;
 
-class BME680Controller final
+class BME680Controller final : utils::Counter< BME680Controller >
 {
 	struct BME680Device;
 

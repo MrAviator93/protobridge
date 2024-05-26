@@ -2,6 +2,7 @@
 #define PBL_I2C_MPU9250_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+#include <utils/Counter.hpp>
 
 namespace pbl::i2c
 {
@@ -10,7 +11,7 @@ namespace pbl::i2c
  * @brief TBW
  * 
  */
-class MPU9250Controller final : public ICBase
+class MPU9250Controller final : public ICBase, utils::Counter< MPU9250Controller >
 {
 public:
 	enum class Address : std::uint8_t
@@ -18,7 +19,7 @@ public:
 
 	};
 
-	explicit MPU9250Controller(class BusController& busController, Address address);
+	explicit MPU9250Controller( class BusController& busController, Address address );
 };
 
 } // namespace pbl::i2c

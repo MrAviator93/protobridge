@@ -1,6 +1,8 @@
 #ifndef PBL_I2C__BME680_CONTROLLER_V2_HPP__
 #define PBL_I2C__BME680_CONTROLLER_V2_HPP__
 
+#include "ICBase.hpp"
+#include <utils/Counter.hpp>
 #include <utils/FastPimpl.hpp>
 
 // C++
@@ -14,7 +16,7 @@ namespace pbl::i2c
 class BusController;
 
 // A wrapper around bme680 library
-class BME680ControllerV2 final
+class BME680ControllerV2 final : utils::Counter< BME680ControllerV2 >
 {
 	static constexpr std::size_t kPointerSize{ sizeof( void* ) };
 
@@ -29,7 +31,7 @@ private:
 	const std::uint8_t m_bme680Address;
 
 	utils::FastPimpl< bme680_dev, 112, kPointerSize > m_pBme680;
-	
+
 	uint16_t min_sampling_period{};
 };
 

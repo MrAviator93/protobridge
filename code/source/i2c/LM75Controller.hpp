@@ -12,6 +12,7 @@
 #define PBL_I2C_LM75_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+#include <utils/Counter.hpp>
 
 // C++
 #include <string>
@@ -54,7 +55,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class LM75Controller final : public ICBase
+class LM75Controller final : public ICBase, utils::Counter< LM75Controller >
 {
 public:
 	template < typename T >

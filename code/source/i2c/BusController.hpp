@@ -1,6 +1,8 @@
 #ifndef PBL_I2C_BUS_CONTROLLER_HPP__
 #define PBL_I2C_BUS_CONTROLLER_HPP__
 
+#include <utils/Counter.hpp>
+
 // C++
 #include <bit>
 #include <span>
@@ -28,7 +30,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class BusController
+class BusController : utils::Counter< BusController >
 {
 public:
 	/// Default ctor opens a file descriptor.

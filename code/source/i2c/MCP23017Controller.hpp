@@ -2,6 +2,7 @@
 #define PBL_I2C_MCP23017_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+#include <utils/Counter.hpp>
 
 namespace pbl::i2c
 {
@@ -52,7 +53,7 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class MCP23017Controller final : public ICBase
+class MCP23017Controller final : public ICBase, utils::Counter< MCP23017Controller >
 {
 public:
 	enum class Address : std::uint8_t
