@@ -80,7 +80,7 @@ public:
 	{ }
 
 	/// Calculates the output signal based on the proportional and integral combined controller theory
-	[[nodiscard]] PIController& update( T dt, T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIController& update( T dt, T desiredValue, T currentValue ) noexcept
 	{
 		// Calculate error
 		T error = desiredValue - currentValue;
@@ -98,9 +98,9 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIController& operator()( T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIController& operator()( T dt, T desiredValue, T currentValue ) noexcept
 	{
-		return update( desiredValue, currentValue );
+		return update( dt, desiredValue, currentValue );
 	}
 
 	/// TBW
@@ -182,9 +182,9 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIDController& operator()( T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIDController& operator()( T dt, T desiredValue, T currentValue ) noexcept
 	{
-		return update( desiredValue, currentValue );
+		return update( dt, desiredValue, currentValue );
 	}
 
 	/// TBW

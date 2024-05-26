@@ -70,7 +70,7 @@ public:
 				return std::pair{ desiredTemp, *currTemp };
 			} )
 			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, std::string > {
-				return ( m_pid.update( dt, unwrap( values ) ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
+				return ( m_pid( dt, unwrap( values ) ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
 			} )
 			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
 			.or_else( []( const std::string& error ) -> std::expected< void, std::string > {
