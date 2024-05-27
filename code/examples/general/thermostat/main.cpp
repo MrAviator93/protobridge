@@ -5,10 +5,6 @@
 
 // Output
 #include <print>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <format>
 
 int main( const int argc, const char* const* const argv )
 {
