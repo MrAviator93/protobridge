@@ -1,17 +1,10 @@
 
 // Include I2C library files
 #include <utils/Timer.hpp>
-#include <i2c/BusController.hpp>
-#include <i2c/LM75Controller.hpp>
+#include <i2c/Controllers.hpp>
 
 // Output
 #include <print>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <format>
-#include <iostream>
-#include <string_view>
 
 int main( const int argc, const char* const* const argv )
 {
