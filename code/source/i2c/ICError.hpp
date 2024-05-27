@@ -3,6 +3,7 @@
 
 // C++
 #include <cstdint>
+#include <string_view>
 
 namespace pbl::i2c
 {
@@ -20,6 +21,27 @@ enum class ICError : std::uint8_t
 	ARBITRATION_LOST, // Arbitration lost during communication
 	UNEXPECTED_ERROR // Any unexpected error
 };
+
+constexpr std::string_view toStringView( const ICError error ) noexcept
+{
+	switch( error )
+	{
+		using enum ICError;
+		case FAILED_TO_READ: return "FAILED_TO_READ";
+		case FAILED_TO_WRITE: return "FAILED_TO_WRITE";
+		case DEVICE_NOT_FOUND: return "DEVICE_NOT_FOUND";
+		case BUS_BUSY: return "BUS_BUSY";
+		case NACK_RECEIVED: return "NACK_RECEIVED";
+		case TIMEOUT: return "TIMEOUT";
+		case INVALID_ADDRESS: return "INVALID_ADDRESS";
+		case DATA_OVERRUN: return "DATA_OVERRUN";
+		case ARBITRATION_LOST: return "ARBITRATION_LOST";
+		case UNEXPECTED_ERROR: return "UNEXPECTED_ERROR";
+		default: return "UNDEFINED";
+	}
+
+	return "UNDEFINED";
+}
 
 } // namespace pbl::i2c
 #endif // PBL_I2C_IC_ERROR_HPP__
