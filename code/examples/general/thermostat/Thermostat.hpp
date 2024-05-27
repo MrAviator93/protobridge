@@ -22,7 +22,7 @@ class ThermostatController
 public:
 	ThermostatController( pbl::i2c::BusController& ) { }
 
-	[[nodiscard]] std::expected< void, std::string > adjust( float value )
+	[[nodiscard]] std::expected< void, pbl::i2c::ICError > adjust( float value )
 	{
 		std::println( "Adjust: {}", value );
 		return {};
@@ -34,7 +34,7 @@ class ADCController
 public:
 	ADCController( pbl::i2c::BusController& ) { }
 
-	[[nodiscard]] std::expected< float, std::string > readDesiredTemp()
+	[[nodiscard]] std::expected< float, pbl::i2c::ICError > readDesiredTemp()
 	{
 		// You would get it using I2C from
 		return 25.0f;
@@ -57,10 +57,10 @@ public:
 
 	{ }
 
-	[[nodiscard]] std::expected< void, std::string > update( float dt )
+	[[nodiscard]] std::expected< void, pbl::i2c::ICError > update( float dt )
 	{
 		return m_adc.readDesiredTemp()
-			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, std::string > {
+			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, pbl::i2c::ICError > {
 				auto currTemp = m_lm75.getTemperatureC();
 				if( !currTemp )
 				{
@@ -69,12 +69,12 @@ public:
 
 				return std::pair{ desiredTemp, *currTemp };
 			} )
-			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, std::string > {
+			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, pbl::i2c::ICError > {
 				return ( m_pid( dt, unwrap( values ) ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
 			} )
 			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
-			.or_else( []( const std::string& error ) -> std::expected< void, std::string > {
-				return std::unexpected< std::string >( error );
+			.or_else( []( const auto error ) -> std::expected< void, pbl::i2c::ICError > {
+				return std::unexpected( error );
 			} );
 	}
 

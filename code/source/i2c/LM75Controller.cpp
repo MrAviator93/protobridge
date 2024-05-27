@@ -80,7 +80,7 @@ auto LM75Controller::getPowerMode() -> Result< PowerMode >
 		return PowerMode::NORMAL;
 	}
 
-	return std::unexpected( std::string{ "Failed to read configuration" } );
+	return std::unexpected( ICError::FAILED_TO_READ );
 }
 
 auto LM75Controller::getThermostatMode() -> Result< ThermostatMode >
@@ -97,7 +97,7 @@ auto LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 		return ThermostatMode::COMPARATOR;
 	}
 
-	return std::unexpected( std::string{ "Failed to read configuration" } );
+	return std::unexpected( ICError::FAILED_TO_READ );
 }
 
 auto LM75Controller::getAlertStatus() -> Result< bool >
@@ -109,7 +109,7 @@ auto LM75Controller::getAlertStatus() -> Result< bool >
 		return configBits.test( kAlertStatusBit );
 	}
 
-	return std::unexpected( std::string{ "Failed to read alert status" } );
+	return std::unexpected( ICError::FAILED_TO_READ );
 }
 
 auto LM75Controller::getTemperatureC() -> Result< float >
@@ -122,7 +122,7 @@ auto LM75Controller::getTemperatureC() -> Result< float >
 		return static_cast< float >( iTemp ) / 256.0f;
 	}
 
-	return std::unexpected( std::string{ "Failed to read temperature" } );
+	return std::unexpected( ICError::FAILED_TO_READ );
 }
 
 auto LM75Controller::getTemperatureF() -> Result< float >

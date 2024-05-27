@@ -46,7 +46,7 @@ int main( const int argc, const char* const* const argv )
 
 			if( !rslt )
 			{
-				std::println( "{}", rslt.error() );
+				std::println( stderr, "{}", pbl::i2c::toStringView( rslt.error() ) );
 				break;
 			}
 

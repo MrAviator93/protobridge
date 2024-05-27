@@ -8,6 +8,7 @@
 namespace pbl::i2c
 {
 
+/// TODO: Consider to rename to ErrorCode and move to utils lib.
 enum class ICError : std::uint8_t
 {
 	FAILED_TO_READ, // General failure to read
