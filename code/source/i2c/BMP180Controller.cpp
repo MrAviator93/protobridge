@@ -9,6 +9,7 @@
 #include <utility>
 
 // Debug
+#include <print>
 #include <format>
 #include <iostream>
 
@@ -69,7 +70,7 @@ constexpr std::uint8_t getBmp180CmdForMode( BMP180Controller::SamplingAccuracy m
 }
 
 template < typename T >
-T readCalibConst( BusController& busController, std::uint8_t bmp180Addr, std::uint8_t regAddr )
+T readCalibConst( BusController& busController, const std::uint8_t bmp180Addr, const std::uint8_t regAddr )
 {
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
@@ -119,7 +120,7 @@ void BMP180Controller::CalibrationConstants::read( BusController& busController,
 	md = readCalibConst< std::int16_t >( busController, address, kBmp180CalibMd );
 }
 
-BMP180Controller::BMP180Controller( BusController& busController, SamplingAccuracy sAccuracy, Address address )
+BMP180Controller::BMP180Controller( BusController& busController, Address address, SamplingAccuracy sAccuracy )
 	: ICBase{ busController, address }
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
@@ -208,11 +209,11 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	std::int64_t X3 = X1 + X2;
 	std::int64_t B3 = ( ( ( m_constants->ac1 * 4 + X3 ) << OSS ) + 2 ) / 4;
 
-	std::cerr << std::format( "B6 {}\n", B6 );
-	std::cerr << std::format( "X1 {}\n", X1 );
-	std::cerr << std::format( "X2 {}\n", X2 );
-	std::cerr << std::format( "X3 {}\n", X3 );
-	std::cerr << std::format( "B3 {}\n", B3 );
+	std::println( "B6 {}", B6 );
+	std::println( "X1 {}", X1 );
+	std::println( "X2 {}", X2 );
+	std::println( "X3 {}", X3 );
+	std::println( "B3 {}", B3 );
 
 	X1 = m_constants->ac3 * B6 / std::pow( 2, 13 );
 	X2 = ( m_constants->b1 * ( B6 * B6 / std::pow( 2, 12 ) ) ) / std::pow( 2, 16 );
@@ -220,11 +221,11 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	std::int64_t B4 = m_constants->ac4 * static_cast< std::int64_t >( X3 + 32768 ) / std::pow( 2, 15 );
 	std::int64_t B7 = ( static_cast< std::int64_t >( UP ) - B3 ) * ( 5000 >> OSS );
 
-	std::cerr << std::format( "X1 {}\n", X1 );
-	std::cerr << std::format( "X2 {}\n", X2 );
-	std::cerr << std::format( "X3 {}\n", X3 );
-	std::cerr << std::format( "B4 {}\n", B4 );
-	std::cerr << std::format( "B7 {}\n", B7 );
+	std::println( "X1 {}", X1 );
+	std::println( "X2 {}", X2 );
+	std::println( "X3 {}", X3 );
+	std::println( "B4 {}", B4 );
+	std::println( "B7 {}", B7 );
 
 	std::int32_t p{};
 	if( B7 < 0x80000000 )
@@ -238,17 +239,17 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 
 	// TODO (AK): Debug this part, there is an error!
 	X1 = ( p / std::pow( 2, 8 ) * ( p / std::pow( 2, 8 ) ) );
-	std::cerr << std::format( "X1 {}\n", X1 );
+	std::println( "X1 {}", X1 );
 
 	X1 = ( X1 * 3038 ) / std::pow( 2, 16 );
-	std::cerr << std::format( "X1 {}\n", X1 );
+	std::println( "X1 {}", X1 );
 
 	X2 = ( -7357 * p ) / std::pow( 2, 16 );
-	std::cerr << std::format( "X2 {}\n", X2 );
+	std::println( "X2 {}", X2 );
 
 	p = p + ( X1 + X2 + 3791 ) / std::pow( 2, 4 ); // Pressure in units of Pa.
 
-	std::cerr << std::format( "P {}\n", p );
+	std::println( "P {}", p );
 
 	// It could be that the pressure and accuracy combination configuration is wrong!
 #warning "This needs investigation the measured pressure appears to be 10 times lower than expected"

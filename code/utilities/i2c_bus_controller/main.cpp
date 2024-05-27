@@ -1,13 +1,9 @@
 
 // I2C
-#include <i2c/MCP23017Controller.hpp>
-#include <i2c/BusController.hpp>
-#include <i2c/BMP180Controller.hpp>
-#include <i2c/LM75Controller.hpp>
-#include <i2c/BME680Controller.hpp>
-#include <i2c/BME680ControllerV2.hpp>
+#include <i2c/Controllers.hpp>
 
 // C++
+#include <print>
 #include <vector>
 #include <chrono>
 #include <format>
@@ -30,7 +26,7 @@ int main( const int argc, const char* const* const argv )
 
 	if( const auto temp = lm75.getTemperatureC(); temp.has_value() )
 	{
-		std::cout << std::format( "Temperature: {}°C", temp.value() ) << std::endl;
+		std::println( "Temperature: {}°C", temp.value() );
 	}
 
 	// We will use MCP here to control LED's, configure ports A & B as output
@@ -42,21 +38,23 @@ int main( const int argc, const char* const* const argv )
 
 	mcp23017.setOffPortA( pbl::i2c::MCP23017Controller::Pins::PIN_8 );
 
-	pbl::i2c::BMP180Controller bmp180{ busController, pbl::i2c::BMP180Controller::ULTRA_HIGH_RESOLUTION };
+	pbl::i2c::BMP180Controller bmp180{ busController,
+									   pbl::i2c::BMP180Controller::DEFAULT,
+									   pbl::i2c::BMP180Controller::ULTRA_HIGH_RESOLUTION };
 
 	if( const auto temp = bmp180.getTrueTemperatureC(); temp.has_value() )
 	{
-		std::cout << std::format( "True temp: {} C", temp.value() ) << std::endl;
+		std::println( "True temp: {} C", temp.value() );
 	}
 
 	if( const auto truePress = bmp180.getTruePressurePa(); truePress.has_value() )
 	{
-		std::cout << std::format( "True pressure: {} Pa", truePress.value() ) << std::endl;
+		std::println( "True pressure: {} Pa", truePress.value() );
 	}
 
 	if( const auto alt = bmp180.getAbsoluteAltitude(); alt.has_value() )
 	{
-		std::cout << std::format( "Absolute altitude: {} m", alt.value() ) << std::endl;
+		std::println( "Absolute altitude: {} m", alt.value() );
 	}
 
 	pbl::i2c::BME680ControllerV2 bme680{ busController };

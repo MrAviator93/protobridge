@@ -79,8 +79,8 @@ public:
 	using enum SamplingAccuracy;
 
 	explicit BMP180Controller( BusController& busController,
-							   SamplingAccuracy sAccuracy = STANDARD,
-							   Address address = DEFAULT );
+							   Address address = DEFAULT,
+							   SamplingAccuracy sAccuracy = STANDARD );
 
 	~BMP180Controller();
 
