@@ -32,10 +32,10 @@ public:
 	{ }
 
 	/// Calculates the output signal based on the proportional controller theory.
-	[[nodiscard]] constexpr PController& update( T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PController& update( const T desiredValue, const T currentValue ) noexcept
 	{
 		// Calculate error
-		T error = desiredValue - currentValue;
+		const T error = desiredValue - currentValue;
 
 		// Calculate proportional term
 		m_signal = m_Kp * error;
@@ -43,9 +43,19 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PController& operator()( T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PController& update( const std::pair< T, T >& values ) noexcept
+	{
+		return update( values.first, values.second );
+	}
+
+	[[nodiscard]] constexpr PController& operator()( const T desiredValue, const T currentValue ) noexcept
 	{
 		return update( desiredValue, currentValue );
+	}
+
+	[[nodiscard]] constexpr PController& operator()( const std::pair< T, T >& values ) noexcept
+	{
+		return update( values );
 	}
 
 	/// TBW
@@ -80,17 +90,17 @@ public:
 	{ }
 
 	/// Calculates the output signal based on the proportional and integral combined controller theory
-	[[nodiscard]] constexpr PIController& update( T dt, T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIController& update( const T dt, const T desiredValue, const T currentValue ) noexcept
 	{
 		// Calculate error
-		T error = desiredValue - currentValue;
+		const T error = desiredValue - currentValue;
 
 		// Calculate proportional term
-		T proportionalTermOut = m_Kp * error;
+		const T proportionalTermOut = m_Kp * error;
 
 		// Calculate integral term
 		m_integral += error * dt;
-		T integralTermOut = m_Ki * m_integral;
+		const T integralTermOut = m_Ki * m_integral;
 
 		// Calculate total output
 		m_signal = proportionalTermOut + integralTermOut;
@@ -98,9 +108,19 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIController& operator()( T dt, T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIController& update( const T dt, const std::pair< T, T >& values ) noexcept
+	{
+		return update( dt, values.first, values.second );
+	}
+
+	[[nodiscard]] constexpr PIController& operator()( const T dt, const T desiredValue, const T currentValue ) noexcept
 	{
 		return update( dt, desiredValue, currentValue );
+	}
+
+	[[nodiscard]] constexpr PIController& operator()( const T dt, const std::pair< T, T >& values ) noexcept
+	{
+		return update( dt, values );
 	}
 
 	/// TBW
@@ -157,21 +177,21 @@ public:
 	{ }
 
 	/// TBW
-	[[nodiscard]] constexpr PIDController& update( T dt, T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIDController& update( const T dt, const T desiredValue, const T currentValue ) noexcept
 	{
 		// Calculate error
-		T error = desiredValue - currentValue;
+		const T error = desiredValue - currentValue;
 
 		// Calculate proportional term
-		T proportionalTermOut = m_Kp * error;
+		const T proportionalTermOut = m_Kp * error;
 
 		// Calculate integral term
 		m_integral += error * dt;
-		T integralTermOut = m_Ki * m_integral;
+		const T integralTermOut = m_Ki * m_integral;
 
 		// Calculate derivative term
-		T derivative = ( error - m_previousError ) / dt;
-		T derivativeTermOut = m_Kd * derivative;
+		const T derivative = ( error - m_previousError ) / dt;
+		const T derivativeTermOut = m_Kd * derivative;
 
 		// Calculate total output
 		m_signal = proportionalTermOut + integralTermOut + derivativeTermOut;
@@ -182,9 +202,19 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIDController& operator()( T dt, T desiredValue, T currentValue ) noexcept
+	[[nodiscard]] constexpr PIDController& update( const T dt, const std::pair< T, T >& values ) noexcept
+	{
+		return update( dt, values.first, values.second );
+	}
+
+	[[nodiscard]] constexpr PIDController& operator()( const T dt, const T desiredValue, const T currentValue ) noexcept
 	{
 		return update( dt, desiredValue, currentValue );
+	}
+
+	[[nodiscard]] constexpr PIDController& operator()( const T dt, const std::pair< T, T >& values ) noexcept
+	{
+		return update( dt, values );
 	}
 
 	/// TBW

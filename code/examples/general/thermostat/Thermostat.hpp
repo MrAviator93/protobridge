@@ -59,8 +59,12 @@ public:
 
 	[[nodiscard]] std::expected< void, pbl::i2c::ICError > update( float dt )
 	{
+		using Desired = float;
+		using Current = float;
+		using PIDInput = std::pair< Desired, Current >;
+		
 		return m_adc.readDesiredTemp()
-			.and_then( [ this ]( float desiredTemp ) -> std::expected< std::pair< float, float >, pbl::i2c::ICError > {
+			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::i2c::ICError > {
 				auto currTemp = m_lm75.getTemperatureC();
 				if( !currTemp )
 				{
@@ -69,8 +73,8 @@ public:
 
 				return std::pair{ desiredTemp, *currTemp };
 			} )
-			.and_then( [ this, dt ]( std::pair< float, float > values ) -> std::expected< float, pbl::i2c::ICError > {
-				return ( m_pid( dt, unwrap( values ) ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
+			.and_then( [ this, dt ]( PIDInput values ) -> std::expected< float, pbl::i2c::ICError > {
+				return ( m_pid( dt, values ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
 			} )
 			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
 			.or_else( []( const auto error ) -> std::expected< void, pbl::i2c::ICError > {
