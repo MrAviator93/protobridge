@@ -7,8 +7,8 @@ Quick cmake build from source notes.
 <https://github.com/Kitware/CMake>
 
 ```bash
-git clone --depth=1 --branch v3.28.0 --recurse-submodules -j20 git@github.com:Kitware/CMake.git cmake-3.28.0
-cd cmake-3.28.0 && mkdir build && cd build
+git clone --depth=1 --branch v3.29.3 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-3.29.3
+cd cmake-3.29.3 && mkdir build && cd build
 ../bootstrap
 make -j$(nproc)
 sudo make install
