@@ -1,6 +1,8 @@
 #ifndef PBL_I2C_IC_BASE_HPP__
 #define PBL_I2C_IC_BASE_HPP__
 
+#include "ICError.hpp"
+
 // C++
 #include <span>
 #include <chrono>
