@@ -7,6 +7,7 @@
 
 // C++
 #include <optional>
+#include <expected>
 
 namespace pbl::i2c
 {
@@ -56,6 +57,9 @@ class BMP180Controller final : public ICBase, public utils::Counter< BMP180Contr
 	static constexpr std::size_t kCalibConstAlign = 2;
 
 public:
+	template < typename T >
+	using Result = std::expected< T, ICError >;
+
 	enum class Address : std::uint8_t
 	{
 		DEFAULT = 0x77,
@@ -81,16 +85,16 @@ public:
 	~BMP180Controller();
 
 	/// Retrieves the temperature in degrees Celsius
-	[[nodiscard]] std::optional< float > getTrueTemperatureC();
+	[[nodiscard]] Result< float > getTrueTemperatureC();
 
 	/// Retrieves the temperature in Fahrenheit
-	[[nodiscard]] std::optional< float > getTemperatureF();
+	[[nodiscard]] Result< float > getTemperatureF();
 
 	/// Retrieves the true pressure in pascals
-	[[nodiscard]] std::optional< float > getTruePressurePa();
+	[[nodiscard]] Result< float > getTruePressurePa();
 
 	/// Calculates the absolute altitude using international barometric formula
-	[[nodiscard]] std::optional< float > getAbsoluteAltitude();
+	[[nodiscard]] Result< float > getAbsoluteAltitude();
 
 private:
 	SamplingAccuracy m_samplingAccuracy;

@@ -129,7 +129,7 @@ BMP180Controller::BMP180Controller( BusController& busController, SamplingAccura
 
 BMP180Controller::~BMP180Controller() = default;
 
-std::optional< float > BMP180Controller::getTrueTemperatureC()
+auto BMP180Controller::getTrueTemperatureC() -> Result< float >
 {
 	using namespace std::chrono_literals;
 
@@ -155,17 +155,18 @@ std::optional< float > BMP180Controller::getTrueTemperatureC()
 	return static_cast< float >( T ) * 0.1f;
 }
 
-std::optional< float > BMP180Controller::getTemperatureF()
+auto BMP180Controller::getTemperatureF() -> Result< float >
 {
-	if( auto temp = getTrueTemperatureC(); temp.has_value() )
+	const auto temp = getTrueTemperatureC();
+	if( temp.has_value() )
 	{
 		return utils::celsiusToFahrenheit( temp.value() );
 	}
 
-	return std::nullopt;
+	return std::unexpected( temp.error() );
 }
 
-std::optional< float > BMP180Controller::getTruePressurePa()
+auto BMP180Controller::getTruePressurePa() -> Result< float >
 {
 	using namespace std::chrono_literals;
 
@@ -256,7 +257,7 @@ std::optional< float > BMP180Controller::getTruePressurePa()
 }
 
 // TODO: Consider moving this function to utils/Math.hpp
-std::optional< float > BMP180Controller::getAbsoluteAltitude()
+auto BMP180Controller::getAbsoluteAltitude() -> Result< float >
 {
 	// H = 44330 * [1 - (P/p0)^(1/5.255) ]
 	constexpr float exponent = 1.0f / 5.255f;
@@ -269,7 +270,7 @@ std::optional< float > BMP180Controller::getAbsoluteAltitude()
 		return 44330.0f * r;
 	}
 
-	return std::nullopt;
+	return std::unexpected( ICError::FAILED_TO_READ );
 }
 
 } // namespace pbl::i2c
