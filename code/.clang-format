@@ -36,9 +36,9 @@ AlignOperands:   true
 AlignTrailingComments: false
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: false
 AlwaysBreakAfterReturnType: None
@@ -84,7 +84,7 @@ SpaceBeforeCpp11BracedList: false
 DerivePointerAlignment: false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
-IndentCaseLabels: false
+IndentCaseLabels: true
 FixNamespaceComments: true
 IndentWrappedFunctionNames: false
 KeepEmptyLinesAtTheStartOfBlocks: true
@@ -119,6 +119,9 @@ SpaceBeforeInheritanceColon: true
 
 SortUsingDeclarations: true
 SortIncludes: false
+
+# Concepts
+# AllowShortCompoundRequirementOnASingleLine: true # clang-format 18 required
 
 # Comments are for developers, they should arrange them
 ReflowComments: false
