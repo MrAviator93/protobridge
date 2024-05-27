@@ -81,16 +81,16 @@ public:
 	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 4 >& result );
 
 	/// TODO: To be introduced, default endian in i2c comms is big, if mismatch convert to native
-	// [[nodiscard]] bool read( const std::uint8_t slaveAddr,
-	// 						 const std::uint8_t reg,
-	// 						 std::int16_t& value,
-	// 						 const std::endian endian = std::endian::big );
+	[[nodiscard]] bool read( const std::uint8_t slaveAddr,
+							 const std::uint8_t reg,
+							 std::int16_t& value,
+							 const std::endian endian = std::endian::big );
 
 	/// TODO: To be introduced, default endian in i2c comms is big, if mismatch convert to native
-	// [[nodiscard]] bool read( const std::uint8_t slaveAddr,
-	// 						 const std::uint8_t reg,
-	// 						 std::int32_t& value,
-	// 						 const std::endian endian = std::endian::big );
+	[[nodiscard]] bool read( const std::uint8_t slaveAddr,
+							 const std::uint8_t reg,
+							 std::int32_t& value,
+							 const std::endian endian = std::endian::big );
 
 	/**
      * @brief Read a data buffer from specified register (raw pointer version)

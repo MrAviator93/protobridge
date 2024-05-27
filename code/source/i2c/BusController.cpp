@@ -62,6 +62,38 @@ constexpr std::array< std::pair< std::size_t, std::string_view >, 20 > kFuncsToC
 	std::pair{ I2C_FUNC_SMBUS_WRITE_I2C_BLOCK, "I2C_FUNC_SMBUS_WRITE_I2C_BLOCK" },
 	std::pair{ I2C_FUNC_SMBUS_HOST_NOTIFY, "I2C_FUNC_SMBUS_HOST_NOTIFY" } };
 
+template < std::size_t N >
+[[nodiscard]] bool
+readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, N >& result )
+{
+	std::uint8_t outbuf[ 2 ];
+	outbuf[ 0 ] = reg;
+
+	i2c_msg msgs[ 2 ];
+	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].flags = 0;
+	msgs[ 0 ].len = 1;
+	msgs[ 0 ].buf = outbuf;
+
+	msgs[ 1 ].addr = slaveAddr;
+	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
+	msgs[ 1 ].len = N;
+	msgs[ 1 ].buf = result.data();
+
+	i2c_rdwr_ioctl_data msgset[ 1 ];
+	msgset[ 0 ].msgs = msgs;
+	msgset[ 0 ].nmsgs = 2;
+
+	::memset( result.data(), 0x00, N );
+
+	if( ::ioctl( fd, I2C_RDWR, &msgset ) < 0 )
+	{
+		return false;
+	}
+
+	return true;
+}
+
 } // namespace
 
 BusController::BusController( const std::string& busName )
@@ -138,30 +170,10 @@ bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, 
 
 	std::lock_guard _{ m_fdMtx };
 
-	std::uint8_t outbuf[ 2 ];
-	outbuf[ 0 ] = reg;
-
-	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slaveAddr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = 1;
-	msgs[ 0 ].buf = outbuf;
-
-	msgs[ 1 ].addr = slaveAddr;
-	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
-	msgs[ 1 ].len = 2;
-	msgs[ 1 ].buf = result.data();
-
-	i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].msgs = msgs;
-	msgset[ 0 ].nmsgs = 2;
-
-	::memset( result.data(), 0x00, 2 );
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( !readN( m_fd, slaveAddr, reg, result ) )
 	{
 		reportError();
-		return -1;
+		return false;
 	}
 
 	return true;
@@ -177,30 +189,74 @@ bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, 
 
 	std::lock_guard _{ m_fdMtx };
 
-	std::uint8_t outbuf[ 2 ];
-	outbuf[ 0 ] = reg;
-
-	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slaveAddr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = 1;
-	msgs[ 0 ].buf = outbuf;
-
-	msgs[ 1 ].addr = slaveAddr;
-	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
-	msgs[ 1 ].len = 2;
-	msgs[ 1 ].buf = result.data();
-
-	i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].msgs = msgs;
-	msgset[ 0 ].nmsgs = 4;
-
-	::memset( result.data(), 0x00, 4 );
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( !readN( m_fd, slaveAddr, reg, result ) )
 	{
 		reportError();
-		return -1;
+		return false;
+	}
+
+	return true;
+}
+
+bool BusController::read( const std::uint8_t slaveAddr,
+						  const std::uint8_t reg,
+						  std::int16_t& value,
+						  const std::endian endian )
+{
+	std::array< std::uint8_t, 2 > raw{};
+	if( !read( slaveAddr, reg, raw ) )
+	{
+		return false;
+	}
+
+	if( endian == std::endian::native )
+	{
+		// Native endianness: directly interpret the raw bytes
+		value = ( raw[ 0 ] << 8 ) | raw[ 1 ];
+	}
+	else if( endian == std::endian::little )
+	{
+		value = ( raw[ 1 ] << 8 ) | raw[ 0 ];
+	}
+	else if( endian == std::endian::big )
+	{
+		value = ( raw[ 0 ] << 8 ) | raw[ 1 ];
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool BusController::read( const std::uint8_t slaveAddr,
+						  const std::uint8_t reg,
+						  std::int32_t& value,
+						  const std::endian endian )
+{
+	std::array< std::uint8_t, 4 > raw{};
+	if( !read( slaveAddr, reg, raw ) )
+	{
+		return false;
+	}
+
+	if( endian == std::endian::native )
+	{
+		// Native endianness: directly interpret the raw bytes
+		value = ( raw[ 0 ] << 24 ) | ( raw[ 1 ] << 16 ) | ( raw[ 2 ] << 8 ) | raw[ 3 ];
+	}
+	else if( endian == std::endian::little )
+	{
+		value = ( raw[ 3 ] << 24 ) | ( raw[ 2 ] << 16 ) | ( raw[ 1 ] << 8 ) | raw[ 0 ];
+	}
+	else if( endian == std::endian::big )
+	{
+		value = ( raw[ 0 ] << 24 ) | ( raw[ 1 ] << 16 ) | ( raw[ 2 ] << 8 ) | raw[ 3 ];
+	}
+	else
+	{
+		return false;
 	}
 
 	return true;
