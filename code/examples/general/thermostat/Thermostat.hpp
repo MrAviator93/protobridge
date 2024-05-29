@@ -20,7 +20,7 @@ class ThermostatController
 public:
 	ThermostatController( pbl::i2c::BusController& ) { }
 
-	[[nodiscard]] std::expected< void, pbl::i2c::ICError > adjust( float value )
+	[[nodiscard]] std::expected< void, pbl::i2c::ErrorCode > adjust( float value )
 	{
 		std::println( "Adjust: {}", value );
 		return {};
@@ -32,7 +32,7 @@ class ADCController
 public:
 	ADCController( pbl::i2c::BusController& ) { }
 
-	[[nodiscard]] std::expected< float, pbl::i2c::ICError > readDesiredTemp()
+	[[nodiscard]] std::expected< float, pbl::i2c::ErrorCode > readDesiredTemp()
 	{
 		// You would get it using I2C from
 		return 25.0f;
@@ -55,14 +55,14 @@ public:
 
 	{ }
 
-	[[nodiscard]] std::expected< void, pbl::i2c::ICError > update( float dt )
+	[[nodiscard]] std::expected< void, pbl::i2c::ErrorCode > update( float dt )
 	{
 		using Desired = float;
 		using Current = float;
 		using PIDInput = std::pair< Desired, Current >;
 
 		return m_adc.readDesiredTemp()
-			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::i2c::ICError > {
+			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::i2c::ErrorCode > {
 				auto currTemp = m_lm75.getTemperatureC();
 				if( !currTemp )
 				{
@@ -71,11 +71,11 @@ public:
 
 				return std::pair{ desiredTemp, *currTemp };
 			} )
-			.and_then( [ this, dt ]( PIDInput values ) -> std::expected< float, pbl::i2c::ICError > {
+			.and_then( [ this, dt ]( PIDInput values ) -> std::expected< float, pbl::i2c::ErrorCode > {
 				return ( m_pid( dt, values ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
 			} )
 			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
-			.or_else( []( const auto error ) -> std::expected< void, pbl::i2c::ICError > {
+			.or_else( []( const auto error ) -> std::expected< void, pbl::i2c::ErrorCode > {
 				return std::unexpected( error );
 			} );
 	}

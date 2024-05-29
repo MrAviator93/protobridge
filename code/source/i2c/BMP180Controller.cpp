@@ -271,7 +271,7 @@ auto BMP180Controller::getAbsoluteAltitude() -> Result< float >
 		return 44330.0f * r;
 	}
 
-	return std::unexpected( ICError::FAILED_TO_READ );
+	return std::unexpected( ErrorCode::FAILED_TO_READ );
 }
 
 } // namespace pbl::i2c

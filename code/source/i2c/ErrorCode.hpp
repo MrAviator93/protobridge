@@ -1,5 +1,5 @@
-#ifndef PBL_I2C_IC_ERROR_HPP__
-#define PBL_I2C_IC_ERROR_HPP__
+#ifndef PBL_I2C_ERROR_CODE_HPP__
+#define PBL_I2C_ERROR_CODE_HPP__
 
 // C++
 #include <cstdint>
@@ -8,8 +8,8 @@
 namespace pbl::i2c
 {
 
-/// TODO: Consider to rename to ErrorCode and move to utils lib.
-enum class ICError : std::uint8_t
+/// TODO: Consider to move to utils lib.
+enum class ErrorCode : std::uint8_t
 {
 	FAILED_TO_READ, // General failure to read
 	FAILED_TO_WRITE, // General failure to write
@@ -23,11 +23,11 @@ enum class ICError : std::uint8_t
 	UNEXPECTED_ERROR // Any unexpected error
 };
 
-constexpr std::string_view toStringView( const ICError error ) noexcept
+constexpr std::string_view toStringView( const ErrorCode error ) noexcept
 {
 	switch( error )
 	{
-		using enum ICError;
+		using enum ErrorCode;
 		case FAILED_TO_READ: return "FAILED_TO_READ";
 		case FAILED_TO_WRITE: return "FAILED_TO_WRITE";
 		case DEVICE_NOT_FOUND: return "DEVICE_NOT_FOUND";
@@ -45,4 +45,4 @@ constexpr std::string_view toStringView( const ICError error ) noexcept
 }
 
 } // namespace pbl::i2c
-#endif // PBL_I2C_IC_ERROR_HPP__
+#endif // PBL_I2C_ERROR_CODE_HPP__

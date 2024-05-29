@@ -1,7 +1,7 @@
 
 set(PBL_LIB_HEADERS
     ICBase.hpp
-    ICError.hpp
+    ErrorCode.hpp
     Controllers.hpp
     BusController.hpp
     LM75Controller.hpp
@@ -22,7 +22,6 @@ set(PBL_LIB_HEADERS
 set(PBL_LIB_SOURCE
     BusController.cpp
     ICBase.cpp
-    ICError.cpp
     LM75Controller.cpp
     BMP180Controller.cpp
     ADS1015Controller.cpp

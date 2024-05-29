@@ -58,7 +58,7 @@ class BMP180Controller final : public ICBase, public utils::Counter< BMP180Contr
 
 public:
 	template < typename T >
-	using Result = std::expected< T, ICError >;
+	using Result = std::expected< T, ErrorCode >;
 
 	enum class Address : std::uint8_t
 	{

@@ -91,9 +91,9 @@ struct IntegralWindupGuard
 {
 	T maxIntegral;
 
-	[[nodiscard]] T operator()( T integralComponent ) const
+	[[nodiscard]] constexpr T operator()( T integralComponent ) const
 	{
-		return constexpr std::clamp( integralComponent, -maxIntegral, maxIntegral );
+		return std::clamp( integralComponent, -maxIntegral, maxIntegral );
 	}
 };
 
