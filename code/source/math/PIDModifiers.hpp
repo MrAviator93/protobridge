@@ -13,7 +13,7 @@ struct Min
 {
 	T min;
 
-	[[nodiscard]] T operator()( T value ) const { return std::min( min, value ); }
+	[[nodiscard]] constexpr T operator()( T value ) const { return std::min( min, value ); }
 };
 
 template < std::floating_point T >
@@ -21,7 +21,7 @@ struct Max
 {
 	T max;
 
-	[[nodiscard]] T operator()( T value ) const { return std::max( max, value ); }
+	[[nodiscard]] constexpr T operator()( T value ) const { return std::max( max, value ); }
 };
 
 template < std::floating_point T >
@@ -30,13 +30,13 @@ struct Cap
 	T lower;
 	T upper;
 
-	[[nodiscard]] T operator()( T value ) const { return std::clamp( value, lower, upper ); }
+	[[nodiscard]] constexpr T operator()( T value ) const { return std::clamp( value, lower, upper ); }
 };
 
 struct Pow2
 {
 	template < std::floating_point T >
-	[[nodiscard]] T operator()( T value ) const
+	[[nodiscard]] constexpr T operator()( T value ) const
 	{
 		return value * value;
 	}
@@ -45,7 +45,7 @@ struct Pow2
 struct Pow3
 {
 	template < std::floating_point T >
-	[[nodiscard]] T operator()( T value ) const
+	[[nodiscard]] constexpr T operator()( T value ) const
 	{
 		return value * value * value;
 	}
@@ -54,9 +54,18 @@ struct Pow3
 struct Pow4
 {
 	template < std::floating_point T >
-	[[nodiscard]] T operator()( T value ) const
+	[[nodiscard]] constexpr T operator()( T value ) const
 	{
 		return value * value * value * value;
+	}
+};
+
+struct Pow5
+{
+	template < std::floating_point T >
+	[[nodiscard]] constexpr T operator()( T value ) const
+	{
+		return value * value * value * value * value;
 	}
 };
 
@@ -65,7 +74,7 @@ struct DeadZone
 {
 	T threshold;
 
-	[[nodiscard]] T operator()( T value ) const { return ( std::abs( value ) < threshold ) ? T{} : value; }
+	[[nodiscard]] constexpr T operator()( T value ) const { return ( std::abs( value ) < threshold ) ? T{} : value; }
 };
 
 template < std::floating_point T >
@@ -74,7 +83,7 @@ struct Saturation
 	T minVal;
 	T maxVal;
 
-	[[nodiscard]] T operator()( T value ) const { return std::clamp( value, minVal, maxVal ); }
+	[[nodiscard]] constexpr T operator()( T value ) const { return std::clamp( value, minVal, maxVal ); }
 };
 
 template < std::floating_point T >
@@ -84,7 +93,7 @@ struct IntegralWindupGuard
 
 	[[nodiscard]] T operator()( T integralComponent ) const
 	{
-		return std::clamp( integralComponent, -maxIntegral, maxIntegral );
+		return constexpr std::clamp( integralComponent, -maxIntegral, maxIntegral );
 	}
 };
 
@@ -94,9 +103,9 @@ struct RateLimiter
 	T lastValue{};
 	T maxRate;
 
-	[[nodiscard]] T operator()( T value )
+	[[nodiscard]] constexpr T operator()( T value )
 	{
-		T limitedValue = std::clamp( value, lastValue - maxRate, lastValue + maxRate );
+		const T limitedValue = std::clamp( value, lastValue - maxRate, lastValue + maxRate );
 		lastValue = limitedValue;
 		return limitedValue;
 	}
@@ -107,7 +116,7 @@ struct ExponentialScaling
 {
 	T exponent;
 
-	[[nodiscard]] T operator()( T value ) const { return std::pow( value, exponent ); }
+	[[nodiscard]] constexpr T operator()( T value ) const { return std::pow( value, exponent ); }
 };
 
 // Introduces a small oscillation or noise to the output,

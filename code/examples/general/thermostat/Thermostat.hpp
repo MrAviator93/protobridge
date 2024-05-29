@@ -9,8 +9,6 @@
 #include <print>
 #include <expected>
 
-#define unwrap( p ) p.first, p.second
-
 namespace pbl
 {
 
@@ -62,7 +60,7 @@ public:
 		using Desired = float;
 		using Current = float;
 		using PIDInput = std::pair< Desired, Current >;
-		
+
 		return m_adc.readDesiredTemp()
 			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::i2c::ICError > {
 				auto currTemp = m_lm75.getTemperatureC();

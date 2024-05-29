@@ -27,6 +27,9 @@ template < std::floating_point T >
 class PController : public ControllerBase< T >
 {
 public:
+	using Desired = T;
+	using Current = T;
+
 	constexpr PController( T Kp ) noexcept
 		: m_Kp{ Kp }
 	{ }
@@ -43,7 +46,7 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PController& update( const std::pair< T, T >& values ) noexcept
+	[[nodiscard]] constexpr PController& update( const std::pair< Desired, Current >& values ) noexcept
 	{
 		return update( values.first, values.second );
 	}
@@ -53,7 +56,7 @@ public:
 		return update( desiredValue, currentValue );
 	}
 
-	[[nodiscard]] constexpr PController& operator()( const std::pair< T, T >& values ) noexcept
+	[[nodiscard]] constexpr PController& operator()( const std::pair< Desired, Current >& values ) noexcept
 	{
 		return update( values );
 	}
@@ -84,6 +87,9 @@ template < std::floating_point T >
 class PIController : public ControllerBase< T >
 {
 public:
+	using Desired = T;
+	using Current = T;
+
 	constexpr PIController( T Kp, T Ki ) noexcept
 		: m_Kp{ Kp }
 		, m_Ki{ Ki }
@@ -108,7 +114,7 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIController& update( const T dt, const std::pair< T, T >& values ) noexcept
+	[[nodiscard]] constexpr PIController& update( const T dt, const std::pair< Desired, Current >& values ) noexcept
 	{
 		return update( dt, values.first, values.second );
 	}
@@ -118,7 +124,7 @@ public:
 		return update( dt, desiredValue, currentValue );
 	}
 
-	[[nodiscard]] constexpr PIController& operator()( const T dt, const std::pair< T, T >& values ) noexcept
+	[[nodiscard]] constexpr PIController& operator()( const T dt, const std::pair< Desired, Current >& values ) noexcept
 	{
 		return update( dt, values );
 	}
@@ -153,6 +159,9 @@ template < std::floating_point T >
 class PIDController : public ControllerBase< T >
 {
 public:
+	using Desired = T;
+	using Current = T;
+
 	/**
 	 * @brief Construct a new CPIDControllerT object
 	 * 
@@ -202,7 +211,7 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIDController& update( const T dt, const std::pair< T, T >& values ) noexcept
+	[[nodiscard]] constexpr PIDController& update( const T dt, const std::pair< Desired, Current >& values ) noexcept
 	{
 		return update( dt, values.first, values.second );
 	}
@@ -212,7 +221,7 @@ public:
 		return update( dt, desiredValue, currentValue );
 	}
 
-	[[nodiscard]] constexpr PIDController& operator()( const T dt, const std::pair< T, T >& values ) noexcept
+	[[nodiscard]] constexpr PIDController& operator()( const T dt, const std::pair< Desired, Current >& values ) noexcept
 	{
 		return update( dt, values );
 	}
