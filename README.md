@@ -16,6 +16,7 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
 
 - [ProtoBridge Library](#protobridge-library)
 	- [Table of contents](#table-of-contents)
+	- [Structure](#structure)
 	- [Features](#features)
 	- [Examples](#examples)
 		- [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
@@ -31,6 +32,15 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
 		- [Commit Message Guidelines](#commit-message-guidelines)
 		- [Example of a Commit Message](#example-of-a-commit-message)
 	- [License](#license)
+
+## Structure
+
+The library is organized into several key sub-libraries, each offering specific functionality:
+
+- i2c: provides controllers and utilities for I2C communication, including support for various I2C devices.
+- spi: facilitates SPI communication, offering tools to interact with SPI devices.
+- math: Includes mathematical utilities and controllers, such as PID controllers for implementing control systems.
+- utils: Provides various utility functions and tools to assist with general tasks and improve code efficiency.
 
 ## Features
 
