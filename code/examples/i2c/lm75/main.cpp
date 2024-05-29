@@ -43,7 +43,7 @@ int main( const int argc, const char* const* const argv )
 			if( !temp.has_value() )
 			{
 				// With C++ 23 we can retrieve exact error what caused the value not present
-				std::println( stderr, "{}", pbl::i2c::toStringView( temp.error() ) );
+				std::println( stderr, "{}", pbl::utils::toStringView( temp.error() ) );
 				return 1;
 			}
 

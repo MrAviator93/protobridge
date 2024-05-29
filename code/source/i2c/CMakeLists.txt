@@ -1,7 +1,6 @@
 
 set(PBL_LIB_HEADERS
     ICBase.hpp
-    ErrorCode.hpp
     Controllers.hpp
     BusController.hpp
     LM75Controller.hpp

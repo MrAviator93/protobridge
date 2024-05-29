@@ -4,6 +4,7 @@ set(PBL_LIB_HEADERS
     Counter.hpp
     TimeStep.hpp
     SpinLock.hpp
+    ErrorCode.hpp
     TimeTypes.hpp
     FastPimpl.hpp
     TimeStamp.hpp

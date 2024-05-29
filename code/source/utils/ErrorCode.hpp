@@ -1,11 +1,11 @@
-#ifndef PBL_I2C_ERROR_CODE_HPP__
-#define PBL_I2C_ERROR_CODE_HPP__
+#ifndef PBL_UTILS_ERROR_CODE_HPP__
+#define PBL_UTILS_ERROR_CODE_HPP__
 
 // C++
 #include <cstdint>
 #include <string_view>
 
-namespace pbl::i2c
+namespace pbl::utils
 {
 
 /// TODO: Consider to move to utils lib.
@@ -44,5 +44,5 @@ constexpr std::string_view toStringView( const ErrorCode error ) noexcept
 	return "UNDEFINED";
 }
 
-} // namespace pbl::i2c
-#endif // PBL_I2C_ERROR_CODE_HPP__
+} // namespace pbl::utils
+#endif // PBL_UTILS_ERROR_CODE_HPP__
