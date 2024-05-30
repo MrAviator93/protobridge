@@ -50,13 +50,13 @@ constexpr std::uint8_t kBmp180CmdPressHighRes{ 0xB4 }; //!< Pressure in high-res
 constexpr std::uint8_t kBmp180CmdPressUltraHighRes{ 0xF4 }; //!< Pressure in ultra high-res mode.
 
 // You need to use this structure in order to be able to figure out which command to use at what sampling parameter
-constexpr std::array< std::pair< BMP180Controller::SamplingAccuracy, std::uint8_t >, 4 > kCmdLookupTable = {
+constexpr std::array kCmdLookupTable = {
 	std::pair{ BMP180Controller::SamplingAccuracy::ULTRA_LOW_POWER, kBmp180CmdPressUltraLow },
 	std::pair{ BMP180Controller::SamplingAccuracy::STANDARD, kBmp180CmdPressStandard },
 	std::pair{ BMP180Controller::SamplingAccuracy::HIGH_RESOLUTION, kBmp180CmdPressHighRes },
 	std::pair{ BMP180Controller::SamplingAccuracy::ULTRA_HIGH_RESOLUTION, kBmp180CmdPressUltraHighRes } };
 
-constexpr std::uint8_t getBmp180CmdForMode( BMP180Controller::SamplingAccuracy mode )
+constexpr std::uint8_t commandForMode( BMP180Controller::SamplingAccuracy mode )
 {
 	for( const auto& [ accuracy, cmd ] : kCmdLookupTable )
 	{
