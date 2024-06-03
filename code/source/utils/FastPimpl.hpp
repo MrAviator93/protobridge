@@ -66,7 +66,7 @@ public:
 	T* operator->() { return reinterpret_cast< T* >( &m_storage ); }
 
 	/// Overloads the arrow operator to allow direct access to the internal object's methods (const version).
-	const T* operator->() const { return reinterpret_cast< T* >( &m_storage ); }
+	const T* operator->() const { return reinterpret_cast< const T* >( &m_storage ); }
 
 private:
 	/**
