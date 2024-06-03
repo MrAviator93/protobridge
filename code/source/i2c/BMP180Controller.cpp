@@ -7,6 +7,7 @@
 #include <cmath>
 #include <chrono>
 #include <utility>
+#include <algorithm>
 
 // Debug
 #include <print>
@@ -58,12 +59,10 @@ constexpr std::array kCmdLookupTable = {
 
 constexpr std::uint8_t commandForMode( BMP180Controller::SamplingAccuracy mode )
 {
-	for( const auto& [ accuracy, cmd ] : kCmdLookupTable )
+	const auto it = std::ranges::find_if( kCmdLookupTable, [ mode ]( const auto& v ) { return v.first == mode; } );
+	if( it != kCmdLookupTable.end() )
 	{
-		if( accuracy == mode )
-		{
-			return cmd;
-		}
+		return it->second;
 	}
 
 	return {};
