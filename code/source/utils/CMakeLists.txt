@@ -9,6 +9,7 @@ set(PBL_LIB_HEADERS
     FastPimpl.hpp
     TimeStamp.hpp
     FixedString.hpp
+    EnumFlagSet.hpp
     CompactBitset.hpp
     RandomGenerator.hpp
 )
