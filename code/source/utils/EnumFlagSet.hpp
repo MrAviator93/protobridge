@@ -31,8 +31,8 @@ public:
 
 	/// Variadic constructor from multiple bits, accepts IntType and or EnumType.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 1 && ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) &&
-				  ... )
+		requires( sizeof...( Bits ) > 1 &&
+				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
 	constexpr EnumFlagSet( Bits... bits ) noexcept
 		: m_value{ ( ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) | ... ) }
 	{ }
@@ -50,11 +50,11 @@ public:
 
 	///  Variadic set function to set multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 0 && ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) &&
-				  ... )
+		requires( sizeof...( Bits ) > 1 &&
+				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
 	constexpr void set( Bits... bits ) noexcept
 	{
-		( m_value |= ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ), ... );
+		( ( m_value |= ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
 	}
 
 	/// Clears a specific bit.
@@ -62,11 +62,11 @@ public:
 
 	///  Variadic clear function to clear multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 0 && ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) &&
-				  ... )
+		requires( sizeof...( Bits ) > 1 &&
+				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
 	constexpr void clear( Bits... bits ) noexcept
 	{
-		( m_value &= ~( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ), ... );
+		( ( m_value &= ~( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
 	}
 
 	/// Toggles a specific bit.
@@ -74,10 +74,11 @@ public:
 
 	///  Variadic toggle function to toggle multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 0( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... )
-	constexpr void clear( Bits... bits ) noexcept
+		requires( sizeof...( Bits ) > 1 &&
+				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
+	constexpr void toggle( Bits... bits ) noexcept
 	{
-		( m_value &= ~( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ), ... );
+		( ( m_value ^= ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
 	}
 
 	/// Tests if a specific bit is set.
@@ -88,8 +89,8 @@ public:
 
 	///  Variadic test function to test multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 0 && ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) &&
-				  ... )
+		requires( sizeof...( Bits ) > 1 &&
+				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
 	constexpr void test( Bits... bits ) noexcept
 	{
 		return ( ( m_value & ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ) && ... );
