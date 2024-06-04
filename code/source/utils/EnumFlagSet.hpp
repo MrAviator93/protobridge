@@ -31,7 +31,8 @@ public:
 
 	/// Variadic constructor from multiple bits, accepts IntType and or EnumType.
 	template < typename... Bits >
-		requires( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... )
+		requires( sizeof...( Bits ) > 1 && ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) &&
+				  ... )
 	constexpr EnumFlagSet( Bits... bits ) noexcept
 		: m_value{ ( ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) | ... ) }
 	{ }
