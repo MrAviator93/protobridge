@@ -70,6 +70,8 @@ public:
 
 	[[nodiscard]] constexpr auto value() const noexcept { return m_value; }
 
+	[[nodiscard]] constexpr auto operator<=>( const EnumFlagSet& ) const noexcept = default;
+
 private:
 	IntType m_value{};
 };
