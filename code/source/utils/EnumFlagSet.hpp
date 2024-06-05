@@ -48,7 +48,7 @@ public:
 	/// Sets a specific bit.
 	constexpr void set( EnumType bit ) noexcept { m_value |= static_cast< IntType >( bit ); }
 
-	///  Variadic set function to set multiple bits.
+	/// Variadic set function to set multiple bits.
 	template < typename... Bits >
 		requires( sizeof...( Bits ) > 1 &&
 				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
@@ -69,14 +69,14 @@ public:
 		( ( m_value &= ~( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
 	}
 
-	/// Toggles a specific bit.
-	constexpr void toggle( EnumType bit ) noexcept { m_value ^= static_cast< IntType >( bit ); }
+	/// Flips a specific bit.
+	constexpr void flip( EnumType bit ) noexcept { m_value ^= static_cast< IntType >( bit ); }
 
-	///  Variadic toggle function to toggle multiple bits.
+	/// Variadic toggle function to flip multiple bits.
 	template < typename... Bits >
 		requires( sizeof...( Bits ) > 1 &&
 				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
-	constexpr void toggle( Bits... bits ) noexcept
+	constexpr void flip( Bits... bits ) noexcept
 	{
 		( ( m_value ^= ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
 	}
@@ -87,13 +87,21 @@ public:
 		return ( m_value & static_cast< IntType >( bit ) ) != 0;
 	}
 
-	///  Variadic test function to test multiple bits.
+	/// Variadic test function to test multiple bits.
 	template < typename... Bits >
 		requires( sizeof...( Bits ) > 1 &&
 				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
 	constexpr void test( Bits... bits ) noexcept
 	{
 		return ( ( m_value & ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ) && ... );
+	}
+
+	/// Checks if all bits are set.
+	[[nodiscard]] constexpr bool all() const noexcept
+	{
+		if( m_value <= 0 ) return false;
+		
+		return m_value & ( m_value - 1 ) == 0;
 	}
 
 	/// Checks if any bit is set.

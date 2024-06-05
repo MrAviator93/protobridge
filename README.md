@@ -2,9 +2,9 @@
 
 Unlock the full potential of your single-board computer with the ProtoBridge Library, a robust and intuitive toolkit designed for seamless control and communication with a wide array of integrated circuits (ICs). This library transcends mere communication; it empowers users to effortlessly command and interact with diverse ICs, including temperature sensors, environmental monitors, and more, across multiple protocols.
 
-Ideal for both hobbyists and professionals, the ProtoBridge Library simplifies the process of setting up and initiating communication with devices like the LM75 temperature sensor. This enables efficient reading and management of data, ensuring a smooth and streamlined workflow for your projects.
+Ideal for both hobbyists and professionals, the ProtoBridge Library simplifies the process of setting up and initiating communication with a wide range of devices inlcuding sensors, motors, accelometers, gyroscopes and others. This enables efficient reading and management of data, ensuring a smooth and streamlined workflow for your projects.
 
-Built on the modern features of C++23, the ProtoBridge Library is an essential asset for reliable and effective device control. It offers broad compatibility and versatility, perfectly aligning with various single-board computer models and brands.
+Built on the modern features of C++ 23, the ProtoBridge Library is an essential asset for reliable and effective device control. It offers broad compatibility and versatility, perfectly aligning with various single-board computer models and brands.
 
 Whether your aim is to configure an environmental sensor or manage an I/O expander, the ProtoBridge Library facilitates intuitive and direct interaction with devices. It opens up a realm of possibilities in embedded systems and IoT applications, making sophisticated device control accessible and manageable.
 
@@ -15,23 +15,23 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
 ## Table of contents
 
 - [ProtoBridge Library](#protobridge-library)
-	- [Table of contents](#table-of-contents)
-	- [Structure](#structure)
-	- [Features](#features)
-	- [Examples](#examples)
-		- [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
-		- [Advanced - Pseudo Thermostat Implementation Example](#advanced---pseudo-thermostat-implementation-example)
-	- [Requirements](#requirements)
-		- [I2C Tools](#i2c-tools)
-	- [Quick Start](#quick-start)
-		- [Building from Source](#building-from-source)
-	- [Generating documentation](#generating-documentation)
-	- [Motivation](#motivation)
-	- [Contributing](#contributing)
-		- [Branch Naming Conventions](#branch-naming-conventions)
-		- [Commit Message Guidelines](#commit-message-guidelines)
-		- [Example of a Commit Message](#example-of-a-commit-message)
-	- [License](#license)
+  - [Table of contents](#table-of-contents)
+  - [Structure](#structure)
+  - [Features](#features)
+    - [Examples](#examples)
+    - [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
+    - [Advanced - Pseudo Thermostat Implementation Example](#advanced---pseudo-thermostat-implementation-example)
+  - [Requirements](#requirements)
+    - [I2C Tools](#i2c-tools)
+  - [Quick Start](#quick-start)
+    - [Building from Source](#building-from-source)
+  - [Generating documentation](#generating-documentation)
+  - [Motivation](#motivation)
+  - [Contributing](#contributing)
+    - [Branch Naming Conventions](#branch-naming-conventions)
+    - [Commit Message Guidelines](#commit-message-guidelines)
+    - [Example of a Commit Message](#example-of-a-commit-message)
+  - [License](#license)
 
 ## Structure
 
@@ -46,7 +46,7 @@ The library is organized into several key sub-libraries, each offering specific 
 
 - Multi-Protocol Device Control: Facilitates efficient and low-level communication across various protocols (I2C, SPI, Serial, and GPIO).
 - Compatibility with various single-board computers.
-- Modern C++23 Features.
+- Modern C++ 23 Features.
 - Customizable and Expandable.
 - User-Friendly Device Management.
 - Comprehensive documentation support.
@@ -152,6 +152,8 @@ private:
 
 // Include I2C library files
 #include "Thermostat.hpp"
+
+// Inlude Timer utility
 #include <utils/Timer.hpp>
 
 // Output
@@ -211,7 +213,7 @@ For more detailed examples, including how to interact with other types of sensor
 
 - Doctest
 - CMake (version 3.29.0 or newer).
-- A C++23 compliant compiler (GCC-14.1, Clang-18.1).
+- A C++ 23 compliant compiler (GCC-14.1, Clang-18.1).
 - A single-board computer (e.g., Raspberry Pi, BeagleBone) running an OS that supports I2C ioctl system calls.
 
 ### I2C Tools
@@ -264,7 +266,7 @@ Diving into embedded systems and single-board computers opened a whole new world
 
 What I sought was something clean, something elegant—a single library, written in a consistent style, harnessing the full power of modern C++. I dreamt of something cleaner, more intuitive. A tool that didn't force us to get lost in the weeds with every new IC, but rather, one that cleared the path, making device interaction almost second nature.
 
-That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++23's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for I2C communication, accommodating numerous configurations for various ICs all under one roof.
+That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++ 23's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for I2C communication, accommodating numerous configurations for various ICs all under one roof.
 
 This library is the fruit of that ambition: a testament to a belief in a world where sophisticated development doesn't have to be synonymous with complexity. It's here to provide a seamless, enjoyable experience for fellow developers, helping them bring their inventive projects to life with less hassle and more confidence.
 
