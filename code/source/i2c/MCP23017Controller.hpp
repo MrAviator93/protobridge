@@ -41,6 +41,11 @@ namespace pbl::i2c
  * @note The initial state of the pins after powering up the MCP23017 device is defined by its hardware 
  * characteristics. Users should ensure they configure the pins to a known state before performing operations.
  * 
+ * @note Most likely the default values on power-on:
+ * - IODIR registers (input/output direction): All pins are configured as inputs by default.
+ * - GPIO registers: Undefined, because inputs and outputs will have no state initially until configured.
+ * - GPPU registers (pull-up resistors): By default, the pull-up resistors are disabled for all pins.
+ * 
  * @note MCP23017 output pin configuration:
  * 1. If pins are set as output after chip restart (power off - on)
  * the pins will be all on 0x00. To set them all of use i2cset -y 1 0x20 0x14 0xff
