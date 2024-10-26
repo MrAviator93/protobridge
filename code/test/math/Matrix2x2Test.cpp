@@ -85,27 +85,46 @@ SCENARIO( "Testing matrix multiplication" )
 	}
 }
 
-// SCENARIO( "Testing scalar addition" )
-// {
-// 	GIVEN( "A 2x2 matrix and a scalar value" )
-// 	{
-// 		pbl::math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
-// 		float scalar = 2.0f;
+SCENARIO( "Adding a scalar to each element of a 2x2 matrix" )
+{
+	GIVEN( "A 2x2 matrix initialized with specific values and a scalar to add" )
+	{
+		pbl::math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
+		float scalar = 2.0f;
 
-// 		WHEN( "We add the scalar to the matrix" )
-// 		{
-// 			matrix += scalar;
+		WHEN( "The scalar is added to each element in a new matrix" )
+		{
+			matrix = matrix + scalar;
 
-// 			THEN( "Each element of the matrix should be increased by the scalar value" )
-// 			{
-// 				CHECK_EQ( matrix.at( 0 ), 3.0f );
-// 				CHECK_EQ( matrix.at( 1 ), 4.0f );
-// 				CHECK_EQ( matrix.at( 2 ), 5.0f );
-// 				CHECK_EQ( matrix.at( 3 ), 6.0f );
-// 			}
-// 		}
-// 	}
-// }
+			THEN( "Each element in the new matrix should be increased by the scalar value" )
+			{
+				CHECK_EQ( matrix.at( 0 ), 3.0f );
+				CHECK_EQ( matrix.at( 1 ), 4.0f );
+				CHECK_EQ( matrix.at( 2 ), 5.0f );
+				CHECK_EQ( matrix.at( 3 ), 6.0f );
+			}
+		}
+	}
+
+	GIVEN( "A 2x2 matrix initialized with specific values and a scalar to add (in-place)" )
+	{
+		pbl::math::Matrix2x2< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f };
+		float scalar = 2.0f;
+
+		WHEN( "The scalar is added in-place to each element of the matrix" )
+		{
+			matrix += scalar;
+
+			THEN( "Each element of the matrix should be increased by the scalar value in place" )
+			{
+				CHECK_EQ( matrix.at( 0 ), 3.0f );
+				CHECK_EQ( matrix.at( 1 ), 4.0f );
+				CHECK_EQ( matrix.at( 2 ), 5.0f );
+				CHECK_EQ( matrix.at( 3 ), 6.0f );
+			}
+		}
+	}
+}
 
 SCENARIO( "Testing scalar multiplication" )
 {
