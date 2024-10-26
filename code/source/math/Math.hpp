@@ -76,6 +76,43 @@ template < std::floating_point T >
 }
 
 /**
+ * @brief Maps a value from one range to another.
+ * 
+ * This function takes an input value within a specified input range 
+ * (`inMin` to `inMax`) and maps it proportionally to an output range 
+ * (`outMin` to `outMax`).
+ * 
+ * @tparam T The data type of the input values and the output. Typically, this is a floating-point type.
+ * 
+ * @param value The input value to be mapped from the input range to the output range.
+ * @param inMin The lower bound of the input range.
+ * @param inMax The upper bound of the input range.
+ * @param outMin The lower bound of the output range.
+ * @param outMax The upper bound of the output range.
+ * 
+ * @return T The value mapped to the output range, maintaining the proportion 
+ * relative to the input range.
+ * 
+ * @note Ensure that (inMax - inMin) is not zero to avoid division by zero errors.
+ * 
+ * @example 
+ * To map the value 5 from an input range of [0, 10] to an output range of [0, 100]:
+ * double result = map(5.0, 0.0, 10.0, 0.0, 100.0);
+ * This would set `result` to 50.0.
+ */
+template < std::floating_point T >
+[[nodiscard]] constexpr T map( T value, T inMin, T inMax, T outMin, T outMax ) noexcept
+{
+	if( inMax == inMin )
+	{
+		// Return outMin if input range is zero
+		return outMin;
+	}
+
+	return ( value - inMin ) * ( outMax - outMin ) / ( inMax - inMin ) + outMin;
+}
+
+/**
  * @brief Computes a linearly interpolated value between two points.
  * 
  * Given two points `(x1, y1)` and `(x2, y2)`, this function calculates the value `y` 
