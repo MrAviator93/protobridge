@@ -11,9 +11,12 @@ option(PBL_BUILD_EXAMPLES "Build examples" ON)
 option(PBL_BUILD_UTILITIES "Build utilities" ON)
 option(PBL_CORE_GENERATE_DOC "Generate documentation." ON)
 
-# Build individual libraries
+# Enable/Disable build individual libraries
 option(PBL_BUILD_I2C_LIB "Build I2C library" ON)
-option(PBL_BUILD_SPI_LIB "Build I2C library" ON)
+option(PBL_BUILD_SPI_LIB "Build SPI library" ON)
+option(PBL_BUILD_GPIO_LIB "Build Gpio library" ON)
+option(PBL_BUILD_SERIAL_LIB "Build Serial library" ON)
+option(PBL_BUILD_DEVICES_LIB "Build Devices library" ON)
 
 project(protobridge VERSION 1.0 LANGUAGES C CXX)
 
@@ -82,7 +85,6 @@ if (PBL_CORE_GENERATE_DOC)
         message("Doxygen has not been found on the current system. Install it in order to generate the documentation.")
     endif()
 endif()
-
 
 find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
 if (CMAKE_CXX_CPPCHECK)

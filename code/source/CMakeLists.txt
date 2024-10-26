@@ -8,3 +8,15 @@ endif()
 if(PBL_BUILD_SPI_LIB)
     add_subdirectory(spi)
 endif()
+
+if(PBL_BUILD_GPIO_LIB)
+    # TODO
+endif()
+
+if(PBL_BUILD_SERIAL_LIB)
+    # TODO
+endif()
+
+if(PBL_BUILD_DEVICES)
+    # TODO
+endif()
