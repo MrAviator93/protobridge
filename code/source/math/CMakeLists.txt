@@ -8,12 +8,12 @@ set(PBL_LIB_HEADERS
     Matrix3x3.hpp
     Matrix4x4.hpp
     Matrix6x6.hpp
+    Modifiers.hpp
     MatrixBase.hpp
     LinearBase.hpp
     Matrix12x12.hpp
     MatrixFormat.hpp
     KalmanFilter.hpp
-    PIDModifiers.hpp
     PredicionModels.hpp
     ComplementaryFilter.hpp
 )
