@@ -3,6 +3,7 @@
 
 // C++
 #include <mutex>
+#include <chrono>
 #include <atomic>
 #include <string>
 #include <cstdint>
@@ -14,6 +15,31 @@ namespace pbl::spi
 class BusController
 {
 public:
+	/// SPI mode
+	enum class Mode : std::uint8_t
+	{
+		MODE_0,
+		MODE_1,
+		MODE_2,
+		MODE_3
+	};
+
+	/// SPI speed
+	enum class Speed : std::uint32_t
+	{
+		SPEED_500KHZ = 500000,
+		SPEED_1MHZ = 1000000,
+		SPEED_5MHZ = 5000000,
+		SPEED_10MHZ = 10000000
+	};
+
+	/// Bits per word
+	enum class BitsPerWord : std::uint8_t
+	{
+		BITS_8 = 8,
+		BITS_16 = 16
+	};
+
 	/// Default ctor opens a file descriptor.
 	explicit BusController( const std::string& busName );
 
@@ -26,7 +52,22 @@ public:
 	/// Returns whether the I2C is open on the device.
 	[[nodiscard]] bool isOpen() const { return m_open.load(); }
 
+	/// Puts asleep calling thread for specified sleep time in milliseconds
+	void sleep( const std::chrono::milliseconds sleepTimeMs );
+
+	/// Puts asleep calling thread for specified sleep time in microseconds
+	void sleep( const std::chrono::microseconds sleepTimeUs );
+
 private:
+	// This class is non-copyable and non-movable
+	BusController( const BusController& ) = delete;
+	BusController( BusController&& ) = delete;
+	BusController operator=( const BusController& ) = delete;
+	BusController operator=( BusController&& ) = delete;
+
+	/// Configures the SPI bus
+	[[nodiscard]] bool configure( Mode mode, Speed speed, BitsPerWord bitsPerWord );
+
 	/// Retrieves error buffer and outputs it into the logger using make_error method.
 	void reportError();
 
