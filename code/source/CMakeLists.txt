@@ -10,7 +10,7 @@ if(PBL_BUILD_SPI_LIB)
 endif()
 
 if(PBL_BUILD_GPIO_LIB)
-    # TODO
+    add_subdirectory(gpio)
 endif()
 
 if(PBL_BUILD_SERIAL_LIB)
