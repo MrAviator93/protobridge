@@ -4,6 +4,9 @@
 #include "ICBase.hpp"
 #include <utils/Counter.hpp>
 
+// C++
+#include <bitset>
+
 namespace pbl::i2c
 {
 
@@ -217,6 +220,88 @@ private:
 
 	std::uint8_t m_portAPinStates{}; //!< Current pin states for port A
 	std::uint8_t m_portBPinStates{}; //!< Current pin states for port B
+};
+
+/// Version 2 of the original MCP23017 controller
+class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP23017ControllerV2 >
+{
+public:
+	enum class Address : std::uint8_t
+	{
+		H20 = 0x20, // A2=0, A1=0, A0=0
+		H21 = 0x21, // A2=0, A1=0, A0=1
+		H22 = 0x22, // A2=0, A1=1, A0=0
+		H23 = 0x23, // A2=0, A1=1, A0=1
+		H24 = 0x24, // A2=1, A1=0, A0=0
+		H25 = 0x25, // A2=1, A1=0, A0=1
+		H26 = 0x26, // A2=1, A1=1, A0=0
+		H27 = 0x27 // A2=1, A1=1, A0=1
+	};
+
+	class Port
+	{
+	public:
+		Port( MCP23017ControllerV2& controller )
+			: m_controller{ controller }
+		{ }
+
+		/// MCP23017 chip pin states, this needs to be checked! Could be otherway around!
+		enum class PinState : std::uint8_t
+		{
+			OFF = 0,
+			ON = 1
+		};
+
+		/// MCP23017 chip available pinmodes
+		enum class PinMode : std::uint8_t
+		{
+			OUTPUT = 0,
+			INPUT = 1
+		};
+
+		/// MCP23017 chip port addresses
+		enum class Address : std::uint8_t
+		{
+			PORT_A = 0x14,
+			PORT_B = 0x15
+		};
+
+		/// MCP23017 chip available pins on port A and B
+		enum Pins : std::uint8_t
+		{
+			PIN_1 = 0x01,
+			PIN_2 = 0x02,
+			PIN_3 = 0x04,
+			PIN_4 = 0x08,
+			PIN_5 = 0x10,
+			PIN_6 = 0x20,
+			PIN_7 = 0x40,
+			PIN_8 = 0x80
+		};
+
+	private:
+		MCP23017ControllerV2& m_controller;
+		std::bitset< 8 > m_iodir; // IODIR register for input/output direction
+		std::bitset< 8 > m_gpio; // GPIO register for pin states
+		std::bitset< 8 > m_gppu; // GPPU register for pull-up configuration
+		std::bitset< 8 > m_intcon; // INTCON register for interrupt configuration
+		std::bitset< 8 > m_defval; // DEFVAL register for default comparison value for interrupts
+		std::bitset< 8 > m_gpinten; // GPINTEN register for enabling/disabling interrupts
+		std::bitset< 8 > m_intcap; // INTCAP register for capturing the state at interrupt time
+		std::bitset< 8 > m_intf; // INTF register for interrupt flags (which pin triggered)
+	};
+
+	using enum Address;
+
+	/// Default ctor, all pins are configured as output by default
+	explicit MCP23017ControllerV2( BusController& busController, Address address = H20 ) noexcept;
+
+	[[nodiscard]] auto& portA( this auto& self ) noexcept { return self.m_portA; }
+	[[nodiscard]] auto& portB( this auto& self ) noexcept { return self.m_portB; }
+
+private:
+	Port m_portA;
+	Port m_portB;
 };
 
 } // namespace pbl::i2c

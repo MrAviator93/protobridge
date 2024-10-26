@@ -151,4 +151,12 @@ bool MCP23017Controller::retrieve()
 	return rslt;
 }
 
+MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Address address ) noexcept
+	: ICBase{ busController, address }
+	, m_portA{ *this }
+	, m_portB{ *this }
+{
+	// TODO
+}
+
 } // namespace pbl::i2c
