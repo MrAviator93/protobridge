@@ -10,12 +10,6 @@ set(PBL_LIB_HEADERS
     ADS1015Controller.hpp
     PCA9685Controller.hpp
     MCP23017Controller.hpp
-
-    # BME680 To be refactored
-    bme680.h
-    bme680_defs.h
-    BME680Controller.hpp
-    BME680ControllerV2.hpp
 )
 
 set(PBL_LIB_SOURCE
@@ -28,11 +22,6 @@ set(PBL_LIB_SOURCE
     MPU9250Controller.cpp
     PCA9685Controller.cpp
     MCP23017Controller.cpp
-
-    # BME680 To be refactored
-    bme680.c
-    BME680Controller.cpp
-    BME680ControllerV2.cpp
 )
 
 set(PBL_LIB_PRIVATE_DEPS
