@@ -38,9 +38,8 @@ int main( const int argc, const char* const* const argv )
 
 	mcp23017.setOffPortA( pbl::i2c::MCP23017Controller::Pins::PIN_8 );
 
-	pbl::i2c::BMP180Controller bmp180{ busController,
-									   pbl::i2c::BMP180Controller::DEFAULT,
-									   pbl::i2c::BMP180Controller::ULTRA_HIGH_RESOLUTION };
+	pbl::i2c::BMP180Controller bmp180{
+		busController, pbl::i2c::BMP180Controller::DEFAULT, pbl::i2c::BMP180Controller::ULTRA_HIGH_RESOLUTION };
 
 	if( const auto temp = bmp180.getTrueTemperatureC(); temp.has_value() )
 	{
@@ -56,14 +55,6 @@ int main( const int argc, const char* const* const argv )
 	{
 		std::println( "Absolute altitude: {} m", alt.value() );
 	}
-
-	// pbl::i2c::BME680ControllerV2 bme680{ busController };
-
-	// while( true )
-	// {
-	// 	bme680.printMeasurements();
-	// 	busController.sleep( std::chrono::milliseconds( 100 ) );
-	// }
 
 	return 0;
 }
