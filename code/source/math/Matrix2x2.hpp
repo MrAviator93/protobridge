@@ -53,9 +53,6 @@ public:
 	constexpr Matrix2x2& operator*=( const T scalar ) noexcept;
 };
 
-using Matrix2x2f = Matrix2x2< float >;
-using Matrix2x2d = Matrix2x2< double >;
-
 template < typename T >
 constexpr Matrix2x2< T > Matrix2x2< T >::operator+( const Matrix2x2< T >& other ) const noexcept
 {
@@ -165,6 +162,9 @@ constexpr Matrix2x2< T >& Matrix2x2< T >::operator*=( const T scalar ) noexcept
 	self.m_data[ 3 ] *= scalar;
 	return self;
 }
+
+using Matrix2x2f = Matrix2x2< float >;
+using Matrix2x2d = Matrix2x2< double >;
 
 } // namespace pbl::math
 #endif // I2C_MATH_MATRIX_2X2_HPP__

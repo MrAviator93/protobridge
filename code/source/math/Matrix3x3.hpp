@@ -53,9 +53,6 @@ public:
 	constexpr Matrix3x3& operator*=( const T scalar ) noexcept;
 };
 
-using Matrix3x3f = Matrix3x3< float >;
-using Matrix3x3d = Matrix3x3< double >;
-
 template < typename T >
 constexpr Matrix3x3< T > Matrix3x3< T >::operator+( const Matrix3x3< T >& other ) const noexcept
 {
@@ -84,7 +81,7 @@ constexpr Matrix3x3< T >& Matrix3x3< T >::operator+=( const Matrix3x3< T >& othe
 	self.m_data[ 6 ] += other.m_data[ 6 ];
 	self.m_data[ 7 ] += other.m_data[ 7 ];
 	self.m_data[ 8 ] += other.m_data[ 8 ];
-	return *this;
+	return self;
 }
 
 template < typename T >
@@ -115,7 +112,7 @@ constexpr Matrix3x3< T >& Matrix3x3< T >::operator+=( const T scalar ) noexcept
 	self.m_data[ 6 ] += scalar;
 	self.m_data[ 7 ] += scalar;
 	self.m_data[ 8 ] += scalar;
-	return *this;
+	return self;
 }
 
 template < typename T >
@@ -161,7 +158,7 @@ constexpr Matrix3x3< T >& Matrix3x3< T >::operator-=( const T scalar ) noexcept
 	self.m_data[ 6 ] -= scalar;
 	self.m_data[ 7 ] -= scalar;
 	self.m_data[ 8 ] -= scalar;
-	return *this;
+	return self;
 }
 
 template < typename T >
@@ -192,7 +189,7 @@ constexpr Matrix3x3< T >& Matrix3x3< T >::operator*=( const Matrix3x3< T >& othe
 	self.m_data[ 6 ] *= other.m_data[ 6 ];
 	self.m_data[ 7 ] *= other.m_data[ 7 ];
 	self.m_data[ 8 ] *= other.m_data[ 8 ];
-	return *this;
+	return self;
 }
 
 template < typename T >
@@ -223,8 +220,11 @@ constexpr Matrix3x3< T >& Matrix3x3< T >::operator*=( const T scalar ) noexcept
 	self.m_data[ 6 ] *= scalar;
 	self.m_data[ 7 ] *= scalar;
 	self.m_data[ 8 ] *= scalar;
-	return *this;
+	return self;
 }
+
+using Matrix3x3f = Matrix3x3< float >;
+using Matrix3x3d = Matrix3x3< double >;
 
 } // namespace pbl::math
 #endif // I2C_MATH_MATRIX_3X3_HPP__
