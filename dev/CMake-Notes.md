@@ -2,13 +2,13 @@
 
 Quick cmake build from source notes.
 
-## CMake 3.28
+## Build & Install CMake 3.30.5
 
 <https://github.com/Kitware/CMake>
 
 ```bash
-git clone --depth=1 --branch v3.29.3 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-3.29.3
-cd cmake-3.29.3 && mkdir build && cd build
+git clone --depth=1 --branch v3.30.5 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-3.30.5
+cd cmake-3.30.5 && mkdir build && cd build
 ../bootstrap
 make -j$(nproc)
 sudo make install
