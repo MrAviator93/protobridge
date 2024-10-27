@@ -9,6 +9,5 @@
 #include "MPU9250Controller.hpp"
 #include "PCA9685Controller.hpp"
 #include "MCP23017Controller.hpp"
-#include "BME680ControllerV2.hpp"
 
 #endif // PBL_I2C_CONTROLLERS_HPP__

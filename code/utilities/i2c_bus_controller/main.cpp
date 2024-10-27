@@ -57,13 +57,13 @@ int main( const int argc, const char* const* const argv )
 		std::println( "Absolute altitude: {} m", alt.value() );
 	}
 
-	pbl::i2c::BME680ControllerV2 bme680{ busController };
+	// pbl::i2c::BME680ControllerV2 bme680{ busController };
 
-	while( true )
-	{
-		bme680.printMeasurements();
-		busController.sleep( std::chrono::milliseconds( 100 ) );
-	}
+	// while( true )
+	// {
+	// 	bme680.printMeasurements();
+	// 	busController.sleep( std::chrono::milliseconds( 100 ) );
+	// }
 
 	return 0;
 }
