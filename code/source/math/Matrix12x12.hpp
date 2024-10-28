@@ -28,6 +28,7 @@ public:
 	{ }
 };
 
+using Matrix12x12i = Matrix12x12< int >;
 using Matrix12x12f = Matrix12x12< float >;
 using Matrix12x12d = Matrix12x12< double >;
 

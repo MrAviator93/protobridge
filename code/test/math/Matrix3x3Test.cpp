@@ -5,7 +5,7 @@
 
 SCENARIO( "Testing element access" )
 {
-	GIVEN( "A 2x2 matrix" )
+	GIVEN( "A 3x3 matrix" )
 	{
 		pbl::math::Matrix3x3< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
 

@@ -9,6 +9,8 @@ set(SRC
     MathTest.cpp
     Matrix2x2Test.cpp
     Matrix3x3Test.cpp
+    Matrix4x4Test.cpp
+    Matrix6x6Test.cpp
 )
 
 create_test_application(
