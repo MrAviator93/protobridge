@@ -11,6 +11,8 @@
 namespace pbl::utils
 {
 
+namespace detail
+{
 template < typename T >
 struct DistributionSelector;
 
@@ -32,6 +34,8 @@ struct DistributionSelector< T >
 
 template < typename T >
 using DistributionSelectorT = DistributionSelector< T >::Type;
+
+} // namespace detail
 
 /**
  * @class RandomGenerator
@@ -118,7 +122,7 @@ public:
      */
 	[[nodiscard]] T operator()( const T& a, const T& b )
 	{
-		DistributionSelectorT< T > distribution{ a, b };
+		detail::DistributionSelectorT< T > distribution{ a, b };
 		return distribution( m_generator );
 	}
 
