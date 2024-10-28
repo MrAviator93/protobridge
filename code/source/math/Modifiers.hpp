@@ -129,5 +129,40 @@ struct Sither
 	[[nodiscard]] T operator()( T value ) { return value + ( ( std::rand() % 2 == 0 ? 1.0f : -1.0f ) * amplitude ); }
 };
 
+template < std::floating_point T >
+struct Gain
+{
+	T gainValue;
+
+	[[nodiscard]] constexpr T operator()( T value ) const { return value * gainValue; }
+};
+
+template < std::floating_point T >
+struct Offset
+{
+	T offsetValue;
+
+	[[nodiscard]] constexpr T operator()( T value ) const { return value + offsetValue; }
+};
+
+template < std::floating_point T >
+struct ExponentialDecay
+{
+	T rate;
+
+	[[nodiscard]] constexpr T operator()( T value ) const { return value * std::exp( -rate ); }
+};
+
+template < std::floating_point T >
+struct LogScaling
+{
+	T base;
+
+	[[nodiscard]] constexpr T operator()( T value ) const
+	{
+		return ( value > T{} ) ? std::log( value ) / std::log( base ) : T{};
+	}
+};
+
 } // namespace pbl::math
 #endif // PBL_MATH_PID_MODIFIERS_HPP__
