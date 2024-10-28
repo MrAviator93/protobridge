@@ -225,23 +225,14 @@ private:
 /// Version 2 of the original MCP23017 controller
 class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP23017ControllerV2 >
 {
-public:
-	enum class Address : std::uint8_t
-	{
-		H20 = 0x20, // A2=0, A1=0, A0=0
-		H21 = 0x21, // A2=0, A1=0, A0=1
-		H22 = 0x22, // A2=0, A1=1, A0=0
-		H23 = 0x23, // A2=0, A1=1, A0=1
-		H24 = 0x24, // A2=1, A1=0, A0=0
-		H25 = 0x25, // A2=1, A1=0, A0=1
-		H26 = 0x26, // A2=1, A1=1, A0=0
-		H27 = 0x27 // A2=1, A1=1, A0=1
-	};
+	struct PortTag
+	{ };
 
+public:
 	class Port
 	{
 	public:
-		Port( MCP23017ControllerV2& controller )
+		Port( MCP23017ControllerV2& controller, PortTag )
 			: m_controller{ controller }
 		{ }
 
@@ -289,6 +280,18 @@ public:
 		std::bitset< 8 > m_gpinten; // GPINTEN register for enabling/disabling interrupts
 		std::bitset< 8 > m_intcap; // INTCAP register for capturing the state at interrupt time
 		std::bitset< 8 > m_intf; // INTF register for interrupt flags (which pin triggered)
+	};
+
+	enum class Address : std::uint8_t
+	{
+		H20 = 0x20, // A2=0, A1=0, A0=0
+		H21 = 0x21, // A2=0, A1=0, A0=1
+		H22 = 0x22, // A2=0, A1=1, A0=0
+		H23 = 0x23, // A2=0, A1=1, A0=1
+		H24 = 0x24, // A2=1, A1=0, A0=0
+		H25 = 0x25, // A2=1, A1=0, A0=1
+		H26 = 0x26, // A2=1, A1=1, A0=0
+		H27 = 0x27 // A2=1, A1=1, A0=1
 	};
 
 	using enum Address;
