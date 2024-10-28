@@ -2,6 +2,7 @@
 #define PBL_MATH_PID_MODIFIERS_HPP__
 
 // C++
+#include <cmath>
 #include <algorithm>
 #include <type_traits>
 
