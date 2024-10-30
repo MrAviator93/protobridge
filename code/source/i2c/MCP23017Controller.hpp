@@ -5,7 +5,10 @@
 #include <utils/Counter.hpp>
 
 // C++
+#include <array>
 #include <bitset>
+#include <expected>
+#include <functional>
 
 namespace pbl::i2c
 {
@@ -225,15 +228,27 @@ private:
 /// Version 2 of the original MCP23017 controller
 class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP23017ControllerV2 >
 {
+
 	struct PortTag
 	{ };
 
 public:
 	class Port
 	{
+		struct PinTag
+		{ };
+
 	public:
-		Port( MCP23017ControllerV2& controller, PortTag )
+		/// MCP23017 chip port addresses
+		enum class Address : std::uint8_t
+		{
+			PORT_A = 0x14,
+			PORT_B = 0x15
+		};
+
+		Port( MCP23017ControllerV2& controller, Address address, PortTag )
 			: m_controller{ controller }
+			, m_address{ address }
 		{ }
 
 		/// MCP23017 chip pin states, this needs to be checked! Could be otherway around!
@@ -250,15 +265,8 @@ public:
 			INPUT = 1
 		};
 
-		/// MCP23017 chip port addresses
-		enum class Address : std::uint8_t
-		{
-			PORT_A = 0x14,
-			PORT_B = 0x15
-		};
-
 		/// MCP23017 chip available pins on port A and B
-		enum Pins : std::uint8_t
+		enum class Pins : std::uint8_t
 		{
 			PIN_1 = 0x01,
 			PIN_2 = 0x02,
@@ -270,8 +278,91 @@ public:
 			PIN_8 = 0x80
 		};
 
+		class Pin
+		{
+		public:
+			template < typename T >
+			using Result = std::expected< T, std::string >;
+
+			using GetPinModeCb = std::function< PinMode( Pins ) >;
+			using SetPinModeCb = std::function< Result< void >( Pins, PinMode ) >;
+			using GetPinStateCb = std::function< Result< PinState >( Pins ) >;
+			using SetPinStateCb = std::function< Result< void >( Pins, PinState ) >;
+			using SetPullUpCb = std::function< Result< void >( Pins, bool ) >;
+			using EnableInterruptCb = std::function< Result< void >( Pins, bool, bool, PinState ) >;
+
+			Pin( Port& port, Pins pin, PinTag )
+				: m_port{ port }
+				, m_pin{ pin }
+			{ }
+
+			/// TBW
+			[[nodiscard]] auto pin() const { return m_pin; }
+
+			[[nodiscard]] PinMode mode() const
+			{
+				// TODO: return m_getPinModeCb(m_pin);
+				return PinMode::INPUT;
+			}
+
+			[[nodiscard]] bool isInput() const { return mode() == PinMode::INPUT; }
+			[[nodiscard]] bool isOutput() const { return mode() == PinMode::OUTPUT; }
+
+			Result< void > setMode( const PinMode mode )
+			{
+				// TODO: return m_setPinModeCb(m_pin, mode);
+				return std::unexpected( "Not implemented ..." );
+			}
+
+			Result< PinState > pinState()
+			{
+				// TODO: return m_pinStateCb(m_pin);
+				return std::unexpected( "Not implemented ..." );
+			}
+
+			Result< void > setPinState( const PinState state )
+			{
+				// TODO: return m_setPinState(m_pin, state);
+				return std::unexpected( "Not implemented ..." );
+			}
+
+			Result< void > switchPinState()
+			{
+				// TODO: return m_switchPinState(m_pin, state);
+				return std::unexpected( "Not implemented ..." );
+			}
+
+			// Enable or disable the pull-up resistor for this pin
+			Result< void > setPullUpResistor( bool enable )
+			{
+				// TODO return m_setPullUpCb( m_pin, enable );
+				return std::unexpected( "Not implemented ..." );
+			}
+
+			// Enable or disable interrupts for this pin
+			Result< void >
+			enableInterrupt( bool enable, bool compareWithDefault = false, PinState defaultValue = PinState::OFF )
+			{
+				// TODO: return m_enableInterruptCb( m_pin, enable, compareWithDefault, defaultValue );
+				return std::unexpected( "Not implemented ..." );
+			}
+
+			// Result<void> setInterruptTrigger(Pins pin, bool onChange, PinState triggerState = PinState::OFF);
+
+			// Result<void> clearInterruptFlag();
+
+			// [[nodiscard]] bool isInterruptTriggered() const;
+
+		private:
+			Port& m_port;
+			Pins m_pin;
+		};
+
+		[[nodiscard]] Pin pin( Pins pin );
+
 	private:
 		MCP23017ControllerV2& m_controller;
+		Address m_address;
 		std::bitset< 8 > m_iodir; // IODIR register for input/output direction
 		std::bitset< 8 > m_gpio; // GPIO register for pin states
 		std::bitset< 8 > m_gppu; // GPPU register for pull-up configuration
