@@ -4,9 +4,6 @@
 #include "Math.hpp"
 #include "Modifiers.hpp"
 
-// C++
-#include <utility>
-
 namespace pbl::math
 {
 
@@ -30,6 +27,12 @@ public:
 	using Desired = T;
 	using Current = T;
 
+	struct Input
+	{
+		Desired desired{};
+		Current current{};
+	};
+
 	constexpr PController( T Kp ) noexcept
 		: m_Kp{ Kp }
 	{ }
@@ -46,9 +49,9 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PController& update( const std::pair< Desired, Current >& values ) noexcept
+	[[nodiscard]] constexpr PController& update( const Input& input ) noexcept
 	{
-		return update( values.first, values.second );
+		return update( input.desired, input.current );
 	}
 
 	[[nodiscard]] constexpr PController& operator()( const T desiredValue, const T currentValue ) noexcept
@@ -56,10 +59,7 @@ public:
 		return update( desiredValue, currentValue );
 	}
 
-	[[nodiscard]] constexpr PController& operator()( const std::pair< Desired, Current >& values ) noexcept
-	{
-		return update( values );
-	}
+	[[nodiscard]] constexpr PController& operator()( const Input& input ) noexcept { return update( input ); }
 
 	/// TBW
 	template < typename Functor >
@@ -90,6 +90,12 @@ public:
 	using Desired = T;
 	using Current = T;
 
+	struct Input
+	{
+		Desired desired{};
+		Current current{};
+	};
+
 	constexpr PIController( T Kp, T Ki ) noexcept
 		: m_Kp{ Kp }
 		, m_Ki{ Ki }
@@ -114,9 +120,9 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIController& update( const T dt, const std::pair< Desired, Current >& values ) noexcept
+	[[nodiscard]] constexpr PIController& update( const T dt, const Input& input ) noexcept
 	{
-		return update( dt, values.first, values.second );
+		return update( dt, input.desired, input.current );
 	}
 
 	[[nodiscard]] constexpr PIController& operator()( const T dt, const T desiredValue, const T currentValue ) noexcept
@@ -124,9 +130,9 @@ public:
 		return update( dt, desiredValue, currentValue );
 	}
 
-	[[nodiscard]] constexpr PIController& operator()( const T dt, const std::pair< Desired, Current >& values ) noexcept
+	[[nodiscard]] constexpr PIController& operator()( const T dt, const Input& input ) noexcept
 	{
-		return update( dt, values );
+		return update( dt, input );
 	}
 
 	/// TBW
