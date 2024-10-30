@@ -153,10 +153,62 @@ bool MCP23017Controller::retrieve()
 
 MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
-	, m_portA{ *this, PortTag{} }
-	, m_portB{ *this, PortTag{} }
+	, m_portA{ *this, Port::Address::PORT_A, PortTag{} }
+	, m_portB{ *this, Port::Address::PORT_B, PortTag{} }
 {
 	// TODO
 }
+
+auto MCP23017ControllerV2::Port::pin( Pins pin ) -> Pin
+{
+	// TODO: This will get more complicated
+	return Pin{ *this, pin, PinTag{} };
+}
+
+// auto MCP23017ControllerV2::Port::Pin::mode() const -> PinMode
+// {
+// 	return PinMode::OUTPUT;
+// }
+
+// auto MCP23017ControllerV2::Port::Pin::setMode( const PinMode mode ) -> Result< void >
+// {
+// 	// // Convert the enum-based pin to its bitmask value
+// 	// auto pinMask = static_cast< std::uint8_t >( m_pin );
+
+// 	// if( mode == PinMode::INPUT )
+// 	// {
+// 	// 	m_port.m_iodir |= pinMask; // Set the bit to 1 for input mode
+// 	// }
+// 	// else
+// 	// {
+// 	// 	m_port.m_iodir &= ~pinMask; // Clear the bit to 0 for output mode
+// 	// }
+
+// 	// // Write the updated IODIR register to the MCP23017
+// 	// if( auto result = m_port.writeRegister( static_cast< uint8_t >( m_port.m_address ), m_port.m_iodir.to_ulong() );
+// 	// 	!result )
+// 	// {
+// 	// 	return std::unexpected( "Failed to write to IODIR register" );
+// 	// }
+
+// 	return std::unexpected( "Not implemented ..." );
+// }
+
+// auto MCP23017ControllerV2::Port::Pin::pinState() -> Result< PinState >
+// {
+// 	return std::unexpected( "Not implemented ..." );
+// }
+
+// auto MCP23017ControllerV2::Port::Pin::setPinState( const PinState state ) -> Result< void >
+// {
+// 	if( !isOutput() )
+// 	{
+// 		return std::unexpected( "Can't set pin state, as pin not configured as an output pin ..." );
+// 	}
+
+// 	// TODO: Implement
+
+// 	return std::unexpected( "Not implemented ..." );
+// }
 
 } // namespace pbl::i2c
