@@ -30,25 +30,13 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create an BMP180 controller, attached to the bus controller
-	pbl::i2c::BMP180Controller bmp180{
-		busController, pbl::i2c::BMP180Controller::DEFAULT, pbl::i2c::BMP180Controller::ULTRA_HIGH_RESOLUTION };
+	pbl::i2c::BMP180Controller bmp180{ busController, pbl::i2c::BMP180Controller::DEFAULT };
 	pbl::utils::Timer timer{ std::chrono::milliseconds( 500 ) };
 
 	while( true )
 	{
 		if( timer.hasElapsed() )
 		{
-			std::println("----------------------------------------------------------");
-			const auto checkAndPrintError = [] (const auto& reading) {
-				if (!reading)
-				{
-					std::println( stderr, "{}", pbl::utils::toStringView( reading.error() ) );
-					return false;
-				}
-
-				return true;
-			};
-
 			const auto temp = bmp180.getTrueTemperatureC();
 			if( temp.has_value() )
 			{
@@ -65,22 +53,6 @@ int main( const int argc, const char* const* const argv )
 			if( alt.has_value() )
 			{
 				std::println( "Absolute altitude: {} m", alt.value() );
-			}
-
-
-			if (!checkAndPrintError(temp)) 
-			{
-				
-			}
-
-			if (!checkAndPrintError(truePress))
-			{
-
-			}
-
-			if (!checkAndPrintError(alt))
-			{
-
 			}
 
 			// Reset the timer
