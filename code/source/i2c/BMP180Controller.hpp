@@ -99,7 +99,7 @@ public:
 	 * you must provide local pressure in Pa, to get an accurate reading of the true
 	 * altitude, above ground.
 	 */
-	[[nodiscard]] Result< float > getAbsoluteAltitude(float localPressure = kPressureAtSeaLevelPa);
+	[[nodiscard]] Result< float > getAbsoluteAltitude( float localPressure = kPressureAtSeaLevelPa );
 
 private:
 	SamplingAccuracy m_samplingAccuracy;

@@ -9,13 +9,6 @@
 #include <utility>
 #include <algorithm>
 
-// Debug
-#include <print>
-#include <format>
-#include <iostream>
-
-// https://os.mbed.com/users/onehorse/code/BMP180/file/06dc60296e6e/BMP180.h/
-
 namespace pbl::i2c
 {
 
@@ -81,17 +74,21 @@ constexpr std::uint8_t commandForMode( BMP180Controller::SamplingAccuracy mode )
 }
 
 template < typename T >
-bool readCalibConst( T& value, BusController& busController, const std::uint8_t bmp180Addr, const std::uint8_t msb,const std::uint8_t lsb )
+bool readCalibConst( T& value,
+					 BusController& busController,
+					 const std::uint8_t bmp180Addr,
+					 const std::uint8_t msb,
+					 const std::uint8_t lsb )
 {
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
 
-	if (!busController.read( bmp180Addr, msb, highByte )) 
+	if( !busController.read( bmp180Addr, msb, highByte ) )
 	{
 		return false;
 	}
 
-	if (!busController.read( bmp180Addr, lsb, lowByte ))
+	if( !busController.read( bmp180Addr, lsb, lowByte ) )
 	{
 		return false;
 	}
@@ -123,18 +120,18 @@ struct BMP180Controller::CalibrationConstants
 
 bool BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
 {
-	bool rslt{true};
-	rslt |= readCalibConst(ac1, busController, address, kBmp180CalibAc1, kBmp180CalibAc1Lsb );
-	rslt |= readCalibConst(ac2, busController, address, kBmp180CalibAc2, kBmp180CalibAc2Lsb );
-	rslt |= readCalibConst(ac3, busController, address, kBmp180CalibAc3, kBmp180CalibAc3Lsb );
-	rslt |= readCalibConst(ac4, busController, address, kBmp180CalibAc4, kBmp180CalibAc4Lsb );
-	rslt |= readCalibConst(ac5, busController, address, kBmp180CalibAc5, kBmp180CalibAc5Lsb );
-	rslt |= readCalibConst(ac6, busController, address, kBmp180CalibAc6, kBmp180CalibAc6Lsb );
-	rslt |= readCalibConst(b1, busController, address, kBmp180CalibB1, kBmp180CalibB1Lsb );
-	rslt |= readCalibConst(b2, busController, address, kBmp180CalibB2, kBmp180CalibB2Lsb );
-	rslt |= readCalibConst(mb, busController, address, kBmp180CalibMb, kBmp180CalibMbLsb );
-	rslt |= readCalibConst(mc, busController, address, kBmp180CalibMc, kBmp180CalibMcLsb );
-	rslt |= readCalibConst(md, busController, address, kBmp180CalibMd, kBmp180CalibMdLsb );
+	bool rslt{ true };
+	rslt |= readCalibConst( ac1, busController, address, kBmp180CalibAc1, kBmp180CalibAc1Lsb );
+	rslt |= readCalibConst( ac2, busController, address, kBmp180CalibAc2, kBmp180CalibAc2Lsb );
+	rslt |= readCalibConst( ac3, busController, address, kBmp180CalibAc3, kBmp180CalibAc3Lsb );
+	rslt |= readCalibConst( ac4, busController, address, kBmp180CalibAc4, kBmp180CalibAc4Lsb );
+	rslt |= readCalibConst( ac5, busController, address, kBmp180CalibAc5, kBmp180CalibAc5Lsb );
+	rslt |= readCalibConst( ac6, busController, address, kBmp180CalibAc6, kBmp180CalibAc6Lsb );
+	rslt |= readCalibConst( b1, busController, address, kBmp180CalibB1, kBmp180CalibB1Lsb );
+	rslt |= readCalibConst( b2, busController, address, kBmp180CalibB2, kBmp180CalibB2Lsb );
+	rslt |= readCalibConst( mb, busController, address, kBmp180CalibMb, kBmp180CalibMbLsb );
+	rslt |= readCalibConst( mc, busController, address, kBmp180CalibMc, kBmp180CalibMcLsb );
+	rslt |= readCalibConst( md, busController, address, kBmp180CalibMd, kBmp180CalibMdLsb );
 	return rslt;
 }
 
@@ -143,7 +140,7 @@ BMP180Controller::BMP180Controller( BusController& busController, Address addres
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
 {
-	if (!m_constants->read( busController, static_cast< std::uint8_t >( address ) )) 
+	if( !m_constants->read( busController, static_cast< std::uint8_t >( address ) ) )
 	{
 		// TODO: We need to do something about this ...
 		// return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
@@ -157,7 +154,7 @@ auto BMP180Controller::getTrueTemperatureC() -> Result< float >
 	using namespace std::chrono_literals;
 
 	// Read uncompensated temperature (UT) value
-	if (!write( kBmp180Control, kBmp180CmdTemp )) // Start temperature measurement
+	if( !write( kBmp180Control, kBmp180CmdTemp ) ) // Start temperature measurement
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -166,7 +163,7 @@ auto BMP180Controller::getTrueTemperatureC() -> Result< float >
 
 	// Read raw temperature measurement
 	std::array< std::uint8_t, 2 > rawUT{};
-	if (!read( kBmp180OutMsb, rawUT.data(), rawUT.size() ))
+	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) )
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -203,7 +200,7 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	const std::uint8_t OSS = static_cast< std::uint8_t >( m_samplingAccuracy );
 
 	// Start temperature measurement
-	if (!write( kBmp180Control, kBmp180CmdTemp ))
+	if( !write( kBmp180Control, kBmp180CmdTemp ) )
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -212,7 +209,7 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 
 	// Read uncompensated temperature value
 	std::array< std::uint8_t, 2 > rawUT{};
-	if (!read( kBmp180OutMsb, rawUT.data(), rawUT.size() ))
+	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) )
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -220,8 +217,8 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	const std::int16_t UT = ( ( std::int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
 	// Start pressure measurement
-	std::uint8_t cmdOss = commandForMode(m_samplingAccuracy);
-	if (!write( kBmp180Control, cmdOss ))
+	std::uint8_t cmdOss = commandForMode( m_samplingAccuracy );
+	if( !write( kBmp180Control, cmdOss ) )
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -231,15 +228,15 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	// Read uncompensated pressure value
 	// UP = ( MSB << 16 + LSB << 8 + XLSB ) >> ( 8 - oss );
 	std::array< std::uint8_t, 3 > upRawData{};
-	if (!read( kBmp180OutMsb, upRawData.data(), upRawData.size() ))
+	if( !read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) )
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	// + or | here?
 	const std::int64_t UP = ( ( static_cast< std::int64_t >( upRawData[ 0 ] ) << 16 ) +
-						( static_cast< std::int64_t >( upRawData[ 1 ] ) << 8 ) + upRawData[ 2 ] ) >>
-					  ( 8 - OSS );
+							  ( static_cast< std::int64_t >( upRawData[ 1 ] ) << 8 ) + upRawData[ 2 ] ) >>
+							( 8 - OSS );
 
 	// const std::int64_t A1 = static_cast< std::int64_t >( upRawData[ 0 ] );
 	// const std::int64_t A2 = static_cast< std::int64_t >( upRawData[ 1 ] );
@@ -249,10 +246,10 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	// Calculate true temperature (correct - validated against real temperature calculation)
 	std::int64_t X1 = ( std::int64_t( UT - m_constants->ac6 ) * m_constants->ac5 ) / 32768;
 	std::int64_t X2 = m_constants->mc * 2048 / ( X1 + m_constants->md );
-	std::int64_t B5 =  X1 + X2;
+	std::int64_t B5 = X1 + X2;
 
 	// Calculate true pressure
-	std::int64_t B6 =  B5 - 4000;
+	std::int64_t B6 = B5 - 4000;
 	X1 = ( m_constants->b2 * ( B6 * B6 / 4096 ) / 2048 );
 	X2 = m_constants->ac2 * B6 / 2048;
 
@@ -262,13 +259,13 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	X1 = m_constants->ac3 * B6 / 8192;
 	X2 = ( m_constants->b1 * ( B6 * B6 / 4096 ) ) / 65536;
 	X3 = ( ( X1 + X2 ) + 2 ) / 4;
-	const std::uint64_t B4 = ( m_constants->ac4 * std::uint64_t( X3 + 32768 ) / 32768);
-	const std::uint64_t B7 = ( std::uint64_t ( UP ) - B3 ) * ( 50000 >> OSS );
+	const std::uint64_t B4 = ( m_constants->ac4 * std::uint64_t( X3 + 32768 ) / 32768 );
+	const std::uint64_t B7 = ( std::uint64_t( UP ) - B3 ) * ( 50000 >> OSS );
 
 	std::int32_t p{};
 	if( B7 < 0x80000000 )
 	{
-		p = (( B7 * 2 ) / B4);
+		p = ( ( B7 * 2 ) / B4 );
 	}
 	else
 	{
@@ -284,7 +281,7 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 }
 
 // TODO: Consider moving this function to utils/Math.hpp
-auto BMP180Controller::getAbsoluteAltitude(float localPressure) -> Result< float >
+auto BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
 {
 	// H = 44330 * [1 - (P/p0)^(1/5.255) ]
 	constexpr float exponent = 1.0f / 5.255f;
