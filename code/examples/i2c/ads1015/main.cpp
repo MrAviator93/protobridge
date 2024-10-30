@@ -5,7 +5,6 @@
 
 // Output
 #include <print>
-#include <algorithm>
 
 int main( const int argc, const char* const* const argv )
 {
@@ -29,31 +28,15 @@ int main( const int argc, const char* const* const argv )
 		return 1;
 	}
 
-	// Create an BMP180 controller, attached to the bus controller
-	pbl::i2c::BMP180Controller bmp180{ busController, pbl::i2c::BMP180Controller::DEFAULT };
+	// Create an LM75 controller, attached to the bus controller
+	pbl::i2c::ADS1015Controller ads1015{ busController };
 	pbl::utils::Timer timer{ std::chrono::milliseconds( 500 ) };
 
 	while( true )
 	{
 		if( timer.hasElapsed() )
 		{
-			const auto temp = bmp180.getTrueTemperatureC();
-			if( temp.has_value() )
-			{
-				std::println( "True temp: {} C", temp.value() );
-			}
-
-			const auto truePress = bmp180.getTruePressurePa();
-			if( truePress.has_value() )
-			{
-				std::println( "True pressure: {} Pa", truePress.value() );
-			}
-
-			const auto alt = bmp180.getAbsoluteAltitude();
-			if( alt.has_value() )
-			{
-				std::println( "Absolute altitude: {} m", alt.value() );
-			}
+			// TODO:
 
 			// Reset the timer
 			timer.set();

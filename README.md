@@ -129,7 +129,7 @@ public:
 					return std::unexpected( currTemp.error() );
 				}
 
-				return std::pair{ desiredTemp, *currTemp };
+				return PIDInput{ desiredTemp, *currTemp };
 			} )
 			.and_then( [ this, dt ]( PIDInput values ) -> std::expected< float, pbl::utils::ErrorCode > {
 				return ( m_pid( dt, values ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );

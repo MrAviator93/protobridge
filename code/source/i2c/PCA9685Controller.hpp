@@ -4,6 +4,10 @@
 #include "ICBase.hpp"
 #include <utils/Counter.hpp>
 
+// C++
+#include <string>
+#include <expected>
+
 namespace pbl::i2c
 {
 
@@ -14,6 +18,9 @@ namespace pbl::i2c
 class PCA9685Controller final : public ICBase, public utils::Counter< PCA9685Controller >
 {
 public:
+	template < typename T >
+	using Result = std::expected< T, utils::ErrorCode >;
+
 	enum class Address : std::uint8_t
 	{
 		H40 = 0x40, // A0=0, A1=0, A2=0
@@ -26,9 +33,52 @@ public:
 		H47 = 0x47 // A0=1, A1=1, A2=1
 	};
 
+	enum class Channel : std::uint8_t
+	{
+		CH0 = 0,
+		CH1 = 1,
+		CH2 = 2,
+		CH3 = 3,
+		CH4 = 4,
+		CH5 = 5,
+		CH6 = 6,
+		CH7 = 7,
+		CH8 = 8,
+		CH9 = 9,
+		CH10 = 10,
+		CH11 = 11,
+		CH12 = 12,
+		CH13 = 13,
+		CH14 = 14,
+		CH15 = 15
+	};
+
+	/// Enum for on/off time ranges (0-4095, represented by ON or OFF state)
+	enum class PWMState : std::uint16_t
+	{
+		MIN = 0,
+		MAX = 4095
+	};
+
 	using enum Address;
+	using enum Channel;
 
 	explicit PCA9685Controller( class BusController& busController, Address address = H40 );
+
+	// Set PWM frequency (applies globally to all channels)
+	Result< void > setPWMFrequency( std::uint16_t frequency );
+
+	std::uint16_t pulseWidthToSteps( float pulseWidth )
+	{
+		// Specific resolution of the PCA9685, which allows 12-bit (4096-step) resolution for PWM.
+		constexpr float pcaResolution = 4096.0f;
+
+		// Calculate the period of one cycle in microseconds
+		// const float periodUs = 1'000'000.0f / pwmFrequency; // currently set to 20'000
+
+		// 1 step = 4.88 microseconds (20000us / 4096 steps for 50Hz)
+		return static_cast< std::uint16_t >( ( pulseWidth / 20'000.0f ) * pcaResolution );
+	}
 };
 
 } // namespace pbl::i2c

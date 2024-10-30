@@ -32,16 +32,27 @@ constexpr std::uint8_t kBmp180OutXlsb{ 0xF8 }; //!< Data output - Extension Byte
 
 // Calibration registers
 constexpr std::uint8_t kBmp180CalibAc1{ 0xAA }; //!< Calibration data (AC1 value).
+constexpr std::uint8_t kBmp180CalibAc1Lsb{ 0xAB }; //!< Calibration data (AC1 value).
 constexpr std::uint8_t kBmp180CalibAc2{ 0xAC }; //!< Calibration data (AC2 value).
+constexpr std::uint8_t kBmp180CalibAc2Lsb{ 0xAD }; //!< Calibration data (AC2 value).
 constexpr std::uint8_t kBmp180CalibAc3{ 0xAE }; //!< Calibration data (AC3 value).
+constexpr std::uint8_t kBmp180CalibAc3Lsb{ 0xAF }; //!< Calibration data (AC3 value).
 constexpr std::uint8_t kBmp180CalibAc4{ 0xB0 }; //!< Calibration data (AC4 value).
+constexpr std::uint8_t kBmp180CalibAc4Lsb{ 0xB1 }; //!< Calibration data (AC4 value).
 constexpr std::uint8_t kBmp180CalibAc5{ 0xB2 }; //!< Calibration data (AC5 value).
+constexpr std::uint8_t kBmp180CalibAc5Lsb{ 0xB3 }; //!< Calibration data (AC5 value).
 constexpr std::uint8_t kBmp180CalibAc6{ 0xB4 }; //!< Calibration data (AC6 value).
+constexpr std::uint8_t kBmp180CalibAc6Lsb{ 0xB5 }; //!< Calibration data (AC6 value).
 constexpr std::uint8_t kBmp180CalibB1{ 0xB6 }; //!< Calibration data (B1 value).
+constexpr std::uint8_t kBmp180CalibB1Lsb{ 0xB7 }; //!< Calibration data (B1 value).
 constexpr std::uint8_t kBmp180CalibB2{ 0xB8 }; //!< Calibration data (B2 value).
+constexpr std::uint8_t kBmp180CalibB2Lsb{ 0xB9 }; //!< Calibration data (B2 value).
 constexpr std::uint8_t kBmp180CalibMb{ 0xBA }; //!< Calibration data (MB value).
+constexpr std::uint8_t kBmp180CalibMbLsb{ 0xBB }; //!< Calibration data (MB value).
 constexpr std::uint8_t kBmp180CalibMc{ 0xBC }; //!< Calibration data (MC value).
+constexpr std::uint8_t kBmp180CalibMcLsb{ 0xBD }; //!< Calibration data (MC value).
 constexpr std::uint8_t kBmp180CalibMd{ 0xBE }; //!< Calibration data (MD value).
+constexpr std::uint8_t kBmp180CalibMdLsb{ 0xBF }; //!< Calibration data (MD value).
 
 // BMP180 Commands
 constexpr std::uint8_t kBmp180CmdTemp{ 0x2E }; //!< Start temperature measurement.
@@ -65,23 +76,29 @@ constexpr std::uint8_t commandForMode( BMP180Controller::SamplingAccuracy mode )
 		return it->second;
 	}
 
-	return {};
+	// Just return the standard pressure setting
+	return kBmp180CmdPressStandard;
 }
 
 template < typename T >
-T readCalibConst( BusController& busController, const std::uint8_t bmp180Addr, const std::uint8_t regAddr )
+bool readCalibConst( T& value, BusController& busController, const std::uint8_t bmp180Addr, const std::uint8_t msb,const std::uint8_t lsb )
 {
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
 
-	busController.read( bmp180Addr, regAddr, highByte );
-	busController.read( bmp180Addr, regAddr + 1, lowByte );
+	if (!busController.read( bmp180Addr, msb, highByte )) 
+	{
+		return false;
+	}
 
-	T value{};
-	value = highByte << 8;
-	value |= lowByte;
+	if (!busController.read( bmp180Addr, lsb, lowByte ))
+	{
+		return false;
+	}
 
-	return value;
+	value = highByte << 8 | lowByte;
+
+	return true;
 }
 
 } // namespace
@@ -89,7 +106,7 @@ T readCalibConst( BusController& busController, const std::uint8_t bmp180Addr, c
 struct BMP180Controller::CalibrationConstants
 {
 	/// Read calibration constants from BME180 device
-	void read( BusController& busController, std::uint8_t address );
+	bool read( BusController& busController, std::uint8_t address );
 
 	std::int16_t ac1{};
 	std::int16_t ac2{};
@@ -104,19 +121,21 @@ struct BMP180Controller::CalibrationConstants
 	std::int16_t md{};
 };
 
-void BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
+bool BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
 {
-	ac1 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibAc1 );
-	ac2 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibAc2 );
-	ac3 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibAc3 );
-	ac4 = readCalibConst< std::uint16_t >( busController, address, kBmp180CalibAc4 );
-	ac5 = readCalibConst< std::uint16_t >( busController, address, kBmp180CalibAc5 );
-	ac6 = readCalibConst< std::uint16_t >( busController, address, kBmp180CalibAc6 );
-	b1 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibB1 );
-	b2 = readCalibConst< std::int16_t >( busController, address, kBmp180CalibB2 );
-	mb = readCalibConst< std::int16_t >( busController, address, kBmp180CalibMb );
-	mc = readCalibConst< std::int16_t >( busController, address, kBmp180CalibMc );
-	md = readCalibConst< std::int16_t >( busController, address, kBmp180CalibMd );
+	bool rslt{true};
+	rslt |= readCalibConst(ac1, busController, address, kBmp180CalibAc1, kBmp180CalibAc1Lsb );
+	rslt |= readCalibConst(ac2, busController, address, kBmp180CalibAc2, kBmp180CalibAc2Lsb );
+	rslt |= readCalibConst(ac3, busController, address, kBmp180CalibAc3, kBmp180CalibAc3Lsb );
+	rslt |= readCalibConst(ac4, busController, address, kBmp180CalibAc4, kBmp180CalibAc4Lsb );
+	rslt |= readCalibConst(ac5, busController, address, kBmp180CalibAc5, kBmp180CalibAc5Lsb );
+	rslt |= readCalibConst(ac6, busController, address, kBmp180CalibAc6, kBmp180CalibAc6Lsb );
+	rslt |= readCalibConst(b1, busController, address, kBmp180CalibB1, kBmp180CalibB1Lsb );
+	rslt |= readCalibConst(b2, busController, address, kBmp180CalibB2, kBmp180CalibB2Lsb );
+	rslt |= readCalibConst(mb, busController, address, kBmp180CalibMb, kBmp180CalibMbLsb );
+	rslt |= readCalibConst(mc, busController, address, kBmp180CalibMc, kBmp180CalibMcLsb );
+	rslt |= readCalibConst(md, busController, address, kBmp180CalibMd, kBmp180CalibMdLsb );
+	return rslt;
 }
 
 BMP180Controller::BMP180Controller( BusController& busController, Address address, SamplingAccuracy sAccuracy )
@@ -124,7 +143,11 @@ BMP180Controller::BMP180Controller( BusController& busController, Address addres
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
 {
-	m_constants->read( busController, static_cast< std::uint8_t >( address ) );
+	if (!m_constants->read( busController, static_cast< std::uint8_t >( address ) )) 
+	{
+		// TODO: We need to do something about this ...
+		// return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	}
 }
 
 BMP180Controller::~BMP180Controller() = default;
@@ -134,23 +157,29 @@ auto BMP180Controller::getTrueTemperatureC() -> Result< float >
 	using namespace std::chrono_literals;
 
 	// Read uncompensated temperature (UT) value
-	write( kBmp180Control, kBmp180CmdTemp ); // Start temperature measurement
+	if (!write( kBmp180Control, kBmp180CmdTemp )) // Start temperature measurement
+	{
+		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
 	sleep( 4500us );
 
 	// Read raw temperature measurement
 	std::array< std::uint8_t, 2 > rawUT{};
-	read( kBmp180OutMsb, rawUT.data(), rawUT.size() );
+	if (!read( kBmp180OutMsb, rawUT.data(), rawUT.size() ))
+	{
+		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	}
 
-	std::int16_t UT = ( ( int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
+	const std::int16_t UT = ( ( int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
 	// Calculate true temperature
-	std::int64_t X1 = ( std::int64_t( UT - m_constants->ac6 ) * m_constants->ac5 ) / std::pow( 2.0, 15 );
-	std::int64_t X2 = m_constants->mc * std::pow( 2.0, 11 ) / ( X1 + m_constants->md );
-	std::int64_t B5 = X1 + X2;
+	const std::int64_t X1 = ( std::int64_t( UT - m_constants->ac6 ) * m_constants->ac5 ) / 32768;
+	const std::int64_t X2 = m_constants->mc * 2048 / ( X1 + m_constants->md );
+	const std::int64_t B5 = X1 + X2;
 
 	// Temperature calculated here will be in units of 0.1 deg C
-	// TODO: There seems to be some type conversion issues here
-	std::int64_t T = ( B5 + 8 ) / std::pow( 2.0, 4 );
+	std::int64_t T = ( B5 + 8 ) / 16;
 
 	return static_cast< float >( T ) * 0.1f;
 }
@@ -174,100 +203,97 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 	const std::uint8_t OSS = static_cast< std::uint8_t >( m_samplingAccuracy );
 
 	// Start temperature measurement
-	write( kBmp180Control, kBmp180CmdTemp );
+	if (!write( kBmp180Control, kBmp180CmdTemp ))
+	{
+		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
 	sleep( 4500us );
 
-	// Read raw temperature measurement
+	// Read uncompensated temperature value
 	std::array< std::uint8_t, 2 > rawUT{};
-	read( kBmp180OutMsb, rawUT.data(), rawUT.size() );
+	if (!read( kBmp180OutMsb, rawUT.data(), rawUT.size() ))
+	{
+		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	}
 
-	std::int16_t UT = ( ( std::int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
+	const std::int16_t UT = ( ( std::int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
 	// Start pressure measurement
-	write( kBmp180Control, 0x34 | OSS << 6 ); // Configure pressure measurement for highest resolution
+	std::uint8_t cmdOss = commandForMode(m_samplingAccuracy);
+	if (!write( kBmp180Control, cmdOss ))
+	{
+		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+	}
 
 	sleep( std::chrono::milliseconds( static_cast< int >( ( 5.0f + 8.0f * OSS ) ) ) );
 
+	// Read uncompensated pressure value
 	// UP = ( MSB << 16 + LSB << 8 + XLSB ) >> ( 8 - oss );
 	std::array< std::uint8_t, 3 > upRawData{};
-	read( kBmp180OutMsb, upRawData.data(), upRawData.size() ); // Read raw ...
+	if (!read( kBmp180OutMsb, upRawData.data(), upRawData.size() ))
+	{
+		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	}
 
-	std::int64_t UP = ( ( static_cast< std::int64_t >( upRawData[ 0 ] ) << 16 ) |
-						( static_cast< std::int64_t >( upRawData[ 1 ] ) << 8 ) | upRawData[ 2 ] ) >>
+	// + or | here?
+	const std::int64_t UP = ( ( static_cast< std::int64_t >( upRawData[ 0 ] ) << 16 ) +
+						( static_cast< std::int64_t >( upRawData[ 1 ] ) << 8 ) + upRawData[ 2 ] ) >>
 					  ( 8 - OSS );
 
-	// Temp related calculations
-	std::int64_t X1 = ( std::int64_t( UT - m_constants->ac6 ) * m_constants->ac5 ) / std::pow( 2.0, 15 );
-	std::int64_t X2 = m_constants->mc * std::pow( 2.0, 11 ) / ( X1 + m_constants->md );
-	std::int64_t B5 = X1 + X2;
+	// const std::int64_t A1 = static_cast< std::int64_t >( upRawData[ 0 ] );
+	// const std::int64_t A2 = static_cast< std::int64_t >( upRawData[ 1 ] );
+	// const std::int64_t A3 = static_cast< std::int64_t >( upRawData[ 2 ] );
+	// const std::int64_t UP = (A1 << 16 | A2 << 8 | A3) >> (8 - OSS);
+
+	// Calculate true temperature (correct - validated against real temperature calculation)
+	std::int64_t X1 = ( std::int64_t( UT - m_constants->ac6 ) * m_constants->ac5 ) / 32768;
+	std::int64_t X2 = m_constants->mc * 2048 / ( X1 + m_constants->md );
+	std::int64_t B5 =  X1 + X2;
 
 	// Calculate true pressure
-	std::int64_t B6 = B5 - 4000;
-	X1 = ( m_constants->b2 * ( B6 * B6 / std::pow( 2, 12 ) ) / std::pow( 2, 11 ) );
-	X2 = m_constants->ac2 * B6 / std::pow( 2, 11 );
+	std::int64_t B6 =  B5 - 4000;
+	X1 = ( m_constants->b2 * ( B6 * B6 / 4096 ) / 2048 );
+	X2 = m_constants->ac2 * B6 / 2048;
+
 	std::int64_t X3 = X1 + X2;
 	std::int64_t B3 = ( ( ( m_constants->ac1 * 4 + X3 ) << OSS ) + 2 ) / 4;
 
-	std::println( "B6 {}", B6 );
-	std::println( "X1 {}", X1 );
-	std::println( "X2 {}", X2 );
-	std::println( "X3 {}", X3 );
-	std::println( "B3 {}", B3 );
-
-	X1 = m_constants->ac3 * B6 / std::pow( 2, 13 );
-	X2 = ( m_constants->b1 * ( B6 * B6 / std::pow( 2, 12 ) ) ) / std::pow( 2, 16 );
-	X3 = ( ( X1 + X2 ) + 2 ) / std::pow( 2, 2 );
-	std::int64_t B4 = m_constants->ac4 * static_cast< std::int64_t >( X3 + 32768 ) / std::pow( 2, 15 );
-	std::int64_t B7 = ( static_cast< std::int64_t >( UP ) - B3 ) * ( 5000 >> OSS );
-
-	std::println( "X1 {}", X1 );
-	std::println( "X2 {}", X2 );
-	std::println( "X3 {}", X3 );
-	std::println( "B4 {}", B4 );
-	std::println( "B7 {}", B7 );
+	X1 = m_constants->ac3 * B6 / 8192;
+	X2 = ( m_constants->b1 * ( B6 * B6 / 4096 ) ) / 65536;
+	X3 = ( ( X1 + X2 ) + 2 ) / 4;
+	const std::uint64_t B4 = ( m_constants->ac4 * std::uint64_t( X3 + 32768 ) / 32768);
+	const std::uint64_t B7 = ( std::uint64_t ( UP ) - B3 ) * ( 50000 >> OSS );
 
 	std::int32_t p{};
 	if( B7 < 0x80000000 )
 	{
-		p = ( B7 * 2 ) / B4;
+		p = (( B7 * 2 ) / B4);
 	}
 	else
 	{
 		p = ( B7 / B4 ) * 2;
 	}
 
-	// TODO (AK): Debug this part, there is an error!
-	X1 = ( p / std::pow( 2, 8 ) * ( p / std::pow( 2, 8 ) ) );
-	std::println( "X1 {}", X1 );
+	X1 = ( p / 256 * ( p / 256 ) );
+	X1 = ( X1 * 3038 ) / 65536;
+	X2 = ( -7357 * p ) / 65536;
+	p = p + ( X1 + X2 + 3791 ) / 16; // Pressure in units of Pa.
 
-	X1 = ( X1 * 3038 ) / std::pow( 2, 16 );
-	std::println( "X1 {}", X1 );
-
-	X2 = ( -7357 * p ) / std::pow( 2, 16 );
-	std::println( "X2 {}", X2 );
-
-	p = p + ( X1 + X2 + 3791 ) / std::pow( 2, 4 ); // Pressure in units of Pa.
-
-	std::println( "P {}", p );
-
-	// It could be that the pressure and accuracy combination configuration is wrong!
-#warning "This needs investigation the measured pressure appears to be 10 times lower than expected"
-
-	return static_cast< float >( p ) * 10.0f;
+	return static_cast< float >( p );
 }
 
 // TODO: Consider moving this function to utils/Math.hpp
-auto BMP180Controller::getAbsoluteAltitude() -> Result< float >
+auto BMP180Controller::getAbsoluteAltitude(float localPressure) -> Result< float >
 {
 	// H = 44330 * [1 - (P/p0)^(1/5.255) ]
 	constexpr float exponent = 1.0f / 5.255f;
-	constexpr float pressureAtSeaLevel = 101325.0f; // Pa
 
 	if( auto truePressure = getTruePressurePa(); truePressure.has_value() )
 	{
-		float pd = truePressure.value() / pressureAtSeaLevel;
-		float r = 1.0f - std::pow( pd, exponent );
-		return 44330.0f * r;
+		const auto pd = truePressure.value() / localPressure;
+		const auto r = 1.0f - std::powf( pd, exponent );
+		return 44330.0 * r;
 	}
 
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );

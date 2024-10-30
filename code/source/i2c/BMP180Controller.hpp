@@ -55,6 +55,7 @@ class BMP180Controller final : public ICBase, public utils::Counter< BMP180Contr
 	struct CalibrationConstants;
 	static constexpr std::size_t kCalibConstSize = 22;
 	static constexpr std::size_t kCalibConstAlign = 2;
+	static constexpr float kPressureAtSeaLevelPa = 101325.0f; // Pa
 
 public:
 	template < typename T >
@@ -93,8 +94,12 @@ public:
 	/// Retrieves the true pressure in pascals
 	[[nodiscard]] Result< float > getTruePressurePa();
 
-	/// Calculates the absolute altitude using international barometric formula
-	[[nodiscard]] Result< float > getAbsoluteAltitude();
+	/**
+	 * @brief Calculates the absolute altitude using international barometric formula,
+	 * you must provide local pressure in Pa, to get an accurate reading of the true
+	 * altitude, above ground.
+	 */
+	[[nodiscard]] Result< float > getAbsoluteAltitude(float localPressure = kPressureAtSeaLevelPa);
 
 private:
 	SamplingAccuracy m_samplingAccuracy;

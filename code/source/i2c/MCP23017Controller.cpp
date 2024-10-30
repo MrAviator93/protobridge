@@ -153,8 +153,8 @@ bool MCP23017Controller::retrieve()
 
 MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
-	, m_portA{ *this }
-	, m_portB{ *this }
+	, m_portA{ *this, PortTag{} }
+	, m_portB{ *this, PortTag{} }
 {
 	// TODO
 }
