@@ -162,6 +162,12 @@ public:
 	using Desired = T;
 	using Current = T;
 
+	struct Input
+	{
+		Desired desired{};
+		Current current{};
+	};
+
 	/**
 	 * @brief Construct a new CPIDControllerT object
 	 * 
@@ -211,9 +217,9 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] constexpr PIDController& update( const T dt, const std::pair< Desired, Current >& values ) noexcept
+	[[nodiscard]] constexpr PIDController& update( const T dt, const Input& input ) noexcept
 	{
-		return update( dt, values.first, values.second );
+		return update( dt, input.desired, input.current );
 	}
 
 	[[nodiscard]] constexpr PIDController& operator()( const T dt, const T desiredValue, const T currentValue ) noexcept
@@ -221,9 +227,9 @@ public:
 		return update( dt, desiredValue, currentValue );
 	}
 
-	[[nodiscard]] constexpr PIDController& operator()( const T dt, const std::pair< Desired, Current >& values ) noexcept
+	[[nodiscard]] constexpr PIDController& operator()( const T dt, const Input& input ) noexcept
 	{
-		return update( dt, values );
+		return update( dt, input );
 	}
 
 	/// TBW

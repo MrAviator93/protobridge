@@ -47,6 +47,8 @@ namespace examples
 
 class Thermostat
 {
+	using PIDController = pbl::math::PIDController< float >;
+
 public:
 	Thermostat( pbl::i2c::BusController& busController )
 		: m_pid{ 0.5, 0.2, 0.25 }
@@ -58,13 +60,11 @@ public:
 
 	[[nodiscard]] std::expected< void, pbl::utils::ErrorCode > update( float dt )
 	{
-		using Desired = float;
-		using Current = float;
-		using PIDInput = std::pair< Desired, Current >;
+		using PIDInput = PIDController::Input;
 
 		return m_adc.readDesiredTemp()
 			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::utils::ErrorCode > {
-				auto currTemp = m_lm75.getTemperatureC();
+				const auto currTemp = m_lm75.getTemperatureC();
 				if( !currTemp )
 				{
 					return std::unexpected( currTemp.error() );
@@ -82,7 +82,7 @@ public:
 	}
 
 private:
-	pbl::math::PIDController< float > m_pid;
+	PIDController m_pid;
 	pbl::i2c::ADCController m_adc;
 	pbl::i2c::LM75Controller m_lm75;
 	pbl::i2c::ThermostatController m_thermostat;
