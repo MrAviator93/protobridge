@@ -29,7 +29,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create an LM75 controller, attached to the bus controller
-	pbl::i2c::MCP23017ControllerV2 mcp23017{ busController };
+	pbl::i2c::ADS1015Controller ads1015{ busController };
 	pbl::utils::Timer timer{ std::chrono::milliseconds( 500 ) };
 
 	while( true )
