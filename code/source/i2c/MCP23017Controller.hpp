@@ -233,6 +233,9 @@ class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP2301
 	{ };
 
 public:
+	template < typename T >
+	using Result = std::expected< T, std::string >;
+
 	class Port
 	{
 		struct PinTag
@@ -265,6 +268,47 @@ public:
 			INPUT = 1
 		};
 
+		template < typename T, T Default, typename AssignmentOp = decltype( []( const T& ) { return false; } ) >
+		struct PinConfig
+		{
+			[[nodiscard]] constexpr operator std::bitset< 8 >() const noexcept
+			{
+				std::bitset< 8 > bitset;
+				bitset[ 0 ] = AssignmentOp{}( pin1 );
+				bitset[ 1 ] = AssignmentOp{}( pin2 );
+				bitset[ 2 ] = AssignmentOp{}( pin3 );
+				bitset[ 3 ] = AssignmentOp{}( pin4 );
+				bitset[ 4 ] = AssignmentOp{}( pin5 );
+				bitset[ 5 ] = AssignmentOp{}( pin6 );
+				bitset[ 6 ] = AssignmentOp{}( pin7 );
+				bitset[ 7 ] = AssignmentOp{}( pin8 );
+				return bitset;
+			}
+
+			T pin1{ Default };
+			T pin2{ Default };
+			T pin3{ Default };
+			T pin4{ Default };
+			T pin5{ Default };
+			T pin6{ Default };
+			T pin7{ Default };
+			T pin8{ Default };
+		};
+
+		/// TBW
+		using PinModeAssignOp = decltype( []( auto v ) { return v == PinMode::INPUT; } );
+		using PinModes = PinConfig< PinMode, PinMode::OUTPUT, PinModeAssignOp >;
+
+		/// TBW
+		using PinStatesAssignOp = decltype( []( auto v ) { return v == PinState::ON; } );
+		using PinStates = PinConfig< PinState, PinState::OFF, PinStatesAssignOp >;
+
+		/// Allows to configure individual pins with enabled or disabled interrupt
+		using PinInterrupts = PinConfig< bool, false, decltype( []( auto v ) { return v; } ) >;
+
+		/// Allows to configure individual pins with enabled or disabled pull-up resistor
+		using PinPullUps = PinConfig< bool, false, decltype( []( auto v ) { return v; } ) >;
+
 		/// MCP23017 chip available pins on port A and B
 		enum class Pins : std::uint8_t
 		{
@@ -278,12 +322,21 @@ public:
 			PIN_8 = 0x80
 		};
 
+		enum class PinsIds : std::uint8_t
+		{
+			PIN_1 = 1,
+			PIN_2 = 2,
+			PIN_3 = 3,
+			PIN_4 = 4,
+			PIN_5 = 5,
+			PIN_6 = 6,
+			PIN_7 = 7,
+			PIN_8 = 8
+		};
+
 		class Pin
 		{
 		public:
-			template < typename T >
-			using Result = std::expected< T, std::string >;
-
 			using GetPinModeCb = std::function< PinMode( Pins ) >;
 			using SetPinModeCb = std::function< Result< void >( Pins, PinMode ) >;
 			using GetPinStateCb = std::function< Result< PinState >( Pins ) >;
@@ -314,7 +367,7 @@ public:
 				return std::unexpected( "Not implemented ..." );
 			}
 
-			Result< PinState > pinState()
+			[[nodiscard]] Result< PinState > pinState()
 			{
 				// TODO: return m_pinStateCb(m_pin);
 				return std::unexpected( "Not implemented ..." );
@@ -358,7 +411,14 @@ public:
 			Pins m_pin;
 		};
 
+		/// Returns a specific pin
 		[[nodiscard]] Pin pin( Pins pin );
+
+		/// Returns all pin modes
+		[[nodiscard]] Result< PinModes > pinModes();
+
+		/// Returns all pin states
+		// [[nodiscard]] PinStates pinStates();
 
 	private:
 		MCP23017ControllerV2& m_controller;
