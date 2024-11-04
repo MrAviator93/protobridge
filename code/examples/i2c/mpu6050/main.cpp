@@ -34,7 +34,7 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create an MPU6050 controller, attached to the bus controller, using the default device address
-	pbl::i2c::MPU6050Controller mpu6050{ busController };
+	pbl::i2c::MPU6050Controller mpu{ busController };
 
 	while( true )
 	{

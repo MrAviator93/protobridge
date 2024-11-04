@@ -1,11 +1,9 @@
 /**
- *  @brief Declaration of LM75Controller class for managing the LM75 sensor.
- *  @author Artur K.
- *  @date 25 October 2024
+ * @author MrAviator93
+ * @date 25 October 2024
+ * @brief Declaration of LM75Controller class for managing the LM75 sensor.
  *
- *  Copyright (c) 2024 Artur K.
- *
- *  For license details, see the LICENSE file in the project root.
+ * For license details, see the LICENSE file in the project root.
  */
 
 #ifndef PBL_I2C_LM75_CONTROLLER_HPP__

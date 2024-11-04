@@ -1,3 +1,11 @@
+/**
+ * @author Artur K.
+ * @date 4 November 2024
+ * @brief Declaration of BMP180Controller class for managing the BMP180 sensor.
+ *
+ * For license details, see the LICENSE file in the project root.
+ */
+
 #ifndef I2C_DEVICES_BMP180_CONTROLLER_HPP__
 #define I2C_DEVICES_BMP180_CONTROLLER_HPP__
 

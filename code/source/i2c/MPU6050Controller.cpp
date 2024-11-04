@@ -144,10 +144,10 @@ void MPU6050Controller::calculateImuError()
 	GyroErrorZ = GyroErrorZ / static_cast< double >( kGyroCalibReadIterations );
 }
 
-math::Vector3f MPU6050Controller::angles()
+auto MPU6050Controller::angles() -> Result< math::Vector3f >
 {
 	// TODO (AK)
-	return {};
+	return std::unexpected( utils::ErrorCode::UNEXPECTED_ERROR );
 }
 
 // A way to extract the angles
