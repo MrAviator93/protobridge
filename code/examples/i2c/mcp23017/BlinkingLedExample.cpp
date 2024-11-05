@@ -69,8 +69,8 @@ int main( const int argc, const char* const* const argv )
 	using MCP23017 = pbl::i2c::MCP23017ControllerV2;
 
 	// Create an LM75 controller, attached to the bus controller
-	MCP23017 mcp23017{ busController };
-	auto pin = mcp23017.portA().pin( MCP23017::Port::Pins::PIN_1 );
+	MCP23017 mcp{ busController };
+	auto pin = mcp.portA().pin( MCP23017::Port::Pins::PIN_1 );
 
 	// This API allows us to configure individual pins
 	if( !pin.setMode( MCP23017::Port::PinMode::OUTPUT ) )
@@ -87,9 +87,9 @@ int main( const int argc, const char* const* const argv )
 		{
 			using Port = MCP23017::Port;
 
-			auto pin = mcp23017.portA().pin( Port::Pins::PIN_1 );
+			auto pin = mcp.portA().pin( Port::Pins::PIN_1 );
 
-			// Good thing to do, is to check if the pin is set as output
+			// A good thing to do, is to check if the pin is set as output
 			if( pin.isOutput() )
 			{
 				if( !pin.switchPinState() )

@@ -68,15 +68,15 @@ int main( const int argc, const char* const* const argv )
 	using MCP23017 = pbl::i2c::MCP23017ControllerV2;
 
 	// Create an LM75 controller, attached to the bus controller
-	MCP23017 mcp23017{ busController };
+	MCP23017 mcp{ busController };
 
 	MCP23017::Port::PinModes pinModes{ .pin1 = MCP23017::Port::PinMode::OUTPUT,
 									   .pin2 = MCP23017::Port::PinMode::OUTPUT };
 
 	// Validate that we were able to set them correctly
-	if( !mcp23017.portA().setPinModes( pinModes ) )
+	if( !mcp.portA().setPinModes( pinModes ) )
 	{
-		std::println( stderr, "Failed to set port A pins mode" );
+		std::println( stderr, "Failed to set port A pin modes" );
 		return 1;
 	}
 

@@ -46,9 +46,15 @@ int main( const int argc, const char* const* const argv )
 
 	using MCP23017 = pbl::i2c::MCP23017ControllerV2;
 
+	// Create an LM75 controller, attached to the bus controller
+	MCP23017 mcp{ busController };
+
+	
 	// Configure Port A, Pin 2 as input with pull-down resistor enabled
-	// MCP23017::Port::PinModes pinModes{ .pin2 = MCP23017::Port::PinMode::INPUT };
-	// if( !mcp23017.portA().setPinModes( pinModes ) )
+	// template<std::sizet Idx>
+	// using Pin = pbl::utils::PinConfig::Pin<Idx, MCP23017::Port::PinMode>; 
+	// CP23017::Port::PinModes pinModes{ Pin< 2 >{ MCP23017::Port::PinMode::INPUT } };
+	// if( !mcp.portA().setPinModes( pinModes ) )
 	// {
 	// 	std::println( stderr, "Failed to set Port A, Pin 2 mode to INPUT" );
 	// 	return 1;
