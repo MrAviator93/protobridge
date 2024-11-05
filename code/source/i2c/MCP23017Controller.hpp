@@ -307,10 +307,10 @@ public:
 		[[nodiscard]] Pin pin( Pins pin );
 
 		/// Returns all pin modes
-		[[nodiscard]] Result< PinModes > pinModes();
+		// [[nodiscard]] Result< PinModes > pinModes();
 
 		/// Returns all pin states
-		[[nodiscard]] PinStates pinStates();
+		// [[nodiscard]] Result< PinStates > pinStates();
 
 		/// TBW, Read Only (Should be easy to implement, just read)
 		// [[nodiscard]] Result<PinInterruptCapture> pinInterruptCapture();
