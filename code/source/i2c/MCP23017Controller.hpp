@@ -312,6 +312,12 @@ public:
 		/// Returns all pin states
 		[[nodiscard]] PinStates pinStates();
 
+		/// TBW, Read Only (Should be easy to implement, just read)
+		// [[nodiscard]] Result<PinInterruptCapture> pinInterruptCapture();
+
+		/// TBW, Read Only (Should be easy to implement, just read)
+		// [[nodiscard]] Result<PinInterruptFlags> pinInterruptFlags();
+
 	private:
 		MCP23017ControllerV2& m_controller;
 		Address m_address;
