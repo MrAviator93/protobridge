@@ -30,13 +30,13 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// We will use MCP here to control LED's, configure ports A & B as output
-	pbl::i2c::MCP23017Controller mcp23017{ busController, 0x00, 0x00 };
+	// pbl::i2c::MCP23017Controller mcp23017{ busController, 0x00, 0x00 };
 
-	mcp23017.setOnPortA( pbl::i2c::MCP23017Controller::Pins::PIN_8,
-						 pbl::i2c::MCP23017Controller::Pins::PIN_7,
-						 pbl::i2c::MCP23017Controller::Pins::PIN_6 );
+	// mcp23017.setOnPortA( pbl::i2c::MCP23017Controller::Pins::PIN_8,
+	// 					 pbl::i2c::MCP23017Controller::Pins::PIN_7,
+	// 					 pbl::i2c::MCP23017Controller::Pins::PIN_6 );
 
-	mcp23017.setOffPortA( pbl::i2c::MCP23017Controller::Pins::PIN_8 );
+	// mcp23017.setOffPortA( pbl::i2c::MCP23017Controller::Pins::PIN_8 );
 
 	pbl::i2c::BMP180Controller bmp180{
 		busController, pbl::i2c::BMP180Controller::DEFAULT, pbl::i2c::BMP180Controller::ULTRA_HIGH_RESOLUTION };

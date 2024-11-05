@@ -74,7 +74,7 @@ int main( const int argc, const char* const* const argv )
 	// 		if( pinStateResult )
 	// 		{
 	// 			const auto pinState = *pinStateResult;
-	// 			std::println( "Port A, Pin 2 state: {}", pinState == MCP23017::Port::PinState::ON ? "HIGH" : "LOW" );
+	// 			std::println( "Port A, Pin 2 state: {}", pinState == MCP23017::Port::PinState:HIGH ? "HIGH" : "LOW" );
 	// 		}
 	// 		else
 	// 		{
