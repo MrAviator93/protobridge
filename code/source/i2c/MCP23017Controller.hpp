@@ -268,7 +268,7 @@ public:
 			INPUT = 1
 		};
 
-		template < typename T, T Default, typename AssignmentOp = decltype( []( const T& ) { return false; } ) >
+		template < typename T, T Default, typename AssignmentOp = decltype( []( T v ) { return v; } ) >
 		struct PinConfig
 		{
 			[[nodiscard]] constexpr operator std::bitset< 8 >() const noexcept
@@ -304,10 +304,10 @@ public:
 		using PinStates = PinConfig< PinState, PinState::OFF, PinStatesAssignOp >;
 
 		/// Allows to configure individual pins with enabled or disabled interrupt
-		using PinInterrupts = PinConfig< bool, false, decltype( []( auto v ) { return v; } ) >;
+		using PinInterrupts = PinConfig< bool, false >;
 
 		/// Allows to configure individual pins with enabled or disabled pull-up resistor
-		using PinPullUps = PinConfig< bool, false, decltype( []( auto v ) { return v; } ) >;
+		using PinPullUps = PinConfig< bool, false >;
 
 		/// MCP23017 chip available pins on port A and B
 		enum class Pins : std::uint8_t
