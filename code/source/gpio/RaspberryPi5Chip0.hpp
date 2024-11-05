@@ -12,6 +12,7 @@
 namespace pbl::gpio
 {
 
+// TODO: Rename to just Rpi5Chip0?
 class RaspberryPi5Chip0 final
 {
 	static constexpr std::string_view kChipName{ "gpiochip0" };
