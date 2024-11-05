@@ -9,6 +9,7 @@
 #include <bitset>
 #include <expected>
 #include <functional>
+#include <type_traits>
 
 namespace pbl::i2c
 {
@@ -32,16 +33,7 @@ namespace pbl::i2c
  *
  * Example usage:
  * @code
- * BusController busController;
- * MCP23017Controller mcp23017(busController); // assume 0x20 is the I2C address of MCP23017
- *
- * // Set individual pins or multiple pins as outputs or inputs
- * mcp23017.setPortConfig(MCP23017Controller::Port::PORT_A, 0xFF); // All pins as inputs on Port A
- * mcp23017.setPortConfig(MCP23017Controller::Port::PORT_B, 0x00); // All pins as outputs on Port B
- *
- * // Turn on and off pins on Port B
- * mcp23017.setOnPortB(MCP23017Controller::Pins::PIN_1);   // Turn on Pin 1 on Port B
- * mcp23017.setOffPortB(MCP23017Controller::Pins::PIN_1);  // Turn off Pin 1 on Port B
+ * // TBW ...
  * @endcode
  *
  * @note The initial state of the pins after powering up the MCP23017 device is defined by its hardware 
@@ -64,168 +56,6 @@ namespace pbl::i2c
  * 
  * @author AK aka MrAviator93
  */
-class MCP23017Controller final : public ICBase, public utils::Counter< MCP23017Controller >
-{
-public:
-	enum class Address : std::uint8_t
-	{
-		H20 = 0x20, // A2=0, A1=0, A0=0
-		H21 = 0x21, // A2=0, A1=0, A0=1
-		H22 = 0x22, // A2=0, A1=1, A0=0
-		H23 = 0x23, // A2=0, A1=1, A0=1
-		H24 = 0x24, // A2=1, A1=0, A0=0
-		H25 = 0x25, // A2=1, A1=0, A0=1
-		H26 = 0x26, // A2=1, A1=1, A0=0
-		H27 = 0x27 // A2=1, A1=1, A0=1
-	};
-
-	/// MCP23017 chip pin states, this needs to be checked! Could be otherway around!
-	enum class PinState : std::uint8_t
-	{
-		OFF = 0,
-		ON = 1
-	};
-
-	/// MCP23017 chip available pinmodes
-	enum class PinMode : std::uint8_t
-	{
-		OUTPUT = 0,
-		INPUT = 1
-	};
-
-	/// MCP23017 chip available ports
-	enum class Port : std::uint8_t
-	{
-		PORT_A = 0x14,
-		PORT_B = 0x15
-	};
-
-	/// MCP23017 chip available pins on port A and B
-	enum Pins : std::uint8_t
-	{
-		PIN_1 = 0x01,
-		PIN_2 = 0x02,
-		PIN_3 = 0x04,
-		PIN_4 = 0x08,
-		PIN_5 = 0x10,
-		PIN_6 = 0x20,
-		PIN_7 = 0x40,
-		PIN_8 = 0x80
-	};
-
-	using enum Port;
-	using enum Address;
-	using enum PinMode;
-	using enum PinState;
-
-	/// Default ctor, all pins are configured as output by default
-	explicit MCP23017Controller( BusController& busController, Address address = H20 ) noexcept;
-
-	/// The secondary ctor, which enables the individual port configuration
-	MCP23017Controller( BusController& busController,
-						std::uint8_t portAConfig,
-						std::uint8_t portBConfig,
-						Address address = H20 ) noexcept;
-
-	/// TBW
-	bool setPortConfig( Port port, std::uint8_t config );
-
-	// Set's pin on on port A
-	bool setOnPortA( Pins pin );
-
-	// TBW ...
-	template < typename... Args >
-	bool setOnPortA( Pins pin, Args... pins )
-	{
-		const std::uint8_t pinValue =
-			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
-
-		// Check if desired pins are configured as output
-		if( ( m_portAConfiguration & pinValue ) == 0 )
-		{
-			m_portAPinStates &= ~pinValue;
-			return write( 0x14, m_portAPinStates );
-		}
-
-		return false;
-	}
-
-	/// TBW
-	bool setOffPortA( Pins pin );
-
-	// TBW ...
-	template < typename... Args >
-	bool setOffPortA( Pins pin, Args... pins )
-	{
-		const std::uint8_t pinValue =
-			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
-
-		// Check if desired pins are configured as output
-		if( ( m_portAConfiguration & pinValue ) == 0 )
-		{
-			m_portAPinStates |= pinValue;
-			return write( 0x14, m_portAPinStates );
-		}
-
-		return false;
-	}
-
-	// Set's pin on on port B
-	bool setOnPortB( Pins pin );
-
-	// TBW ...
-	template < typename... Args >
-	bool setOnPortB( Pins pin, Args... pins )
-	{
-		const std::uint8_t pinValue =
-			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
-
-		// Check if desired pins are configured as output
-		if( ( m_portBConfiguration & pinValue ) == 0 )
-		{
-			m_portBPinStates &= ~pinValue;
-			return write( 0x15, m_portBPinStates );
-		}
-
-		return false;
-	}
-
-	/// TBW
-	bool setOffPortB( Pins pin );
-
-	// TBW ...
-	template < typename... Args >
-	bool setOffPortB( Pins pin, Args... pins )
-	{
-		const std::uint8_t pinValue =
-			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
-
-		// Check if desired pins are configured as output
-		if( ( m_portBConfiguration & pinValue ) == 0 )
-		{
-			m_portBPinStates |= pinValue;
-			return write( 0x15, m_portBPinStates );
-		}
-
-		return false;
-	}
-
-private:
-	/// Configures A and B ports setting pins as inputs or outputs
-	bool configure();
-
-	/// Retrieves current pin states for A and B ports
-	bool retrieve();
-
-private:
-	std::uint8_t m_portAConfiguration{}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port A
-	std::uint8_t m_portBConfiguration{}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port B
-
-	std::uint8_t m_portAPinStates{}; //!< Current pin states for port A
-	std::uint8_t m_portBPinStates{}; //!< Current pin states for port B
-};
-
-/// Version 2 of the original MCP23017 controller
 class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP23017ControllerV2 >
 {
 
@@ -241,6 +71,54 @@ public:
 		struct PinTag
 		{ };
 
+		/**
+		 * @brief TBW
+		 * 
+		 * @tparam T must be either a bool or an enum but only with 2 types!
+		 * We don't have reflection yet to make this automatically checkable!
+		 * @tparam Default 
+		 * @tparam decltype( []( T v ) { return v; } ) 
+		 */
+		template < typename T,
+				   T Default,
+				   typename ToBool = decltype( []( T v ) { return v; } ),
+				   typename FromBool = decltype( []( T v ) { return v; } ) >
+			requires( std::same_as< T, bool > || std::is_enum_v< T > ) &&
+					std::same_as< std::invoke_result_t< ToBool, T >, bool > &&
+					std::same_as< std::invoke_result_t< FromBool, bool >, T >
+		struct PinConfig final
+		{
+			constexpr PinConfig() noexcept { bitset.set( ToBool{}( Default ) ); }
+
+			constexpr explicit PinConfig( T v ) noexcept { bitset.set( ToBool{}( v ) ); }
+
+			constexpr PinConfig( T pin1, T pin2, T pin3, T pin4, T pin5, T pin6, T pin7, T pin8 ) noexcept
+			{
+				bitset[ 0 ] = ToBool{}( pin1 );
+				bitset[ 1 ] = ToBool{}( pin2 );
+				bitset[ 2 ] = ToBool{}( pin3 );
+				bitset[ 3 ] = ToBool{}( pin4 );
+				bitset[ 4 ] = ToBool{}( pin5 );
+				bitset[ 5 ] = ToBool{}( pin6 );
+				bitset[ 6 ] = ToBool{}( pin7 );
+				bitset[ 7 ] = ToBool{}( pin8 );
+			}
+
+			/// Access individual pin value using pin<0>() interface.
+			template < size_t Index >
+			[[nodiscard]] constexpr T pin() const noexcept
+			{
+				static_assert( Index < 8, "Index out of bounds" );
+				return FromBool{}( bitset[ Index ] );
+			}
+
+			[[nodiscard]] constexpr operator auto() const noexcept { return bitset; }
+
+			constexpr auto operator<=>( const PinConfig& ) const = default;
+
+			std::bitset< 8 > bitset{};
+		};
+
 	public:
 		/// MCP23017 chip port addresses
 		enum class Address : std::uint8_t
@@ -254,11 +132,11 @@ public:
 			, m_address{ address }
 		{ }
 
-		/// MCP23017 chip pin states, this needs to be checked! Could be otherway around!
+		/// MCP23017 chip pin states (LOW and HIGH)
 		enum class PinState : std::uint8_t
 		{
-			OFF = 0,
-			ON = 1
+			LOW = 0,
+			HIGH = 1
 		};
 
 		/// MCP23017 chip available pinmodes
@@ -268,46 +146,60 @@ public:
 			INPUT = 1
 		};
 
-		template < typename T, T Default, typename AssignmentOp = decltype( []( T v ) { return v; } ) >
-		struct PinConfig
+		/// MCP23017 chip interrupt control options for INTCON register
+		enum class InterruptControl : std::uint8_t
 		{
-			[[nodiscard]] constexpr operator std::bitset< 8 >() const noexcept
-			{
-				std::bitset< 8 > bitset;
-				bitset[ 0 ] = AssignmentOp{}( pin1 );
-				bitset[ 1 ] = AssignmentOp{}( pin2 );
-				bitset[ 2 ] = AssignmentOp{}( pin3 );
-				bitset[ 3 ] = AssignmentOp{}( pin4 );
-				bitset[ 4 ] = AssignmentOp{}( pin5 );
-				bitset[ 5 ] = AssignmentOp{}( pin6 );
-				bitset[ 6 ] = AssignmentOp{}( pin7 );
-				bitset[ 7 ] = AssignmentOp{}( pin8 );
-				return bitset;
-			}
-
-			T pin1{ Default };
-			T pin2{ Default };
-			T pin3{ Default };
-			T pin4{ Default };
-			T pin5{ Default };
-			T pin6{ Default };
-			T pin7{ Default };
-			T pin8{ Default };
+			PREVIOUS = 0, // Interrupt on change from previous state
+			COMPARE = 1 // Interrupt on comparison with DEFVAL
 		};
 
-		/// TBW
-		using PinModeAssignOp = decltype( []( auto v ) { return v == PinMode::INPUT; } );
-		using PinModes = PinConfig< PinMode, PinMode::OUTPUT, PinModeAssignOp >;
+		using PinModeTo = decltype( []( auto v ) { return v == PinMode::INPUT; } );
+		using PinModeFrom = decltype( []( auto b ) { return b == true ? PinMode::INPUT : PinMode::OUTPUT; } );
 
-		/// TBW
-		using PinStatesAssignOp = decltype( []( auto v ) { return v == PinState::ON; } );
-		using PinStates = PinConfig< PinState, PinState::OFF, PinStatesAssignOp >;
+		/// PinModes represents IODIR register for pin direction configuration.
+		/// Each bit indicates whether the corresponding pin is set to INPUT (1) or OUTPUT (0).
+		using PinModes = PinConfig< PinMode, PinMode::OUTPUT, PinModeTo, PinModeFrom >;
 
-		/// Allows to configure individual pins with enabled or disabled interrupt
+		using PinStatesTo = decltype( []( auto v ) { return v == PinState::HIGH; } );
+		using PinStatesFrom = decltype( []( auto b ) { return b == true ? PinState::HIGH : PinState::LOW; } );
+
+		/// PinStates represents the GPIO register, reflecting current pin states.
+		/// Each bit indicates the actual logic level (HIGH or LOW) of each pin.
+		using PinStates = PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
+
+		using InterruptControlTo = decltype( []( auto v ) { return v == InterruptControl::COMPARE; } );
+		using InterruptControlFrom =
+			decltype( []( auto b ) { return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS; } );
+
+		/// PinInterruptControl represents the INTCON register for interrupt conditions.
+		/// Each bit indicates whether a pin triggers an interrupt on comparison with DEFVAL (1) or change from previous state (0).
+		using PinInterruptControl =
+			PinConfig< InterruptControl, InterruptControl::PREVIOUS, InterruptControlTo, InterruptControlFrom >;
+
+		/// PinDefaultComparison represents DEFVAL register, setting default values for interrupt comparison.
+		/// Each bit represents the comparison value (0 or 1) for each pin.
+		using PinDefaultComparison = PinConfig< bool, false >;
+
+		/// PinInterruptEnable represents GPINTEN register for enabling/disabling interrupts.
+		/// Each bit indicates whether an interrupt is enabled (1) or disabled (0) for each pin.
+		using PinInterruptEnable = PinConfig< bool, false >;
+
+		/// PinInterrupts allows configuration of interrupts per pin.
+		/// This is equivalent to PinInterruptEnable but represents higher-level intent.
 		using PinInterrupts = PinConfig< bool, false >;
 
-		/// Allows to configure individual pins with enabled or disabled pull-up resistor
+		/// PinPullUps represents GPPU register, configuring pull-up resistors.
+		/// Each bit determines whether the pull-up resistor is enabled (1) or disabled (0) for each pin.
 		using PinPullUps = PinConfig< bool, false >;
+
+		// Read-Only Configurations
+		/// Captured pin states at interrupt time, reflecting INTCAP register.
+		/// This is a read-only configuration, storing the state of each pin at the time an interrupt was triggered.
+		using PinInterruptCapture = PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
+
+		/// Interrupt flags indicating which pins triggered an interrupt, reflecting INTF register.
+		/// This is a read-only configuration, showing which pins currently have an interrupt pending.
+		using PinInterruptFlags = PinConfig< bool, false >;
 
 		/// MCP23017 chip available pins on port A and B
 		enum class Pins : std::uint8_t
@@ -394,13 +286,13 @@ public:
 
 			// Enable or disable interrupts for this pin
 			Result< void >
-			enableInterrupt( bool enable, bool compareWithDefault = false, PinState defaultValue = PinState::OFF )
+			enableInterrupt( bool enable, bool compareWithDefault = false, PinState defaultValue = PinState::LOW )
 			{
 				// TODO: return m_enableInterruptCb( m_pin, enable, compareWithDefault, defaultValue );
 				return std::unexpected( "Not implemented ..." );
 			}
 
-			// Result<void> setInterruptTrigger(Pins pin, bool onChange, PinState triggerState = PinState::OFF);
+			// Result<void> setInterruptTrigger(Pins pin, bool onChange, PinState triggerState = PinState::LOW);
 
 			// Result<void> clearInterruptFlag();
 
@@ -418,19 +310,21 @@ public:
 		[[nodiscard]] Result< PinModes > pinModes();
 
 		/// Returns all pin states
-		// [[nodiscard]] PinStates pinStates();
+		[[nodiscard]] PinStates pinStates();
 
 	private:
 		MCP23017ControllerV2& m_controller;
 		Address m_address;
-		std::bitset< 8 > m_iodir; // IODIR register for input/output direction
-		std::bitset< 8 > m_gpio; // GPIO register for pin states
-		std::bitset< 8 > m_gppu; // GPPU register for pull-up configuration
-		std::bitset< 8 > m_intcon; // INTCON register for interrupt configuration
-		std::bitset< 8 > m_defval; // DEFVAL register for default comparison value for interrupts
-		std::bitset< 8 > m_gpinten; // GPINTEN register for enabling/disabling interrupts
-		std::bitset< 8 > m_intcap; // INTCAP register for capturing the state at interrupt time
-		std::bitset< 8 > m_intf; // INTF register for interrupt flags (which pin triggered)
+
+		// There are configurations saved in the registers!
+		// std::bitset< 8 > m_iodir; // IODIR register for input/output direction
+		// std::bitset< 8 > m_gpio; // GPIO register for pin states
+		// std::bitset< 8 > m_gppu; // GPPU register for pull-up configuration
+		// std::bitset< 8 > m_intcon; // INTCON register for interrupt configuration
+		// std::bitset< 8 > m_defval; // DEFVAL register for default comparison value for interrupts
+		// std::bitset< 8 > m_gpinten; // GPINTEN register for enabling/disabling interrupts
+		// std::bitset< 8 > m_intcap; // INTCAP register for capturing the state at interrupt time
+		// std::bitset< 8 > m_intf; // INTF register for interrupt flags (which pin triggered)
 	};
 
 	enum class Address : std::uint8_t
