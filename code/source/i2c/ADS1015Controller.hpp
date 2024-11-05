@@ -24,6 +24,11 @@ class ADS1015Controller final : public ICBase, public utils::Counter< ADS1015Con
 	{ };
 
 public:
+	template < typename T >
+	using Result = std::expected< T, utils::ErrorCode >;
+
+	using Success = Result< void >;
+
 	enum class Address : std::uint8_t
 	{
 		H48 = 0x48, // ADDR connected to GND
@@ -106,8 +111,11 @@ public:
 
 	explicit ADS1015Controller( class BusController& busController, Address address = H48 );
 
-	// ADS1015Controller& setGain( Gain gain );
-	// ADS1015Controller& setSampleRate( Reader::Mode mode );
+	/// TBW
+	Result< void > setGain( Gain gain );
+
+	/// TBW
+	Result< void > setSampleRate( SampleRate rate );
 
 	// We need to think how are we going to pass here a channel, and second channel for differential read ...
 	// [[nodiscard]] Reader makeReader(Reader::Mode mode) { return Reader{ *this, ReaderPrivateTag{} }; }
@@ -156,6 +164,11 @@ public:
 	// 	continuousMode_ = false;
 	// 	configureChannel( currentChannel_, Mode::SINGLE_SHOT ); // Reset to single-shot mode
 	// }
+
+private:
+	Result< std::uint16_t > readConfig();
+
+	Result< void > writeConfig( std::uint16_t config );
 
 private:
 	// TODO

@@ -1,6 +1,9 @@
 #include "ADS1015Controller.hpp"
 #include "BusController.hpp"
 
+// C++
+#include <array>
+
 namespace pbl::i2c
 {
 
@@ -8,19 +11,19 @@ namespace
 {
 
 // ADS1015 Registers
-constexpr std::uint8_t POINTER_CONVERSION = 0x00;
-constexpr std::uint8_t POINTER_CONFIG = 0x01;
+constexpr std::uint8_t kPointerConversion = 0x00;
+constexpr std::uint8_t kPointerConfig = 0x01;
 
 // ADS1015 Configuration Register Masks
-constexpr std::uint16_t OS_SINGLE = 0x8000; // Single-shot start conversion
-constexpr std::uint16_t MUX_MASK = 0x7000; // MUX Mask
-constexpr std::uint16_t GAIN_MASK = 0x0E00; // Gain Mask
-constexpr std::uint16_t MODE_MASK = 0x0100; // Mode Mask
-constexpr std::uint16_t DATA_RATE = 0x0080; // Data rate default setting (1600 SPS)
-constexpr std::uint16_t COMP_QUE_DISABLE = 0x0003; // Disable comparator
+constexpr std::uint16_t kOsSingle = 0x8000; // Single-shot start conversion
+constexpr std::uint16_t kMuxMask = 0x7000; // MUX Mask
+constexpr std::uint16_t kGainMask = 0x0E00; // Gain Mask
+constexpr std::uint16_t kModeMask = 0x0100; // Mode Mask
+constexpr std::uint16_t kDataRateMask = 0x00E0; // Data rate bits mask (bits 7-5)
+constexpr std::uint16_t kCompQueDisable = 0x0003; // Disable comparator
 
 // Configuration Register Template (default)
-constexpr std::uint16_t kDefaultconfigRegister = OS_SINGLE | DATA_RATE | COMP_QUE_DISABLE;
+constexpr std::uint16_t kDefaultconfigRegister = kOsSingle | kDataRateMask | kCompQueDisable;
 
 } // namespace
 
@@ -28,10 +31,77 @@ ADS1015Controller::ADS1015Controller( BusController& busController, Address addr
 	: ICBase{ busController, address }
 { }
 
+auto ADS1015Controller::setGain( Gain gain ) -> Result< void >
+{
+	const auto currentConfigResult = readConfig();
+	if( !currentConfigResult )
+	{
+		return std::unexpected( currentConfigResult.error() );
+	}
+
+	std::uint16_t config = currentConfigResult.value();
+
+	// Clear the gain bits (11-9) and set the new gain
+	config &= ~kGainMask; // Clear gain bits
+	config |= static_cast< std::uint16_t >( gain ); // Set gain bits based on the provided gain
+
+	// Write the updated configuration back to the ADS1015
+	return writeConfig( config );
+}
+
+auto ADS1015Controller::setSampleRate( SampleRate rate ) -> Result< void >
+{
+	const auto currentConfigResult = readConfig();
+	if( !currentConfigResult )
+	{
+		return std::unexpected( currentConfigResult.error() );
+	}
+
+	std::uint16_t config = currentConfigResult.value();
+
+	// Clear the sample rate bits (7-5) and set the new sample rate
+	config &= ~kDataRateMask; // Clear data rate bits
+	config |= static_cast< std::uint16_t >( rate ); // Set rate bits based on the provided rate
+
+	return writeConfig( config );
+}
+
+auto ADS1015Controller::readConfig() -> Result< std::uint16_t >
+{
+	std::array< std::uint8_t, 2 > data{};
+	if( read( kPointerConfig, data.data(), 2 ) == 2 )
+	{
+		// Combine high and low bytes to form the 16-bit config value
+		std::uint16_t config = ( data[ 0 ] << 8 ) | data[ 1 ];
+		return config;
+	}
+	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+}
+
+auto ADS1015Controller::writeConfig( std::uint16_t config ) -> Result< void >
+{
+	// Split the 16-bit config into two bytes for transmission (big-endian format)
+	std::array< std::uint8_t, 2 > data = {
+		static_cast< std::uint8_t >( config >> 8 ), // High byte
+		static_cast< std::uint8_t >( config & 0xFF ) // Low byte
+	};
+
+	// Use the ICBase write method to send the configuration to the CONFIG register
+	if( !write( kPointerConfig, data ) )
+	{
+		// If the write failed, return an error
+		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	// Update the internal configuration state if the write was successful
+	// currentConfig = config;
+	return Success{};
+}
+
 // // Helper to configure channel for single-ended reading
 // void configureChannel( Channel channel )
 // {
-// 	configRegister_ = ( configRegister_ & ~MUX_MASK ) | ( static_cast< std::uint16_t >( channel ) << 12 );
+// 	configRegister_ = ( configRegister_ & ~kMuxMask ) | ( static_cast< std::uint16_t >( channel ) << 12 );
 // 	writeConfig();
 // }
 
@@ -50,14 +120,14 @@ ADS1015Controller::ADS1015Controller( BusController& busController, Address addr
 // 	else
 // 		throw std::invalid_argument( "Invalid differential channel pair" );
 
-// 	configRegister_ = ( configRegister_ & ~MUX_MASK ) | mux;
+// 	configRegister_ = ( configRegister_ & ~kMuxMask ) | mux;
 // 	writeConfig();
 // }
 
 // // Helper to initiate conversion (Single-shot mode)
 // void initiateConversion()
 // {
-// 	configRegister_ |= OS_SINGLE;
+// 	configRegister_ |= kOsSingle;
 // 	writeConfig();
 // }
 
@@ -65,7 +135,7 @@ ADS1015Controller::ADS1015Controller( BusController& busController, Address addr
 // std::int16_t readConversionResult()
 // {
 // 	std::uint8_t rawData[ 2 ];
-// 	if( read( POINTER_CONVERSION, rawData, 2 ) != 2 )
+// 	if( read( kPointerConversion, rawData, 2 ) != 2 )
 // 	{
 // 		throw std::runtime_error( "Failed to read conversion result" );
 // 	}
@@ -77,7 +147,7 @@ ADS1015Controller::ADS1015Controller( BusController& busController, Address addr
 // {
 // 	std::uint8_t configData[ 2 ] = { static_cast< std::uint8_t >( configRegister_ >> 8 ),
 // 									 static_cast< std::uint8_t >( configRegister_ & 0xFF ) };
-// 	if( !write( POINTER_CONFIG, configData, 2 ) )
+// 	if( !write( kPointerConfig, configData, 2 ) )
 // 	{
 // 		throw std::runtime_error( "Failed to write config register" );
 // 	}
