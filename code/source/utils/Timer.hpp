@@ -3,6 +3,9 @@
 
 #include "TimeTypes.hpp"
 
+// C++
+#include <type_traits>
+
 namespace pbl::utils
 {
 
@@ -14,6 +17,7 @@ namespace pbl::utils
 class Timer final
 {
 public:
+	using Dt = double;
 	using Duration = std::chrono::microseconds;
 
 	/**
@@ -46,6 +50,33 @@ public:
 	{
 		const auto elapsedTime = Clock::now() - m_startTime;
 		return std::chrono::duration< float >( elapsedTime ).count();
+	}
+
+	/// TODO: This needs a bit more work, maybe we want to return
+	/// std::expected<bool, utils::ErrorCode or utils::Error>
+	template < typename Callback >
+		requires std::invocable< Callback, Dt >
+	auto onTick( Callback&& callback ) -> std::invoke_result_t< Callback, Dt >
+	{
+		if( hasElapsed() )
+		{
+			Dt dt = elapsedSinceSetInSeconds();
+
+			// If lambda returns void
+			if constexpr( std::is_void_v< std::invoke_result_t< Callback, Dt > > )
+			{
+				std::forward< Callback >( callback )( dt );
+				set();
+			}
+			else // We return the result of invocation
+			{
+				auto result = std::forward< Callback >( callback )( dt );
+				set();
+				return result;
+			}
+		}
+
+		return {};
 	}
 
 private:
