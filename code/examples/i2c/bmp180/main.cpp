@@ -3,8 +3,9 @@
 #include <utils/Timer.hpp>
 #include <i2c/Controllers.hpp>
 
-// Output
+// C++
 #include <print>
+#include <thread>
 #include <algorithm>
 
 int main( const int argc, const char* const* const argv )
@@ -31,33 +32,41 @@ int main( const int argc, const char* const* const argv )
 
 	// Create an BMP180 controller, attached to the bus controller
 	pbl::i2c::BMP180Controller bmp180{ busController, pbl::i2c::BMP180Controller::DEFAULT };
-	pbl::utils::Timer timer{ std::chrono::milliseconds( 500 ) };
+	pbl::utils::Timer timer{ std::chrono::milliseconds{ 500 } };
 
 	while( true )
 	{
-		if( timer.hasElapsed() )
+		// A little bit more advanced example than LM75, rather than continously
+		// looping, here we check if the timer hasn't elapsed, if not, we temporarily
+		// yield control with a short sleep to avoid unnecessary CPU usage, then
+		// continue to the next loop iteration to recheck the timer.
+		if( !timer.hasElapsed() )
 		{
-			const auto temp = bmp180.getTrueTemperatureC();
-			if( temp.has_value() )
-			{
-				std::println( "True temp: {} C", temp.value() );
-			}
-
-			const auto truePress = bmp180.getTruePressurePa();
-			if( truePress.has_value() )
-			{
-				std::println( "True pressure: {} Pa", truePress.value() );
-			}
-
-			const auto alt = bmp180.getAbsoluteAltitude();
-			if( alt.has_value() )
-			{
-				std::println( "Absolute altitude: {} m", alt.value() );
-			}
-
-			// Reset the timer
-			timer.set();
+			// Pause briefly to yield the thread, allowing other processes to execute
+			std::this_thread::sleep_for( std::chrono::milliseconds{ 250 } );
+			continue;
 		}
+
+		const auto temp = bmp180.getTrueTemperatureC();
+		if( temp.has_value() )
+		{
+			std::println( "True temp: {} C", temp.value() );
+		}
+
+		const auto truePress = bmp180.getTruePressurePa();
+		if( truePress.has_value() )
+		{
+			std::println( "True pressure: {} Pa", truePress.value() );
+		}
+
+		const auto alt = bmp180.getAbsoluteAltitude();
+		if( alt.has_value() )
+		{
+			std::println( "Absolute altitude: {} m", alt.value() );
+		}
+
+		// Reset the timer
+		timer.set();
 	}
 
 	return 0;
