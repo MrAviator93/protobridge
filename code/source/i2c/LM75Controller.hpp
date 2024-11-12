@@ -19,6 +19,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @class LM75Controller
  * @brief A controller interface to manage and communicate with the LM75 temperature sensor.
@@ -116,5 +119,6 @@ public:
 	[[nodiscard]] Result< float > getTemperatureF();
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // PBL_I2C_LM75_CONTROLLER_HPP__

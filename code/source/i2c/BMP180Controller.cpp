@@ -100,7 +100,7 @@ bool readCalibConst( T& value,
 
 } // namespace
 
-struct BMP180Controller::CalibrationConstants
+struct v1::BMP180Controller::CalibrationConstants
 {
 	/// Read calibration constants from BME180 device
 	bool read( BusController& busController, std::uint8_t address );
@@ -118,7 +118,7 @@ struct BMP180Controller::CalibrationConstants
 	std::int16_t md{};
 };
 
-bool BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
+bool v1::BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
 {
 	bool rslt{ true };
 	rslt |= readCalibConst( ac1, busController, address, kBmp180CalibAc1, kBmp180CalibAc1Lsb );
@@ -135,7 +135,7 @@ bool BMP180Controller::CalibrationConstants::read( BusController& busController,
 	return rslt;
 }
 
-BMP180Controller::BMP180Controller( BusController& busController, Address address, SamplingAccuracy sAccuracy )
+v1::BMP180Controller::BMP180Controller( BusController& busController, Address address, SamplingAccuracy sAccuracy )
 	: ICBase{ busController, address }
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
@@ -147,9 +147,9 @@ BMP180Controller::BMP180Controller( BusController& busController, Address addres
 	}
 }
 
-BMP180Controller::~BMP180Controller() = default;
+v1::BMP180Controller::~BMP180Controller() = default;
 
-auto BMP180Controller::getTrueTemperatureC() -> Result< float >
+auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 {
 	using namespace std::chrono_literals;
 
@@ -181,7 +181,7 @@ auto BMP180Controller::getTrueTemperatureC() -> Result< float >
 	return static_cast< float >( T ) * 0.1f;
 }
 
-auto BMP180Controller::getTemperatureF() -> Result< float >
+auto v1::BMP180Controller::getTemperatureF() -> Result< float >
 {
 	const auto temp = getTrueTemperatureC();
 	if( temp.has_value() )
@@ -192,7 +192,7 @@ auto BMP180Controller::getTemperatureF() -> Result< float >
 	return std::unexpected( temp.error() );
 }
 
-auto BMP180Controller::getTruePressurePa() -> Result< float >
+auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 {
 	using namespace std::chrono_literals;
 
@@ -281,7 +281,7 @@ auto BMP180Controller::getTruePressurePa() -> Result< float >
 }
 
 // TODO: Consider moving this function to utils/Math.hpp
-auto BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
+auto v1::BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
 {
 	// H = 44330 * [1 - (P/p0)^(1/5.255) ]
 	constexpr float exponent = 1.0f / 5.255f;

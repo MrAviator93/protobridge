@@ -19,11 +19,11 @@ constexpr std::uint8_t MODE1_AI = 0x20; // Auto increment bit
 
 } // namespace
 
-PCA9685Controller::PCA9685Controller( BusController& busController, Address address )
+v1::PCA9685Controller::PCA9685Controller( BusController& busController, Address address )
 	: ICBase{ busController, address }
 { }
 
-auto PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result< void >
+auto v1::PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result< void >
 {
 	if( frequency < 24 || frequency > 1526 )
 	{
@@ -44,7 +44,7 @@ auto PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result< vo
 }
 
 // // Set the PWM duty cycle for a specific channel
-// void PCA9685Controller::setPWM( Channel channel, PWMState on, PWMState off )
+// void v1::PCA9685Controller::setPWM( Channel channel, PWMState on, PWMState off )
 // {
 // 	std::uint8_t regBase = LED0_ON_L + 4 * static_cast< std::uint8_t >( channel );
 
@@ -55,7 +55,7 @@ auto PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result< vo
 // }
 
 // // Enable or disable sleep mode
-// void PCA9685Controller::sleep( bool enable )
+// void v1::PCA9685Controller::sleep( bool enable )
 // {
 // 	std::uint8_t mode1;
 // 	if( !read( MODE1, mode1 ) )

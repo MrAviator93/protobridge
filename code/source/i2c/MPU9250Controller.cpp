@@ -4,7 +4,7 @@
 namespace pbl::i2c
 {
 
-MPU9250Controller::MPU9250Controller( BusController& busController, Address address )
+v1::MPU9250Controller::MPU9250Controller( BusController& busController, Address address )
 	: ICBase{ busController, address }
 { }
 

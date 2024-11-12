@@ -13,6 +13,9 @@
 namespace pbl::devices
 {
 
+inline namespace v1
+{
+
 template < typename PWMController, typename ArmingStrategy >
 class Esc
 {
@@ -73,5 +76,6 @@ private:
 	float m_maxPulseWidth{ 2000.0f }; // Maximum pulse width in microseconds (e.g., 2000us)
 };
 
+} // namespace v1
 } // namespace pbl::devices
 #endif // PBL_DEVICES_ESC_HPP__

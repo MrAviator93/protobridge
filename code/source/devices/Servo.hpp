@@ -9,6 +9,8 @@
 
 namespace pbl::devices
 {
+inline namespace v1
+{
 
 template < typename PWMController >
 class Servo
@@ -61,5 +63,7 @@ private:
 	float m_minPulseWidth{ 1000.0f }; // Minimum pulse width in microseconds (e.g., 1000us)
 	float m_maxPulseWidth{ 2000.0f }; // Maximum pulse width in microseconds (e.g., 2000us)
 };
+
+} // namespace v1
 } // namespace pbl::devices
 #endif // PBL_DEVICES_SERVO_HPP__

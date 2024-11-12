@@ -10,6 +10,9 @@
 namespace pbl::gpio
 {
 
+inline namespace v1
+{
+
 class GpioLine
 {
 public:
@@ -31,5 +34,6 @@ private:
 	std::int32_t m_lineNumber{};
 };
 
+} // namespace v1
 } // namespace pbl::gpio
 #endif // PBL_GPIO_GPIO_LINE_HPP__

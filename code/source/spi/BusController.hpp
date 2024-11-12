@@ -12,6 +12,9 @@
 namespace pbl::spi
 {
 
+inline namespace v1
+{
+
 class BusController
 {
 public:
@@ -88,5 +91,6 @@ private:
 	std::string m_lastError; //<! Stores the string of the last occurred error.
 };
 
+} // namespace v1
 } // namespace pbl::spi
 #endif // PBL_SPI_BUS_CONTROLLER_HPP__

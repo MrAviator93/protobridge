@@ -11,6 +11,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @brief Controller for the PCA9685 16-channel, 12-bit PWM Fm+ I2C-bus LED controller.
  * 
@@ -81,5 +84,6 @@ public:
 	}
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // PBL_I2C_PCA9658_CONTROLLER_HPP__

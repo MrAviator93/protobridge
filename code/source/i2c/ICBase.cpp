@@ -4,37 +4,37 @@
 namespace pbl::i2c
 {
 
-bool ICBase::write( const std::uint8_t reg, const std::uint8_t value )
+bool v1::ICBase::write( const std::uint8_t reg, const std::uint8_t value )
 {
 	return m_busController.write( m_icAddress, reg, value );
 }
 
-bool ICBase::write( const std::uint8_t reg, const std::span< const std::uint8_t > data )
+bool v1::ICBase::write( const std::uint8_t reg, const std::span< const std::uint8_t > data )
 {
 	return m_busController.write( m_icAddress, reg, data );
 }
 
-bool ICBase::write( const std::uint8_t reg, const std::uint8_t* pData, const std::uint8_t size )
+bool v1::ICBase::write( const std::uint8_t reg, const std::uint8_t* pData, const std::uint8_t size )
 {
 	return m_busController.write( m_icAddress, reg, pData, size );
 }
 
-bool ICBase::read( const std::uint8_t reg, std::uint8_t& result )
+bool v1::ICBase::read( const std::uint8_t reg, std::uint8_t& result )
 {
 	return m_busController.read( m_icAddress, reg, result );
 }
 
-std::int16_t ICBase::read( const std::uint8_t reg, std::uint8_t* pData, std::uint16_t size )
+std::int16_t v1::ICBase::read( const std::uint8_t reg, std::uint8_t* pData, std::uint16_t size )
 {
 	return m_busController.read( m_icAddress, reg, pData, size );
 }
 
-void ICBase::sleep( const std::chrono::milliseconds sleepTimeMs )
+void v1::ICBase::sleep( const std::chrono::milliseconds sleepTimeMs )
 {
 	m_busController.sleep( sleepTimeMs );
 }
 
-void ICBase::sleep( const std::chrono::microseconds sleepTimeUs )
+void v1::ICBase::sleep( const std::chrono::microseconds sleepTimeUs )
 {
 	m_busController.sleep( sleepTimeUs );
 }

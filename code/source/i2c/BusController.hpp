@@ -18,6 +18,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @class BusController
  * @brief An interface wrapper for I2C bus.
@@ -205,5 +208,6 @@ private:
 	std::string m_lastError; //<! TBW
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // PBL_I2C_BUS_CONTROLLER_HPP__

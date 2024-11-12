@@ -96,7 +96,7 @@ readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::
 
 } // namespace
 
-BusController::BusController( const std::string& busName )
+v1::BusController::BusController( const std::string& busName )
 	: m_busName{ busName }
 {
 	m_fd = ::open( m_busName.c_str(), O_RDWR | O_NONBLOCK );
@@ -111,13 +111,13 @@ BusController::BusController( const std::string& busName )
 	m_open = true;
 }
 
-BusController::~BusController()
+v1::BusController::~BusController()
 {
 	::close( m_fd );
 	m_open = false;
 }
 
-bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result )
+bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result )
 {
 	if( !isOpen() )
 	{
@@ -160,7 +160,9 @@ bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, 
 	return true;
 }
 
-bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 2 >& result )
+bool v1::BusController::read( const std::uint8_t slaveAddr,
+							  const std::uint8_t reg,
+							  std::array< std::uint8_t, 2 >& result )
 {
 	if( !isOpen() )
 	{
@@ -179,7 +181,9 @@ bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, 
 	return true;
 }
 
-bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 4 >& result )
+bool v1::BusController::read( const std::uint8_t slaveAddr,
+							  const std::uint8_t reg,
+							  std::array< std::uint8_t, 4 >& result )
 {
 	if( !isOpen() )
 	{
@@ -198,10 +202,10 @@ bool BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, 
 	return true;
 }
 
-bool BusController::read( const std::uint8_t slaveAddr,
-						  const std::uint8_t reg,
-						  std::int16_t& value,
-						  const std::endian endian )
+bool v1::BusController::read( const std::uint8_t slaveAddr,
+							  const std::uint8_t reg,
+							  std::int16_t& value,
+							  const std::endian endian )
 {
 	std::array< std::uint8_t, 2 > raw{};
 	if( !read( slaveAddr, reg, raw ) )
@@ -230,10 +234,10 @@ bool BusController::read( const std::uint8_t slaveAddr,
 	return true;
 }
 
-bool BusController::read( const std::uint8_t slaveAddr,
-						  const std::uint8_t reg,
-						  std::int32_t& value,
-						  const std::endian endian )
+bool v1::BusController::read( const std::uint8_t slaveAddr,
+							  const std::uint8_t reg,
+							  std::int32_t& value,
+							  const std::endian endian )
 {
 	std::array< std::uint8_t, 4 > raw{};
 	if( !read( slaveAddr, reg, raw ) )
@@ -262,8 +266,10 @@ bool BusController::read( const std::uint8_t slaveAddr,
 	return true;
 }
 
-std::int16_t
-BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize )
+std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
+									  const std::uint8_t reg,
+									  std::uint8_t* pData,
+									  std::uint16_t dataSize )
 {
 	if( !isOpen() )
 	{
@@ -302,7 +308,7 @@ BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::
 	return dataSize;
 }
 
-bool BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )
+bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )
 {
 	if( !isOpen() )
 	{
@@ -342,10 +348,10 @@ bool BusController::write( const std::uint8_t slaveAddr,
 	return write( slaveAddr, reg, data.data(), data.size() );
 }
 
-bool BusController::write( const std::uint8_t slaveAddr,
-						   const std::uint8_t reg,
-						   const std::uint8_t* data,
-						   const std::uint8_t size )
+bool v1::BusController::write( const std::uint8_t slaveAddr,
+							   const std::uint8_t reg,
+							   const std::uint8_t* data,
+							   const std::uint8_t size )
 {
 	if( !isOpen() )
 	{
@@ -385,17 +391,17 @@ bool BusController::write( const std::uint8_t slaveAddr,
 	return true;
 }
 
-void BusController::sleep( const std::chrono::milliseconds sleepTimeMs )
+void v1::BusController::sleep( const std::chrono::milliseconds sleepTimeMs )
 {
 	std::this_thread::sleep_for( sleepTimeMs );
 }
 
-void BusController::sleep( const std::chrono::microseconds sleepTimeUs )
+void v1::BusController::sleep( const std::chrono::microseconds sleepTimeUs )
 {
 	std::this_thread::sleep_for( sleepTimeUs );
 }
 
-void BusController::reportError()
+void v1::BusController::reportError()
 {
 	auto e = errno;
 	std::array< char, 256 > err{};
@@ -404,7 +410,7 @@ void BusController::reportError()
 	m_lastError = ::strerror_r( e, err.data(), err.size() );
 }
 
-void BusController::checkFunc()
+void v1::BusController::checkFunc()
 {
 	std::uint64_t funcs{};
 
