@@ -22,6 +22,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @class MPU6050Controller
  * @brief High-level controller class for the MPU6050 6-axis motion sensor.
@@ -107,7 +110,7 @@ public:
      * 
      * @return std::tuple<float, float, float> The tuple contains the roll, pitch, and yaw angles in degrees.
      */
-	[[nodiscard]] Result<math::Vector3f> angles();
+	[[nodiscard]] Result< math::Vector3f > angles();
 
 private:
 	/// TBW
@@ -122,5 +125,6 @@ private:
 	void calculateImuError();
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif //!PBL_I2C_MPU6050_CONTROLLER_HPP__

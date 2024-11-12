@@ -7,11 +7,11 @@
 namespace pbl::i2c
 {
 
-MPU6050Controller::MPU6050Controller( BusController& busController, Address address ) noexcept
+v1::MPU6050Controller::MPU6050Controller( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
 { }
 
-bool MPU6050Controller::reset()
+bool v1::MPU6050Controller::reset()
 {
 	bool rslt{ true };
 	rslt = write( MPU6050::kPowerManagement1Register, 0x00 );
@@ -20,7 +20,7 @@ bool MPU6050Controller::reset()
 	return rslt;
 }
 
-bool MPU6050Controller::configure()
+bool v1::MPU6050Controller::configure()
 {
 	bool rslt{ true };
 
@@ -58,7 +58,7 @@ struct CalibrationConstants
 	double GyroErrorZ{};
 };
 
-void MPU6050Controller::calculateImuError()
+void v1::MPU6050Controller::calculateImuError()
 {
 	// We can call this function in the setup section to calculate
 	// the accelerometer and gyro data error. From here we will get
@@ -144,7 +144,7 @@ void MPU6050Controller::calculateImuError()
 	GyroErrorZ = GyroErrorZ / static_cast< double >( kGyroCalibReadIterations );
 }
 
-auto MPU6050Controller::angles() -> Result< math::Vector3f >
+auto v1::MPU6050Controller::angles() -> Result< math::Vector3f >
 {
 	// TODO (AK)
 	return std::unexpected( utils::ErrorCode::UNEXPECTED_ERROR );

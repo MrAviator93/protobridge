@@ -27,11 +27,11 @@ constexpr std::uint16_t kDefaultconfigRegister = kOsSingle | kDataRateMask | kCo
 
 } // namespace
 
-ADS1015Controller::ADS1015Controller( BusController& busController, Address address )
+v1::ADS1015Controller::ADS1015Controller( BusController& busController, Address address )
 	: ICBase{ busController, address }
 { }
 
-auto ADS1015Controller::setGain( Gain gain ) -> Result< void >
+auto v1::ADS1015Controller::setGain( Gain gain ) -> Result< void >
 {
 	const auto currentConfigResult = readConfig();
 	if( !currentConfigResult )
@@ -49,7 +49,7 @@ auto ADS1015Controller::setGain( Gain gain ) -> Result< void >
 	return writeConfig( config );
 }
 
-auto ADS1015Controller::setSampleRate( SampleRate rate ) -> Result< void >
+auto v1::ADS1015Controller::setSampleRate( SampleRate rate ) -> Result< void >
 {
 	const auto currentConfigResult = readConfig();
 	if( !currentConfigResult )
@@ -66,7 +66,7 @@ auto ADS1015Controller::setSampleRate( SampleRate rate ) -> Result< void >
 	return writeConfig( config );
 }
 
-auto ADS1015Controller::readConfig() -> Result< std::uint16_t >
+auto v1::ADS1015Controller::readConfig() -> Result< std::uint16_t >
 {
 	std::array< std::uint8_t, 2 > data{};
 	if( read( kPointerConfig, data.data(), 2 ) == 2 )
@@ -78,7 +78,7 @@ auto ADS1015Controller::readConfig() -> Result< std::uint16_t >
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 }
 
-auto ADS1015Controller::writeConfig( std::uint16_t config ) -> Result< void >
+auto v1::ADS1015Controller::writeConfig( std::uint16_t config ) -> Result< void >
 {
 	// Split the 16-bit config into two bytes for transmission (big-endian format)
 	std::array< std::uint8_t, 2 > data = {

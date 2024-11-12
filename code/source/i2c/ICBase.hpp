@@ -12,6 +12,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 class BusController;
 
 /**
@@ -77,5 +80,6 @@ private:
 	std::uint8_t m_icAddress;
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // PBL_I2C_IC_BASE_HPP__

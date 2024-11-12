@@ -37,7 +37,7 @@ namespace
 
 } // namespace
 
-BusController::BusController( const std::string& busName )
+v1::BusController::BusController( const std::string& busName )
 	: m_busName{ busName }
 {
 	m_fd = ::open( m_busName.c_str(), O_RDWR | O_NONBLOCK );
@@ -51,23 +51,23 @@ BusController::BusController( const std::string& busName )
 	m_open = true;
 }
 
-BusController::~BusController()
+v1::BusController::~BusController()
 {
 	::close( m_fd );
 	m_open = false;
 }
 
-void BusController::sleep( const std::chrono::milliseconds sleepTimeMs )
+void v1::BusController::sleep( const std::chrono::milliseconds sleepTimeMs )
 {
 	std::this_thread::sleep_for( sleepTimeMs );
 }
 
-void BusController::sleep( const std::chrono::microseconds sleepTimeUs )
+void v1::BusController::sleep( const std::chrono::microseconds sleepTimeUs )
 {
 	std::this_thread::sleep_for( sleepTimeUs );
 }
 
-bool BusController::configure( Mode mode, Speed speed, BitsPerWord bitsPerWord )
+bool v1::BusController::configure( Mode mode, Speed speed, BitsPerWord bitsPerWord )
 {
 	if( !m_open.load() )
 	{
@@ -75,7 +75,7 @@ bool BusController::configure( Mode mode, Speed speed, BitsPerWord bitsPerWord )
 		return false;
 	}
 
-	std::uint8_t modeValue = toSpiMode(mode);
+	std::uint8_t modeValue = toSpiMode( mode );
 	if( ::ioctl( m_fd, SPI_IOC_WR_MODE, &modeValue ) == -1 )
 	{
 		setLastError( "Failed to set SPI mode." );
@@ -99,7 +99,7 @@ bool BusController::configure( Mode mode, Speed speed, BitsPerWord bitsPerWord )
 	return true;
 }
 
-void BusController::reportError()
+void v1::BusController::reportError()
 {
 	auto e = errno;
 	std::array< char, 256 > err;

@@ -12,6 +12,9 @@
 namespace pbl::gpio
 {
 
+inline namespace v1
+{
+
 // TODO: Rename to just Rpi5Chip0?
 class Rpi5Chip0 final
 {
@@ -37,5 +40,6 @@ private:
 	std::array< std::optional< GpioLine >, 22 > m_lines;
 };
 
+} // namespace v1
 } // namespace pbl::gpio
 #endif // PBL_GPIO_RPI_5_CHIP_0_HPP__

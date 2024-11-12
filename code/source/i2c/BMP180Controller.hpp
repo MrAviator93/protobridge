@@ -20,6 +20,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @class BMP180Controller
  * @brief Controller interface for the BMP180 barometric pressure sensor.
@@ -114,5 +117,6 @@ private:
 	utils::FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // I2C_DEVICES_BMP180_CONTROLLER_HPP__

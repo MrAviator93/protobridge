@@ -36,11 +36,11 @@ constexpr std::size_t kShutdownModeBit = 7; // Bit 7 is used for the shutdown mo
 
 } // namespace
 
-LM75Controller::LM75Controller( BusController& busController, Address address ) noexcept
+v1::LM75Controller::LM75Controller( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
 { }
 
-bool LM75Controller::setPowerMode( PowerMode mode )
+bool v1::LM75Controller::setPowerMode( PowerMode mode )
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -53,7 +53,7 @@ bool LM75Controller::setPowerMode( PowerMode mode )
 	return false;
 }
 
-bool LM75Controller::setThermostatMode( ThermostatMode mode )
+bool v1::LM75Controller::setThermostatMode( ThermostatMode mode )
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -66,7 +66,7 @@ bool LM75Controller::setThermostatMode( ThermostatMode mode )
 	return false;
 }
 
-auto LM75Controller::getPowerMode() -> Result< PowerMode >
+auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -83,7 +83,7 @@ auto LM75Controller::getPowerMode() -> Result< PowerMode >
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 }
 
-auto LM75Controller::getThermostatMode() -> Result< ThermostatMode >
+auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -100,7 +100,7 @@ auto LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 }
 
-auto LM75Controller::getAlertStatus() -> Result< bool >
+auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 {
 	std::uint8_t config{};
 	if( read( kConfigurationRegister, config ) )
@@ -112,7 +112,7 @@ auto LM75Controller::getAlertStatus() -> Result< bool >
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 }
 
-auto LM75Controller::getTemperatureC() -> Result< float >
+auto v1::LM75Controller::getTemperatureC() -> Result< float >
 {
 	std::array< std::uint8_t, 2 > data{ 0x00, 0x00 };
 	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size > 0 )
@@ -125,7 +125,7 @@ auto LM75Controller::getTemperatureC() -> Result< float >
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 }
 
-auto LM75Controller::getTemperatureF() -> Result< float >
+auto v1::LM75Controller::getTemperatureF() -> Result< float >
 {
 	auto temp = getTemperatureC();
 	if( temp.has_value() )

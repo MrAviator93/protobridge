@@ -26,6 +26,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @class MPU9250Controller
  * @brief Controller interface for the MPU9250 9-axis motion sensor.
@@ -114,5 +117,6 @@ public:
 	// [[nodiscard]] Result< float > getTemperature();
 };
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // PBL_I2C_MPU9250_CONTROLLER_HPP__

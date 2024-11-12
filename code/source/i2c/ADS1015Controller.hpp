@@ -10,6 +10,9 @@
 namespace pbl::i2c
 {
 
+inline namespace v1
+{
+
 /**
  * @brief Controller for the ADS1015 12-bit ADC with I2C interface.
  * 
@@ -196,5 +199,6 @@ private:
 // }
 // adc.endContinuousRead();
 
+} // namespace v1
 } // namespace pbl::i2c
 #endif // PBL_I2C_ADS1015_CONTROLLER_HPP__
