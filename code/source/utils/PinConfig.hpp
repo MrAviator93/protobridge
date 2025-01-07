@@ -23,11 +23,10 @@ namespace pbl::utils
  */
 template < typename T,
 		   T Default,
-		   typename ToBool = decltype( []( T v ) -> bool { return static_cast< bool >( v ); } ),
-		   typename FromBool = decltype( []( bool v ) -> T { return static_cast< T >( v ); } ) >
-	requires( std::same_as< T, bool > || std::is_enum_v< T > ) &&
-			std::same_as< std::invoke_result_t< ToBool, T >, bool > &&
-			std::same_as< std::invoke_result_t< FromBool, bool >, T >
+		   typename ToBool = decltype( []( T v ) noexcept -> bool { return static_cast< bool >( v ); } ),
+		   typename FromBool = decltype( []( bool v ) noexcept -> T { return static_cast< T >( v ); } ) >
+	requires( std::same_as< T, bool > || std::is_enum_v< T > ) && std::is_nothrow_invocable_r_v< bool, ToBool, T > &&
+			std::is_nothrow_invocable_r_v< T, FromBool, bool >
 struct PinConfig final
 {
 	/// Default constructor initializes all pins with the default value.

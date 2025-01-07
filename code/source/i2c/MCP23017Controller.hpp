@@ -104,24 +104,24 @@ public:
 			COMPARE = 1 // Interrupt on comparison with DEFVAL
 		};
 
-		using PinModeTo = decltype( []( auto v ) -> bool { return v == PinMode::INPUT; } );
+		using PinModeTo = decltype( []( auto v ) noexcept -> bool { return v == PinMode::INPUT; } );
 		using PinModeFrom =
-			decltype( []( auto b ) -> PinMode { return b == true ? PinMode::INPUT : PinMode::OUTPUT; } );
+			decltype( []( auto b ) noexcept -> PinMode { return b == true ? PinMode::INPUT : PinMode::OUTPUT; } );
 
 		/// PinModes represents IODIR register for pin direction configuration.
 		/// Each bit indicates whether the corresponding pin is set to INPUT (1) or OUTPUT (0).
 		using PinModes = utils::PinConfig< PinMode, PinMode::OUTPUT, PinModeTo, PinModeFrom >;
 
-		using PinStatesTo = decltype( []( auto v ) -> bool { return v == PinState::HIGH; } );
+		using PinStatesTo = decltype( []( auto v ) noexcept -> bool { return v == PinState::HIGH; } );
 		using PinStatesFrom =
-			decltype( []( auto b ) -> PinState { return b == true ? PinState::HIGH : PinState::LOW; } );
+			decltype( []( auto b ) noexcept -> PinState { return b == true ? PinState::HIGH : PinState::LOW; } );
 
 		/// PinStates represents the GPIO register, reflecting current pin states.
 		/// Each bit indicates the actual logic level (HIGH or LOW) of each pin.
 		using PinStates = utils::PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
 
-		using InterruptControlTo = decltype( []( auto v ) -> bool { return v == InterruptControl::COMPARE; } );
-		using InterruptControlFrom = decltype( []( auto b ) -> InterruptControl {
+		using InterruptControlTo = decltype( []( auto v ) noexcept -> bool { return v == InterruptControl::COMPARE; } );
+		using InterruptControlFrom = decltype( []( auto b ) noexcept -> InterruptControl {
 			return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
 		} );
 
