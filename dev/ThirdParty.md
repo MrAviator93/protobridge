@@ -43,8 +43,8 @@ sudo LD_LIBRARY_PATH=/usr/local/gcc-14.1.0/lib64:$LD_LIBRARY_PATH make install
 git clone --depth=1 --branch 2.16.0 --recurse-submodules -j$(nproc) https://github.com/danmar/cppcheck.git cppcheck-2.16.0
 cd cppcheck-2.16.0 && mkdir build && cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
-sudo make install
+cmake --build . --parallel $(nproc)
+sudo cmake --install .
 ```
 
 ## Libraries
@@ -59,6 +59,6 @@ sudo make install
 git clone --depth=1 --branch v1.9.0 --recurse-submodules -j$(nproc) git@github.com:google/benchmark.git bench-1.9.0
 cd bench-1.9.0 && mkdir build && cd build
 make -j$(nproc)
-sudo make install
-cmake --version
+cmake --build . --parallel $(nproc)
+sudo cmake --install .
 ```
