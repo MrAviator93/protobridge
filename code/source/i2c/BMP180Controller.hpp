@@ -1,6 +1,6 @@
 /**
  * @author Artur K.
- * @date 4 November 2024
+ * @date 4 November 2025
  * @brief Declaration of BMP180Controller class for managing the BMP180 sensor.
  *
  * For license details, see the LICENSE file in the project root.

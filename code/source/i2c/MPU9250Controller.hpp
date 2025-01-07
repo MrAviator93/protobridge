@@ -1,6 +1,6 @@
 /**
  * @author MrAviator93
- * @date 4 November 2024
+ * @date 4 November 2025
  * @brief Declaration of MPU9250Controller class for managing the MPU9250 sensor.
  *
  * For license details, see the LICENSE file in the project root.
