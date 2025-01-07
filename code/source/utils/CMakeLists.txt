@@ -1,6 +1,7 @@
 
 set(PBL_LIB_HEADERS
     Timer.hpp
+    Result.hpp
     Counter.hpp
     TimeStep.hpp
     SpinLock.hpp
