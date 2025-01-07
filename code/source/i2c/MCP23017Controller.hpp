@@ -10,7 +10,6 @@
 #include <expected>
 #include <functional>
 
-
 namespace pbl::i2c
 {
 
@@ -105,23 +104,26 @@ public:
 			COMPARE = 1 // Interrupt on comparison with DEFVAL
 		};
 
-		using PinModeTo = decltype( []( auto v ) { return v == PinMode::INPUT; } );
-		using PinModeFrom = decltype( []( auto b ) { return b == true ? PinMode::INPUT : PinMode::OUTPUT; } );
+		using PinModeTo = decltype( []( auto v ) -> bool { return v == PinMode::INPUT; } );
+		using PinModeFrom =
+			decltype( []( auto b ) -> PinMode { return b == true ? PinMode::INPUT : PinMode::OUTPUT; } );
 
 		/// PinModes represents IODIR register for pin direction configuration.
 		/// Each bit indicates whether the corresponding pin is set to INPUT (1) or OUTPUT (0).
 		using PinModes = utils::PinConfig< PinMode, PinMode::OUTPUT, PinModeTo, PinModeFrom >;
 
-		using PinStatesTo = decltype( []( auto v ) { return v == PinState::HIGH; } );
-		using PinStatesFrom = decltype( []( auto b ) { return b == true ? PinState::HIGH : PinState::LOW; } );
+		using PinStatesTo = decltype( []( auto v ) -> bool { return v == PinState::HIGH; } );
+		using PinStatesFrom =
+			decltype( []( auto b ) -> PinState { return b == true ? PinState::HIGH : PinState::LOW; } );
 
 		/// PinStates represents the GPIO register, reflecting current pin states.
 		/// Each bit indicates the actual logic level (HIGH or LOW) of each pin.
 		using PinStates = utils::PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
 
-		using InterruptControlTo = decltype( []( auto v ) { return v == InterruptControl::COMPARE; } );
-		using InterruptControlFrom =
-			decltype( []( auto b ) { return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS; } );
+		using InterruptControlTo = decltype( []( auto v ) -> bool { return v == InterruptControl::COMPARE; } );
+		using InterruptControlFrom = decltype( []( auto b ) -> InterruptControl {
+			return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
+		} );
 
 		/// PinInterruptControl represents the INTCON register for interrupt conditions.
 		/// Each bit indicates whether a pin triggers an interrupt on comparison with DEFVAL (1) or change from previous state (0).
