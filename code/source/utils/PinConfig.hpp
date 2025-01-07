@@ -16,15 +16,15 @@ namespace pbl::utils
  * @todo Consider adding size_t to define bitset size or PinCount, or leave
  * as 8, as it's the default one.
  * 
- * @tparam T Must be either `bool` or an `enum` with exactly two states.
+ * @tparam T Must be either `bool` or an `enum` with exactly two states (true/false, ON, OFF, etc.).
  * @tparam Default Default value to initialize the pin configuration.
  * @tparam ToBool Callable to convert `T` to `bool`.
  * @tparam FromBool Callable to convert `bool` back to `T`
  */
 template < typename T,
 		   T Default,
-		   typename ToBool = decltype( []( T v ) { return v; } ),
-		   typename FromBool = decltype( []( T v ) { return v; } ) >
+		   typename ToBool = decltype( []( T v ) -> bool { return static_cast< bool >( v ); } ),
+		   typename FromBool = decltype( []( bool v ) -> T { return static_cast< T >( v ); } ) >
 	requires( std::same_as< T, bool > || std::is_enum_v< T > ) &&
 			std::same_as< std::invoke_result_t< ToBool, T >, bool > &&
 			std::same_as< std::invoke_result_t< FromBool, bool >, T >
@@ -66,13 +66,13 @@ struct PinConfig final
 		return FromBool{}( bitset[ Index ] );
 	}
 
-    /// Converts the PinConfig object to its underlying bitset representation.
+	/// Converts the PinConfig object to its underlying bitset representation.
 	[[nodiscard]] constexpr operator auto() const noexcept { return bitset; }
 
-    /// Comparison operator.
+	/// Comparison operator.
 	constexpr auto operator<=>( const PinConfig& ) const = default;
 
-    /// Bitset representing the state of the 8 pins.
+	/// Bitset representing the state of the 8 pins.
 	std::bitset< 8 > bitset{};
 };
 
