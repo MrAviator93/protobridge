@@ -1,6 +1,6 @@
 /**
  * @author MrAviator93
- * @date 25 October 2024
+ * @date 25 October 2025
  * @brief Declaration of LM75Controller class for managing the LM75 sensor.
  *
  * For license details, see the LICENSE file in the project root.

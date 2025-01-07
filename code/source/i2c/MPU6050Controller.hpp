@@ -1,6 +1,6 @@
 /**
  * @author MrAviator93
- * @date 4 November 2024
+ * @date 4 November 2025
  * @brief Declaration of MPU6050Controller class for managing the MPU6050 sensor.
  *
  * Provides an interface to interact with the MPU6050, a 6-axis motion sensor that combines a 3-axis accelerometer 

@@ -45,7 +45,7 @@ FROM debian:12 AS pbl-base
 LABEL vendor="ProtoBridge Library" \
       type="base" \
       version="1.0.0" \
-      release-date="2024-05-25" \
+      release-date="2025-05-25" \
       base-image="debian:12"
 
 ENV DEBIAN_FRONTEND=noninteractive

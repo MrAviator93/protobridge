@@ -1,9 +1,9 @@
 /**
  *  @brief Implementation of LM75Controller class for managing the LM75 sensor.
  *  @author Artur K.
- *  @date 25 October 2024
+ *  @date 25 October 2025
  *
- *  Copyright (c) 2024 Artur K.
+ *  Copyright (c) 2025 Artur K.
  *
  *  For license details, see the LICENSE file in the project root.
  */
