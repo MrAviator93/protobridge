@@ -19,12 +19,18 @@
 #### Build & Install CMake
 
 ```bash
-git clone --depth=1 --branch v3.30.5 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-3.30.5
-cd cmake-3.30.5 && mkdir build && cd build
+git clone --depth=1 --branch v3.31.0 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-3.31.0
+cd cmake-3.31.0 && mkdir build && cd build
 ../bootstrap
 make -j$(nproc)
 sudo make install
 cmake --version
+```
+
+If you have upgraded to the latest copiler you may need to do the following:
+
+```sh
+sudo LD_LIBRARY_PATH=/usr/local/gcc-14.1.0/lib64:$LD_LIBRARY_PATH make install
 ```
 
 ### CPPCheck
