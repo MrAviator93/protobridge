@@ -26,11 +26,11 @@ class ADS1015Controller final : public ICBase, public utils::Counter< ADS1015Con
 	struct ReaderPrivateTag
 	{ };
 
+public:
 	class SingleShotReader;
 	class ContinuousReader;
 	class DifferentialReader;
 
-public:
 	template < typename T >
 	using Result = std::expected< T, utils::ErrorCode >;
 
