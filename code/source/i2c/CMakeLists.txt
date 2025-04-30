@@ -6,6 +6,7 @@ set(PBL_LIB_HEADERS
     LM75Controller.hpp
     SHT31Controller.hpp
     BMP180Controller.hpp
+    TMP102Controller.hpp
     MPU6050Controller.hpp
     MPU9250Controller.hpp
     ADS1015Controller.hpp
@@ -19,6 +20,7 @@ set(PBL_LIB_SOURCE
     LM75Controller.cpp
     SHT31Controller.cpp
     BMP180Controller.cpp
+    TMP102Controller.cpp
     ADS1015Controller.cpp
     MPU6050Controller.cpp
     MPU9250Controller.cpp
