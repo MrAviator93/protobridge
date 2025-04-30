@@ -1,6 +1,8 @@
 #include "BMP180Controller.hpp"
 #include "BusController.hpp"
+
 #include <math/Math.hpp>
+#include <math/Dynamics.hpp>
 
 // C++
 #include <array>

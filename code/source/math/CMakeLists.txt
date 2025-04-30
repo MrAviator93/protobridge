@@ -4,6 +4,7 @@ set(PBL_LIB_HEADERS
     Math.hpp
     Linear.hpp
     Matrix.hpp
+    Dynamics.hpp
     Matrix2x2.hpp
     Matrix3x3.hpp
     Matrix4x4.hpp
