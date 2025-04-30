@@ -82,6 +82,10 @@ public:
 		// 1 step = 4.88 microseconds (20000us / 4096 steps for 50Hz)
 		return static_cast< std::uint16_t >( ( pulseWidth / 20'000.0f ) * pcaResolution );
 	}
+
+private:
+	PCA9685Controller( const PCA9685Controller& ) = delete;
+	PCA9685Controller& operator=( const PCA9685Controller& ) = delete;
 };
 
 } // namespace v1
