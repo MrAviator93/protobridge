@@ -169,6 +169,10 @@ public:
 	// }
 
 private:
+	ADS1015Controller( const ADS1015Controller& ) = delete;
+	ADS1015Controller& operator=( const ADS1015Controller& ) = delete;
+
+private:
 	Result< std::uint16_t > readConfig();
 
 	Result< void > writeConfig( std::uint16_t config );

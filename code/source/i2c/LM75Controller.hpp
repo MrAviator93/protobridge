@@ -117,6 +117,10 @@ public:
 
 	/// Retrieves the temperature in Fahrenheit
 	[[nodiscard]] Result< float > getTemperatureF();
+
+private:
+	LM75Controller( const LM75Controller& ) = delete;
+	LM75Controller& operator=( const LM75Controller& ) = delete;
 };
 
 } // namespace v1

@@ -113,6 +113,10 @@ public:
 	[[nodiscard]] Result< float > getAbsoluteAltitude( float localPressure = kPressureAtSeaLevelPa );
 
 private:
+	BMP180Controller( const BMP180Controller& ) = delete;
+	BMP180Controller& operator=( const BMP180Controller& ) = delete;
+
+private:
 	SamplingAccuracy m_samplingAccuracy;
 	utils::FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
 };

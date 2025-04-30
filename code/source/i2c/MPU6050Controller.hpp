@@ -123,6 +123,9 @@ private:
 	// really this should be done only once for each sensor module, and stored individually for
 	// the sensor (sort of calibration) as offsets.
 	void calculateImuError();
+
+	MPU6050Controller( const MPU6050Controller& ) = delete;
+	MPU6050Controller& operator=( const MPU6050Controller& ) = delete;
 };
 
 } // namespace v1

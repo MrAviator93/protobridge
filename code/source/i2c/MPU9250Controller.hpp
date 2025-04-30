@@ -115,6 +115,10 @@ public:
 
 	/// Retrieves the sensor's temperature in degrees Celsius.
 	// [[nodiscard]] Result< float > getTemperature();
+
+private:
+	MPU9250Controller( const MPU9250Controller& ) = delete;
+	MPU9250Controller& operator=( const MPU9250Controller& ) = delete;
 };
 
 } // namespace v1
