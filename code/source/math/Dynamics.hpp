@@ -1,8 +1,9 @@
 #ifndef PBL_MATH_DYNAMICS_HPP__
 #define PBL_MATH_DYNAMICS_HPP__
 
+#include "Math.hpp"
+
 // C++
-#include <math>
 #include <type_traits>
 
 namespace pbl::math
