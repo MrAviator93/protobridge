@@ -61,7 +61,7 @@ enum class ErrorCode : std::uint8_t
 };
 
 /// Converts an ErrorCode to its string representation.
-constexpr std::string_view toStringView( const ErrorCode error ) noexcept
+[[nodiscard]] constexpr std::string_view toStringView( const ErrorCode error ) noexcept
 {
 	constexpr std::string_view kUndefined{"UNDEFINED"};
 
