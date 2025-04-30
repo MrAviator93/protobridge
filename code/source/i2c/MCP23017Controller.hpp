@@ -147,7 +147,7 @@ public:
 		using PinPullUps = utils::PinConfig< bool, false >;
 
 		// Read-Only Configurations
-		
+
 		/// Captured pin states at interrupt time, reflecting INTCAP register.
 		/// This is a read-only configuration, storing the state of each pin at the time an interrupt was triggered.
 		using PinInterruptCapture = utils::PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
@@ -307,6 +307,10 @@ public:
 
 	[[nodiscard]] auto& portA( this auto& self ) noexcept { return self.m_portA; }
 	[[nodiscard]] auto& portB( this auto& self ) noexcept { return self.m_portB; }
+
+private:
+	MCP23017ControllerV2( const MCP23017ControllerV2& ) = delete;
+	MCP23017ControllerV2& operator=( const MCP23017ControllerV2& ) = delete;
 
 private:
 	Port m_portA;
