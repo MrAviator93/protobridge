@@ -26,6 +26,10 @@ class ADS1015Controller final : public ICBase, public utils::Counter< ADS1015Con
 	struct ReaderPrivateTag
 	{ };
 
+	class SingleShotReader;
+	class ContinuousReader;
+	class DifferentialReader;
+
 public:
 	template < typename T >
 	using Result = std::expected< T, utils::ErrorCode >;
@@ -81,38 +85,14 @@ public:
 
 	using enum Address;
 
-	class Reader
-	{
-	public:
-		enum class Mode
-		{
-			SINGLE_ENDED,
-			DIFFERENTIAL,
-			CONTINUOUS
-		};
-
-		Reader( ADS1015Controller& ads, ReaderPrivateTag )
-			: m_ads{ ads }
-		{
-			// ads.lock();
-		}
-
-		~Reader()
-		{
-			// ads.unlock();
-		}
-
-		std::expected< std::int16_t, std::string > read()
-		{
-			// return ads.read();
-			return 0;
-		}
-
-	private:
-		ADS1015Controller& m_ads;
-	};
-
+	/// TBW
 	explicit ADS1015Controller( class BusController& busController, Address address = H48 );
+
+	/// TBW
+	ADS1015Controller( ADS1015Controller&& ) = default;
+
+	/// TBW
+	ADS1015Controller& operator=( ADS1015Controller&& ) = default;
 
 	/// TBW
 	Result< void > setGain( Gain gain );
@@ -181,11 +161,108 @@ private:
 	// TODO
 };
 
+class ADS1015Controller::SingleShotReader final
+{
+public:
+	explicit SingleShotReader( ADS1015Controller&& ctrl )
+		: controller{ std::move( ctrl ) }
+	{
+		// controller.setMode(Mode::SINGLE_SHOT);
+	}
+
+	std::int16_t read( Channel channel )
+	{
+		// controller.setChannel(channel);
+		// controller.startConversion();
+		// return controller.readConversionResult();
+		return {};
+	}
+
+	ADS1015Controller release() { return std::move( controller ); }
+
+private:
+	SingleShotReader( const SingleShotReader& ) = delete;
+	SingleShotReader& operator=( const SingleShotReader& ) = delete;
+
+private:
+	ADS1015Controller controller;
+};
+
+class ADS1015Controller::ContinuousReader final
+{
+public:
+	explicit ContinuousReader( ADS1015Controller&& ctrl )
+		: controller{ std::move( ctrl ) }
+	{
+		// controller.setMode(Mode::CONTINOUS);
+		// controller.startContinuousRead();
+	}
+
+	~ContinuousReader()
+	{
+		// controller.stopContinuousRead();
+	}
+
+	/// TBW
+	[[nodiscard]] std::int16_t read()
+	{
+		// return controller.readContinuous();
+		return {};
+	}
+
+	/// Returns ownership of the controller after done with continous read
+	ADS1015Controller release()
+	{
+		// Ensure clean stop
+		// controller.stopContinuousRead();
+		return std::move( controller );
+	}
+
+private:
+	ContinuousReader( const ContinuousReader& ) = delete;
+	ContinuousReader& operator=( const ContinuousReader& ) = delete;
+
+private:
+	ADS1015Controller controller;
+};
+
+class ADS1015Controller::DifferentialReader final
+{
+public:
+	explicit DifferentialReader( ADS1015Controller&& ctrl )
+		: controller{ std::move( ctrl ) }
+	{
+		// controller.setMode(Mode::SINGLE_SHOT);
+	}
+
+	std::int16_t read( Channel positive, Channel negative )
+	{
+		// controller.configureDifferential(positive, negative);
+		// controller.startConversion();
+		// return controller.readConversionResult();
+		return {};
+	}
+
+	ADS1015Controller release() { return std::move( controller ); }
+
+private:
+	DifferentialReader( const DifferentialReader& ) = delete;
+	DifferentialReader& operator=( const DifferentialReader& ) = delete;
+
+private:
+	ADS1015Controller controller;
+};
+
 // // Create and configure ADS1015
 // ADS1015Controller adc(busController, ADS1015Controller::Address::H48);
-// adc.setGain(ADS1015Controller::Gain::FS_2_048V)
-//    .setSampleRate(ADS1015Controller::SampleRate::SPS_920)
-//    .setMode(ADS1015Controller::Mode::SINGLE_SHOT);
+// auto rslt = adc.setGain(ADS1015Controller::Gain::FS_2_048V)
+//    			  .setSampleRate(ADS1015Controller::SampleRate::SPS_920)
+//    			  .setMode(ADS1015Controller::Mode::SINGLE_SHOT);
+// if (!rslt)
+// {
+//		std::println("{}", rlst.message());
+//		return -1;
+// }
 
 // // Perform a single-ended read on channel 0
 // std::int16_t singleResult = adc.readSingleEnded(ADS1015Controller::Channel::CH0);
