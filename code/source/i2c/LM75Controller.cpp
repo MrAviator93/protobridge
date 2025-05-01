@@ -130,7 +130,7 @@ auto v1::LM75Controller::getTemperatureF() -> Result< float >
 	auto temp = getTemperatureC();
 	if( temp.has_value() )
 	{
-		return utils::celsiusToFahrenheit( temp.value() );
+		return math::celsiusToFahrenheit( temp.value() );
 	}
 
 	return temp;

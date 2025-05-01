@@ -188,7 +188,7 @@ auto v1::BMP180Controller::getTemperatureF() -> Result< float >
 	const auto temp = getTrueTemperatureC();
 	if( temp.has_value() )
 	{
-		return utils::celsiusToFahrenheit( temp.value() );
+		return math::celsiusToFahrenheit( temp.value() );
 	}
 
 	return std::unexpected( temp.error() );
