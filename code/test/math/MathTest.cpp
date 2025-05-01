@@ -11,7 +11,7 @@ SCENARIO( "Converting degrees to radians" )
 		WHEN( "the value is 0" )
 		{
 			double degrees{ 0.0 };
-			double radians = pbl::utils::degreesToRadians( degrees );
+			double radians = pbl::math::degreesToRadians( degrees );
 
 			THEN( "the result should be 0 radians" )
 			{
@@ -22,22 +22,22 @@ SCENARIO( "Converting degrees to radians" )
 		WHEN( "the value is 90" )
 		{
 			double degrees{ 90.0 };
-			double radians = pbl::utils::degreesToRadians( degrees );
+			double radians = pbl::math::degreesToRadians( degrees );
 
 			THEN( "the result should be pi/2 radians" )
 			{
-				CHECK( radians == doctest::Approx( pbl::utils::PI / 2.0 ) );
+				CHECK( radians == doctest::Approx( pbl::math::PI / 2.0 ) );
 			}
 		}
 
 		WHEN( "the value is 180" )
 		{
 			double degrees{ 180.0 };
-			double radians = pbl::utils::degreesToRadians( degrees );
+			double radians = pbl::math::degreesToRadians( degrees );
 
 			THEN( "the result should be pi radians" )
 			{
-				CHECK( radians == doctest::Approx( pbl::utils::PI ) );
+				CHECK( radians == doctest::Approx( pbl::math::PI ) );
 			}
 		}
 	}
@@ -50,7 +50,7 @@ SCENARIO( "Converting radians to degrees" )
 		WHEN( "the value is 0" )
 		{
 			double radians{ 0.0 };
-			double degrees{ pbl::utils::radiansToDegrees( radians ) };
+			double degrees{ pbl::math::radiansToDegrees( radians ) };
 
 			THEN( "the result should be 0 degrees" )
 			{
@@ -60,8 +60,8 @@ SCENARIO( "Converting radians to degrees" )
 
 		WHEN( "the value is pi/2" )
 		{
-			double radians = pbl::utils::PI / 2.0;
-			double degrees{ pbl::utils::radiansToDegrees( radians ) };
+			double radians = pbl::math::PI / 2.0;
+			double degrees{ pbl::math::radiansToDegrees( radians ) };
 
 			THEN( "the result should be 90 degrees" )
 			{
@@ -71,8 +71,8 @@ SCENARIO( "Converting radians to degrees" )
 
 		WHEN( "the value is pi" )
 		{
-			double radians = pbl::utils::PI;
-			double degrees{ pbl::utils::radiansToDegrees( radians ) };
+			double radians = pbl::math::PI;
+			double degrees{ pbl::math::radiansToDegrees( radians ) };
 			
 			THEN( "the result should be 180 degrees" )
 			{
