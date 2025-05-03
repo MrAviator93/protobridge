@@ -285,14 +285,9 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 // TODO: Consider moving this function to utils/Math.hpp
 auto v1::BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
 {
-	// H = 44330 * [1 - (P/p0)^(1/5.255) ]
-	constexpr float exponent = 1.0f / 5.255f;
-
 	if( auto truePressure = getTruePressurePa(); truePressure.has_value() )
 	{
-		const auto pd = truePressure.value() / localPressure;
-		const auto r = 1.0f - std::powf( pd, exponent );
-		return 44330.0 * r;
+		return math::pressureToAltitude(truePressure.value(), localPressure);
 	}
 
 	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
