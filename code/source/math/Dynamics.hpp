@@ -18,8 +18,9 @@ namespace pbl::math
 template < typename T >
 [[nodiscard]] inline constexpr T pressureToAltitude( T pressurePa, T referencePressurePa )
 {
-	static_assert( std::is_floating_point_v< T >, "pressureToAltitude requires a floating-point type" );
+	static_assert( std::is_floating_point_v< T >, "Requires a floating-point type" );
 
+	// H = 44330 * [1 - (P/p0)^(1/5.255) ]
 	constexpr T exponent = static_cast< T >( 1.0 ) / static_cast< T >( 5.255 );
 
 	const T ratio = pressurePa / referencePressurePa;
@@ -42,7 +43,7 @@ template < typename T >
 template < typename T >
 [[nodiscard]] inline constexpr T dewPoint( T temperatureC, T humidityPercent )
 {
-	static_assert( std::is_floating_point_v< T >, "Requires floating-point" );
+	static_assert( std::is_floating_point_v< T >, "Requires floating-point type" );
 
 	constexpr T a = 17.62;
 	constexpr T b = 243.12;
@@ -68,7 +69,8 @@ template < typename T >
 template < typename T >
 [[nodiscard]] inline T heatIndexCelsius( T tempC, T humidityPercent )
 {
-	static_assert( std::is_floating_point_v< T >, "Requires floating-point" );
+	static_assert( std::is_floating_point_v< T >, "Requires floating-point type" );
+
 	// Convert to Fahrenheit for classic HI equation
 	const T tempF = celsiusToFahrenheit( tempC );
 	const T RH = humidityPercent;
