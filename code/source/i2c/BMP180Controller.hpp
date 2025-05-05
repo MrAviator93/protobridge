@@ -75,7 +75,7 @@ public:
 	enum class Address : std::uint8_t
 	{
 		DEFAULT = 0x77,
-		ALTERNATIVE = 0x76 // SD0 pin set to high
+		ALTERNATIVE = 0x76 ///< SD0 pin set to high
 	};
 
 	// Can be selected by the variable oversampling_setting
