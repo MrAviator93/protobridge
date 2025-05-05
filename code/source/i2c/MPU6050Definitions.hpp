@@ -15,23 +15,23 @@ constexpr std::uint8_t kGyroConfigRegister{ 0x1B }; //!< Gyroscope configuration
 constexpr std::uint8_t kAccelConfigRegister{ 0x1C }; //!< Accelerometer configuration
 constexpr std::uint8_t kFifoEnableRegister{ 0x23 }; //!< FIFO buffer enable
 constexpr std::uint8_t kI2CMasterControlRegister{ 0x24 }; //!< I2C master control settings
-constexpr std::uint8_t kI2CSlave0AddressRegister{ 0x25 }; //!< I2C slave 0 address
-constexpr std::uint8_t kI2CSlave0Register{ 0x26 }; //!< I2C slave 0 data to write
-constexpr std::uint8_t kI2CSlave0ControlRegister{ 0x27 }; //!< I2C slave 0 control
-constexpr std::uint8_t kI2CSlave1AddressRegister{ 0x28 }; //!< I2C slave 1 address
-constexpr std::uint8_t kI2CSlave1Register{ 0x29 }; //!< I2C slave 1 data to write
-constexpr std::uint8_t kI2CSlave1ControlRegister{ 0x2A }; //!< I2C slave 1 control
-constexpr std::uint8_t kI2CSlave2AddressRegister{ 0x2B }; //!< I2C slave 2 address
-constexpr std::uint8_t kI2CSlave2Register{ 0x2C }; //!< I2C slave 2 data to write
-constexpr std::uint8_t kI2CSlave2ControlRegister{ 0x2D }; //!< I2C slave 2 control
-constexpr std::uint8_t kI2CSlave3AddressRegister{ 0x2E }; //!< I2C slave 3 address
-constexpr std::uint8_t kI2CSlave3Register{ 0x2F }; //!< I2C slave 3 data to write
-constexpr std::uint8_t kI2CSlave3ControlRegister{ 0x30 }; //!< I2C slave 3 control
-constexpr std::uint8_t kI2CSlave4AddressRegister{ 0x31 }; //!< I2C slave 4 address
-constexpr std::uint8_t kI2CSlave4Register{ 0x32 }; //!< I2C slave 4 data to write
-constexpr std::uint8_t kI2CSlave4DORegister{ 0x33 }; //!< I2C slave 4 direct data operation
-constexpr std::uint8_t kI2CSlave4ControlRegister{ 0x34 }; //!< I2C slave 4 control
-constexpr std::uint8_t kI2CSlave4DIRegister{ 0x35 }; //!< I2C slave 4 direct data input
+constexpr std::uint8_t kI2CDevice0AddressRegister{ 0x25 }; //!< I2C Device 0 address
+constexpr std::uint8_t kI2CDevice0Register{ 0x26 }; //!< I2C Device 0 data to write
+constexpr std::uint8_t kI2CDevice0ControlRegister{ 0x27 }; //!< I2C Device 0 control
+constexpr std::uint8_t kI2CDevice1AddressRegister{ 0x28 }; //!< I2C Device 1 address
+constexpr std::uint8_t kI2CDevice1Register{ 0x29 }; //!< I2C Device 1 data to write
+constexpr std::uint8_t kI2CDevice1ControlRegister{ 0x2A }; //!< I2C Device 1 control
+constexpr std::uint8_t kI2CDevice2AddressRegister{ 0x2B }; //!< I2C Device 2 address
+constexpr std::uint8_t kI2CDevice2Register{ 0x2C }; //!< I2C Device 2 data to write
+constexpr std::uint8_t kI2CDevice2ControlRegister{ 0x2D }; //!< I2C Device 2 control
+constexpr std::uint8_t kI2CDevice3AddressRegister{ 0x2E }; //!< I2C Device 3 address
+constexpr std::uint8_t kI2CDevice3Register{ 0x2F }; //!< I2C Device 3 data to write
+constexpr std::uint8_t kI2CDevice3ControlRegister{ 0x30 }; //!< I2C Device 3 control
+constexpr std::uint8_t kI2CDevice4AddressRegister{ 0x31 }; //!< I2C Device 4 address
+constexpr std::uint8_t kI2CDevice4Register{ 0x32 }; //!< I2C Device 4 data to write
+constexpr std::uint8_t kI2CDevice4DORegister{ 0x33 }; //!< I2C Device 4 direct data operation
+constexpr std::uint8_t kI2CDevice4ControlRegister{ 0x34 }; //!< I2C Device 4 control
+constexpr std::uint8_t kI2CDevice4DIRegister{ 0x35 }; //!< I2C Device 4 direct data input
 constexpr std::uint8_t kI2CMasterStatusRegister{ 0x36 }; //!< I2C master status
 constexpr std::uint8_t kIntPinConfigRegister{ 0x37 }; //!< Interrupt pin configuration
 constexpr std::uint8_t kIntEnableRegister{ 0x38 }; //!< Interrupt enable
