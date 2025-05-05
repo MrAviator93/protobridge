@@ -102,7 +102,7 @@ bool v1::BusController::configure( Mode mode, Speed speed, BitsPerWord bitsPerWo
 void v1::BusController::reportError()
 {
 	auto e = errno;
-	std::array< char, 256 > err;
+	std::array< char, 256 > err{};
 
 	std::lock_guard _{ m_lastErrMtx };
 	m_lastError = ::strerror_r( e, err.data(), err.size() );
