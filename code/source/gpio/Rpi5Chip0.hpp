@@ -7,6 +7,7 @@
 #include <array>
 #include <optional>
 #include <expected>
+#include <functional>
 #include <string_view>
 
 namespace pbl::gpio
@@ -15,29 +16,60 @@ namespace pbl::gpio
 inline namespace v1
 {
 
-// TODO: Rename to just Rpi5Chip0?
 class Rpi5Chip0 final
 {
 	static constexpr std::string_view kChipName{ "gpiochip0" };
+	static constexpr std::size_t kGpioLineCount = 22;
 
 public:
 	template < typename T >
 	using Result = std::expected< T, utils::ErrorCode >;
 
+	/// Usable GPIOs from the 40-pin header (BCM numbers)
+	enum class Pin : std::uint8_t
+	{
+		GPIO2 = 2,
+		GPIO3 = 3,
+		GPIO4 = 4,
+		GPIO5 = 5,
+		GPIO6 = 6,
+		GPIO7 = 7,
+		GPIO8 = 8,
+		GPIO9 = 9,
+		GPIO10 = 10,
+		GPIO11 = 11,
+		GPIO12 = 12,
+		GPIO13 = 13,
+		GPIO14 = 14,
+		GPIO15 = 15,
+		GPIO16 = 16,
+		GPIO17 = 17,
+		GPIO18 = 18,
+		GPIO19 = 19,
+		GPIO20 = 20,
+		GPIO21 = 21,
+		GPIO22 = 22,
+		GPIO23 = 23,
+		GPIO24 = 24,
+		GPIO25 = 25,
+		GPIO26 = 26,
+		GPIO27 = 27
+	};
+
 	Rpi5Chip0();
 	~Rpi5Chip0();
 
-	[[nodiscard]] bool isOpen() const noexcept;
+	[[nodiscard]] bool isReady() const noexcept;
 
-	// TODO?
-	// static Result< Rpi5Chip0 > make();
+	/// TBW
+	// [[nodiscard]] Result< std::reference_wrapper<GpioLine> > line(Pin pin);
 
 private:
 	gpiod_chip* m_pChip{ nullptr };
 
 	// Using optional here, allows us to lazy initialize the lines,
 	// we don't need to use all the gpio lines always
-	std::array< std::optional< GpioLine >, 22 > m_lines;
+	std::array< std::optional< GpioLine >, kGpioLineCount > m_lines;
 };
 
 } // namespace v1

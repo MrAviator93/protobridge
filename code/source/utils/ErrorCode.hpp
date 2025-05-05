@@ -28,9 +28,10 @@ enum class ErrorCode : std::uint8_t
 	/// @name Device and Hardware Errors
 	/// Errors caused by device or hardware malfunctions.
 	//@{
-	DEVICE_NOT_FOUND, ///< Device not found on the bus.
-	HARDWARE_FAILURE, ///< General hardware malfunction, not specific to read/write.
-	DEVICE_NOT_RESPONDING, ///< Device detected but not responding to commands.
+	DEVICE_NOT_FOUND, ///< Device is not present or not visible to the system (e.g. no /dev entry).
+	DEVICE_NOT_RESPONDING, ///< Device detected but not responding to communication or commands.
+	HARDWARE_NOT_AVAILABLE, ///< Hardware is present but access failed (e.g. open or init failed).
+	HARDWARE_FAILURE, ///< General low-level hardware malfunction not tied to specific operation.
 	//@}
 
 	/// @name Protocol and Communication Errors
@@ -50,20 +51,29 @@ enum class ErrorCode : std::uint8_t
 	ACCESS_DENIED, ///< Insufficient permissions to access the device.
 	//@}
 
+	/// @name GPIO and Peripheral Errors
+	/// Errors related specifically to GPIO chip and lines.
+	//@{
+	GPIO_CHIP_NOT_AVAILABLE, ///< Failed to open or access GPIO chip (e.g., gpiochip0).
+	INVALID_GPIO_PIN, ///< GPIO pin is out of supported range or not mapped.
+	//@}
+
 	/// @name General Operation Errors
 	/// General-purpose errors that do not fit specific categories.
 	//@{
 	UNSUPPORTED_OPERATION, ///< Operation not supported by the device.
 	INVALID_DATA, ///< Data corruption or format error detected.
+	INVALID_ARGUMENT, ///< Provided argument is not valid in this context.
 	RETRY_LIMIT_EXCEEDED, ///< Exceeded maximum retry attempts for the operation.
-	UNEXPECTED_ERROR ///< Any unexpected or unknown error.
+	UNEXPECTED_ERROR, ///< Any unexpected or unknown error.
 	//@}
+
 };
 
 /// Converts an ErrorCode to its string representation.
 [[nodiscard]] constexpr std::string_view toStringView( const ErrorCode error ) noexcept
 {
-	constexpr std::string_view kUndefined{"UNDEFINED"};
+	constexpr std::string_view kUndefined{ "UNDEFINED" };
 
 	switch( error )
 	{
@@ -73,6 +83,7 @@ enum class ErrorCode : std::uint8_t
 		case DEVICE_NOT_FOUND: return "DEVICE_NOT_FOUND";
 		case HARDWARE_FAILURE: return "HARDWARE_FAILURE";
 		case DEVICE_NOT_RESPONDING: return "DEVICE_NOT_RESPONDING";
+		case HARDWARE_NOT_AVAILABLE: return "HARDWARE_NOT_AVAILABLE";
 		case BUS_BUSY: return "BUS_BUSY";
 		case NACK_RECEIVED: return "NACK_RECEIVED";
 		case TIMEOUT: return "TIMEOUT";
@@ -80,8 +91,11 @@ enum class ErrorCode : std::uint8_t
 		case DATA_OVERRUN: return "DATA_OVERRUN";
 		case ARBITRATION_LOST: return "ARBITRATION_LOST";
 		case ACCESS_DENIED: return "ACCESS_DENIED";
+		case GPIO_CHIP_NOT_AVAILABLE: return "GPIO_CHIP_NOT_AVAILABLE";
+		case INVALID_GPIO_PIN: return "INVALID_GPIO_PIN";
 		case UNSUPPORTED_OPERATION: return "UNSUPPORTED_OPERATION";
 		case INVALID_DATA: return "INVALID_DATA";
+		case INVALID_ARGUMENT: return "INVALID_ARGUMENT";
 		case RETRY_LIMIT_EXCEEDED: return "RETRY_LIMIT_EXCEEDED";
 		case UNEXPECTED_ERROR: return "UNEXPECTED_ERROR";
 		default: return kUndefined;
