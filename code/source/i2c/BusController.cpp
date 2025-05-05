@@ -64,18 +64,18 @@ constexpr std::array< std::pair< std::size_t, std::string_view >, 20 > kFuncsToC
 
 template < std::size_t N >
 [[nodiscard]] bool
-readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, N >& result )
+readN( const int fd, const std::uint8_t deviceAddr, const std::uint8_t reg, std::array< std::uint8_t, N >& result )
 {
 	std::uint8_t outbuf[ 2 ];
 	outbuf[ 0 ] = reg;
 
 	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].addr = deviceAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
 	msgs[ 0 ].buf = outbuf;
 
-	msgs[ 1 ].addr = slaveAddr;
+	msgs[ 1 ].addr = deviceAddr;
 	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
 	msgs[ 1 ].len = N;
 	msgs[ 1 ].buf = result.data();
@@ -117,7 +117,7 @@ v1::BusController::~BusController()
 	m_open = false;
 }
 
-bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result )
+bool v1::BusController::read( const std::uint8_t deviceAddr, const std::uint8_t reg, std::uint8_t& result )
 {
 	if( !isOpen() )
 	{
@@ -131,12 +131,12 @@ bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t r
 	std::uint8_t inbuf[ 1 ];
 
 	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].addr = deviceAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
 	msgs[ 0 ].buf = &outbuf[ 0 ];
 
-	msgs[ 1 ].addr = slaveAddr;
+	msgs[ 1 ].addr = deviceAddr;
 	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
 	msgs[ 1 ].len = 1;
 	msgs[ 1 ].buf = inbuf;
@@ -160,7 +160,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t r
 	return true;
 }
 
-bool v1::BusController::read( const std::uint8_t slaveAddr,
+bool v1::BusController::read( const std::uint8_t deviceAddr,
 							  const std::uint8_t reg,
 							  std::array< std::uint8_t, 2 >& result )
 {
@@ -172,7 +172,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 
 	std::lock_guard _{ m_fdMtx };
 
-	if( !readN( m_fd, slaveAddr, reg, result ) )
+	if( !readN( m_fd, deviceAddr, reg, result ) )
 	{
 		reportError();
 		return false;
@@ -181,7 +181,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 	return true;
 }
 
-bool v1::BusController::read( const std::uint8_t slaveAddr,
+bool v1::BusController::read( const std::uint8_t deviceAddr,
 							  const std::uint8_t reg,
 							  std::array< std::uint8_t, 4 >& result )
 {
@@ -193,7 +193,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 
 	std::lock_guard _{ m_fdMtx };
 
-	if( !readN( m_fd, slaveAddr, reg, result ) )
+	if( !readN( m_fd, deviceAddr, reg, result ) )
 	{
 		reportError();
 		return false;
@@ -202,13 +202,13 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 	return true;
 }
 
-bool v1::BusController::read( const std::uint8_t slaveAddr,
+bool v1::BusController::read( const std::uint8_t deviceAddr,
 							  const std::uint8_t reg,
 							  std::int16_t& value,
 							  const std::endian endian )
 {
 	std::array< std::uint8_t, 2 > raw{};
-	if( !read( slaveAddr, reg, raw ) )
+	if( !read( deviceAddr, reg, raw ) )
 	{
 		return false;
 	}
@@ -234,13 +234,13 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 	return true;
 }
 
-bool v1::BusController::read( const std::uint8_t slaveAddr,
+bool v1::BusController::read( const std::uint8_t deviceAddr,
 							  const std::uint8_t reg,
 							  std::int32_t& value,
 							  const std::endian endian )
 {
 	std::array< std::uint8_t, 4 > raw{};
-	if( !read( slaveAddr, reg, raw ) )
+	if( !read( deviceAddr, reg, raw ) )
 	{
 		return false;
 	}
@@ -266,7 +266,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 	return true;
 }
 
-std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
+std::int16_t v1::BusController::read( const std::uint8_t deviceAddr,
 									  const std::uint8_t reg,
 									  std::uint8_t* pData,
 									  std::uint16_t dataSize )
@@ -283,12 +283,12 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 	outbuf[ 0 ] = reg;
 
 	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].addr = deviceAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
 	msgs[ 0 ].buf = outbuf;
 
-	msgs[ 1 ].addr = slaveAddr;
+	msgs[ 1 ].addr = deviceAddr;
 	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
 	msgs[ 1 ].len = dataSize;
 	msgs[ 1 ].buf = pData;
@@ -308,7 +308,7 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 	return dataSize;
 }
 
-bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )
+bool v1::BusController::write( const std::uint8_t deviceAddr, const std::uint8_t reg, const std::uint8_t data )
 {
 	if( !isOpen() )
 	{
@@ -323,7 +323,7 @@ bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t 
 	outbuf[ 1 ] = data;
 
 	i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].addr = deviceAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 2;
 	msgs[ 0 ].buf = outbuf;
@@ -341,14 +341,14 @@ bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t 
 	return true;
 }
 
-bool BusController::write( const std::uint8_t slaveAddr,
+bool BusController::write( const std::uint8_t deviceAddr,
 						   const std::uint8_t reg,
 						   const std::span< const std::uint8_t > data )
 {
-	return write( slaveAddr, reg, data.data(), data.size() );
+	return write( deviceAddr, reg, data.data(), data.size() );
 }
 
-bool v1::BusController::write( const std::uint8_t slaveAddr,
+bool v1::BusController::write( const std::uint8_t deviceAddr,
 							   const std::uint8_t reg,
 							   const std::uint8_t* data,
 							   const std::uint8_t size )
@@ -373,7 +373,7 @@ bool v1::BusController::write( const std::uint8_t slaveAddr,
 	}
 
 	i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = slaveAddr;
+	msgs[ 0 ].addr = deviceAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = dataBuffer.size();
 	msgs[ 0 ].buf = dataBuffer.data();
