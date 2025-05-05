@@ -39,9 +39,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 find_package(Threads REQUIRED)
+find_package(PkgConfig REQUIRED)
 
 if (PBL_BUILD_GPIO_LIB)
-    find_package(PkgConfig REQUIRED)
     pkg_check_modules(GPIOD REQUIRED IMPORTED_TARGET libgpiod)
 endif()
 
