@@ -40,6 +40,8 @@ concept AddressType = std::is_same_v< T, std::uint8_t > ||
  * state common to all ICs, such as maintaining a reference to the I2C bus controller, storing the IC's 
  * unique address, and standard methods all IC controllers are expected to leverage (like sleep).
  * Derived classes should provide the specific implementation details for the respective ICs.
+ * 
+ * @todo Rename to I2CDevice
  */
 class ICBase
 {
