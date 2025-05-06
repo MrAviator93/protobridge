@@ -127,13 +127,7 @@ auto v1::LM75Controller::getTemperatureC() -> Result< float >
 
 auto v1::LM75Controller::getTemperatureF() -> Result< float >
 {
-	auto temp = getTemperatureC();
-	if( temp.has_value() )
-	{
-		return math::celsiusToFahrenheit( temp.value() );
-	}
-
-	return temp;
+	return getTemperatureC().transform( math::CelsiusToFarenheit< float >{} );
 }
 
 } // namespace pbl::i2c

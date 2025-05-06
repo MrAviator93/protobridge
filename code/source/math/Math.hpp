@@ -248,7 +248,3 @@ using FahrenheitToCelcius = decltype( []( T f ) -> T { return fahrenheitToCelsiu
 
 } // namespace pbl::math
 #endif // PBL_MATH_MATH_HPP__
-
-
-
-// return getTemperatureC().transform( math::CelsiusToFarenheit< float >{} );
