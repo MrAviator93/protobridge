@@ -85,12 +85,12 @@ bool readCalibConst( T& value,
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
 
-	if( !busController.read( bmp180Addr, msb, highByte ) )
+	if( !busController.read( bmp180Addr, msb, highByte ) ) [[unlikely]]
 	{
 		return false;
 	}
 
-	if( !busController.read( bmp180Addr, lsb, lowByte ) )
+	if( !busController.read( bmp180Addr, lsb, lowByte ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -142,7 +142,7 @@ v1::BMP180Controller::BMP180Controller( BusController& busController, Address ad
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
 {
-	if( !m_constants->read( busController, static_cast< std::uint8_t >( address ) ) )
+	if( !m_constants->read( busController, static_cast< std::uint8_t >( address ) ) ) [[unlikely]]
 	{
 		// TODO: We need to do something about this ...
 		// return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
@@ -156,7 +156,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 	using namespace std::chrono_literals;
 
 	// Read uncompensated temperature (UT) value
-	if( !write( kBmp180Control, kBmp180CmdTemp ) ) // Start temperature measurement
+	if( !write( kBmp180Control, kBmp180CmdTemp ) ) [[unlikely]] // Start temperature measurement
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -165,7 +165,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 
 	// Read raw temperature measurement
 	std::array< std::uint8_t, 2 > rawUT{};
-	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) )
+	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -196,7 +196,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	const std::uint8_t OSS = static_cast< std::uint8_t >( m_samplingAccuracy );
 
 	// Start temperature measurement
-	if( !write( kBmp180Control, kBmp180CmdTemp ) )
+	if( !write( kBmp180Control, kBmp180CmdTemp ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -205,7 +205,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 
 	// Read uncompensated temperature value
 	std::array< std::uint8_t, 2 > rawUT{};
-	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) )
+	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -214,7 +214,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 
 	// Start pressure measurement
 	std::uint8_t cmdOss = commandForMode( m_samplingAccuracy );
-	if( !write( kBmp180Control, cmdOss ) )
+	if( !write( kBmp180Control, cmdOss ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -224,7 +224,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	// Read uncompensated pressure value
 	// UP = ( MSB << 16 + LSB << 8 + XLSB ) >> ( 8 - oss );
 	std::array< std::uint8_t, 3 > upRawData{};
-	if( !read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) )
+	if( !read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}

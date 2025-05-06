@@ -43,7 +43,7 @@ v1::LM75Controller::LM75Controller( BusController& busController, Address addres
 bool v1::LM75Controller::setPowerMode( PowerMode mode )
 {
 	std::uint8_t config{};
-	if( !read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -56,7 +56,7 @@ bool v1::LM75Controller::setPowerMode( PowerMode mode )
 bool v1::LM75Controller::setThermostatMode( ThermostatMode mode )
 {
 	std::uint8_t config{};
-	if( !read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -69,7 +69,7 @@ bool v1::LM75Controller::setThermostatMode( ThermostatMode mode )
 auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 {
 	std::uint8_t config{};
-	if( !read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -86,7 +86,7 @@ auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 {
 	std::uint8_t config{};
-	if( !read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -103,7 +103,7 @@ auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 {
 	std::uint8_t config{};
-	if( !read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
 		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -115,14 +115,14 @@ auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 auto v1::LM75Controller::getTemperatureC() -> Result< float >
 {
 	std::array< std::uint8_t, 2 > data{ 0x00, 0x00 };
-	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size > 0 )
+	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size < 2 ) [[unlikely]]
 	{
-		// Calculate temperature in Celsius
-		std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
-		return static_cast< float >( iTemp ) / 256.0f;
+		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	// Calculate temperature in Celsius
+	std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
+	return static_cast< float >( iTemp ) / 256.0f;
 }
 
 auto v1::LM75Controller::getTemperatureF() -> Result< float >
