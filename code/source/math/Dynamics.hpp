@@ -29,6 +29,28 @@ template < typename T >
 }
 
 /**
+ * @brief Type alias for a callable that converts pressure to altitude.
+ * 
+ * @tparam T Numeric floating point type.
+ * 
+ * This alias defines the type of a stateless lambda that takes two arguments:
+ * - `pressurePa`: the measured atmospheric pressure in pascals
+ * - `referencePressurePa`: a baseline pressure (e.g. sea level or calibrated ground pressure)
+ * 
+ * and returns the estimated altitude above the reference level in meters.
+ * 
+ * Useful in functional contexts such as `std::expected::transform` with tuples, pairs, or structured bindings.
+ * 
+ * @code
+ * auto altitude = pressureToAltitudeFn<float>(98000.0f, 101325.0f); // ~274 m
+ * @endcode
+ */
+template < typename T >
+using PressureToAltitude = decltype( []( T pressurePa, T referencePressurePa ) -> T {
+	return pressureToAltitude( pressurePa, referencePressurePa );
+} );
+
+/**
  * @brief Calculate the dew point temperature (in Celsius) based on ambient temperature and relative humidity.
  * 
  * Uses the Magnus-Tetens approximation to estimate the dew point. Useful for weather applications,
@@ -51,6 +73,28 @@ template < typename T >
 		( a * temperatureC ) / ( b + temperatureC ) + std::log( humidityPercent / static_cast< T >( 100.0 ) );
 	return ( b * gamma ) / ( a - gamma );
 }
+
+/**
+ * @brief Type alias for a callable that calculates the dew point temperature.
+ * 
+ * @tparam T Numeric floating point type.
+ * 
+ * This alias defines the type of a stateless lambda that takes:
+ * - `temperatureC`: ambient temperature in Celsius
+ * - `humidityPercent`: relative humidity (0–100%)
+ * 
+ * and returns the estimated dew point temperature in Celsius using the Magnus-Tetens formula.
+ * 
+ * This is suitable for use in weather-related data processing, and in functional pipelines
+ * or monadic transformations (e.g., with structured sensor input).
+ * 
+ * @code
+ * auto dew = DewPoint<float>{}(25.0f, 60.0f); // ≈ 16.7°C
+ * @endcode
+ */
+template < typename T >
+using DewPoint =
+	decltype( []( T temperatureC, T humidityPercent ) -> T { return dewPoint( temperatureC, humidityPercent ); } );
 
 /**
  * @brief Estimate the heat index ("feels like" temperature) in Celsius.
@@ -82,6 +126,28 @@ template < typename T >
 
 	return ( hi - 32.0f ) * 5.0f / 9.0f; // Return in Celsius
 }
+
+/**
+ * @brief Type alias for a callable that estimates the heat index ("feels like" temperature).
+ * 
+ * @tparam T Numeric floating point type.
+ * 
+ * This alias defines the type of a stateless lambda that takes:
+ * - `tempC`: ambient temperature in Celsius
+ * - `humidityPercent`: relative humidity (0–100%)
+ * 
+ * and returns the estimated heat index in Celsius, based on the Rothfusz regression formula.
+ * Internally converts to Fahrenheit for calculation, then returns the result in Celsius.
+ * 
+ * Suitable for weather UIs, health alerts, and climate-aware systems.
+ * 
+ * @code
+ * auto hi = HeatIndexCelsius<float>{}(30.0f, 70.0f); // ≈ 35.6°C
+ * @endcode
+ */
+template < typename T >
+using HeatIndexCelsius =
+	decltype( []( T tempC, T humidityPercent ) -> T { return heatIndexCelsius( tempC, humidityPercent ); } );
 
 } // namespace pbl::math
 #endif // PBL_MATH_DYNAMICS_HPP__
