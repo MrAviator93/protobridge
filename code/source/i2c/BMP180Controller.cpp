@@ -185,13 +185,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 
 auto v1::BMP180Controller::getTemperatureF() -> Result< float >
 {
-	const auto temp = getTrueTemperatureC();
-	if( temp.has_value() )
-	{
-		return math::celsiusToFahrenheit( temp.value() );
-	}
-
-	return std::unexpected( temp.error() );
+	return getTrueTemperatureC().transform( math::CelsiusToFarenheit< float >{} );
 }
 
 auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
@@ -282,15 +276,10 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	return static_cast< float >( p );
 }
 
-// TODO: Consider moving this function to utils/Math.hpp
 auto v1::BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
 {
-	if( auto truePressure = getTruePressurePa(); truePressure.has_value() )
-	{
-		return math::pressureToAltitude(truePressure.value(), localPressure);
-	}
-
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	const auto transform = [ = ]( float pressurePa ) { return math::pressureToAltitude( pressurePa, localPressure ); };
+	return getTruePressurePa().transform( transform );
 }
 
 } // namespace pbl::i2c
