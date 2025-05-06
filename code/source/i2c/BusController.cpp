@@ -119,7 +119,7 @@ v1::BusController::~BusController()
 
 bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result )
 {
-	if( !isOpen() )
+	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
 		return false;
@@ -149,7 +149,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t r
 
 	inbuf[ 0 ] = 0;
 
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
 	{
 		reportError();
 		return false;
@@ -164,7 +164,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 							  const std::uint8_t reg,
 							  std::array< std::uint8_t, 2 >& result )
 {
-	if( !isOpen() )
+	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
 		return false;
@@ -172,7 +172,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 
 	std::lock_guard _{ m_fdMtx };
 
-	if( !readN( m_fd, slaveAddr, reg, result ) )
+	if( !readN( m_fd, slaveAddr, reg, result ) ) [[unlikely]]
 	{
 		reportError();
 		return false;
@@ -185,7 +185,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 							  const std::uint8_t reg,
 							  std::array< std::uint8_t, 4 >& result )
 {
-	if( !isOpen() )
+	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
 		return false;
@@ -193,7 +193,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 
 	std::lock_guard _{ m_fdMtx };
 
-	if( !readN( m_fd, slaveAddr, reg, result ) )
+	if( !readN( m_fd, slaveAddr, reg, result ) ) [[unlikely]]
 	{
 		reportError();
 		return false;
@@ -208,7 +208,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 							  const std::endian endian )
 {
 	std::array< std::uint8_t, 2 > raw{};
-	if( !read( slaveAddr, reg, raw ) )
+	if( !read( slaveAddr, reg, raw ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -240,7 +240,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr,
 							  const std::endian endian )
 {
 	std::array< std::uint8_t, 4 > raw{};
-	if( !read( slaveAddr, reg, raw ) )
+	if( !read( slaveAddr, reg, raw ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -271,7 +271,7 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 									  std::uint8_t* pData,
 									  std::uint16_t dataSize )
 {
-	if( !isOpen() )
+	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
 		return {};
@@ -299,7 +299,7 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 
 	::memset( pData, 0x00, dataSize );
 
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
 	{
 		reportError();
 		return -1;
@@ -310,7 +310,7 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 
 bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )
 {
-	if( !isOpen() )
+	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
 		return {};
@@ -332,7 +332,7 @@ bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t 
 	msgset[ 0 ].nmsgs = 1;
 	msgset[ 0 ].msgs = msgs;
 
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
 	{
 		reportError();
 		return false;
@@ -353,7 +353,7 @@ bool v1::BusController::write( const std::uint8_t slaveAddr,
 							   const std::uint8_t* data,
 							   const std::uint8_t size )
 {
-	if( !isOpen() )
+	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
 		return false;
@@ -384,7 +384,7 @@ bool v1::BusController::write( const std::uint8_t slaveAddr,
 	msgset[ 0 ].nmsgs = 1;
 	msgset[ 0 ].msgs = msgs;
 
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
 	{
 		reportError();
 		return false;
@@ -416,7 +416,7 @@ void v1::BusController::checkFunc()
 {
 	std::uint64_t funcs{};
 
-	if( ::ioctl( m_fd, I2C_FUNCS, &funcs ) < 0 )
+	if( ::ioctl( m_fd, I2C_FUNCS, &funcs ) < 0 ) [[unlikely]]
 	{
 		return reportError();
 	}
