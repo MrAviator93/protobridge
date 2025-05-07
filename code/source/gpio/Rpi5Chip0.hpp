@@ -4,8 +4,7 @@
 #include "GpioLine.hpp"
 
 // C++
-#include <array>
-#include <optional>
+#include <memory>
 #include <expected>
 #include <functional>
 #include <string_view>
@@ -18,6 +17,7 @@ inline namespace v1
 
 class Rpi5Chip0 final
 {
+	struct Impl;
 	static constexpr std::string_view kChipName{ "gpiochip0" };
 	static constexpr std::size_t kGpioLineCount = 22;
 
@@ -65,11 +65,7 @@ public:
 	// [[nodiscard]] Result< std::reference_wrapper<GpioLine> > line(Pin pin);
 
 private:
-	gpiod_chip* m_pChip{ nullptr };
-
-	// Using optional here, allows us to lazy initialize the lines,
-	// we don't need to use all the gpio lines always
-	std::array< std::optional< GpioLine >, kGpioLineCount > m_lines;
+	std::unique_ptr< Impl > m_pImpl;
 };
 
 } // namespace v1

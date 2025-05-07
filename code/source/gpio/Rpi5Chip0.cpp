@@ -3,26 +3,56 @@
 // Third Party
 #include <gpiod.hpp>
 
+// C++
+#include <array>
+#include <optional>
+
 namespace pbl::gpio
 {
 
-v1::Rpi5Chip0::Rpi5Chip0()
+namespace
 {
-	m_pChip = ::gpiod_chip_open_by_name( kChipName.data() );
+
+struct GpiodChipDeleter
+{
+	void operator()( gpiod_chip* pChip ) const noexcept
+	{
+		if( pChip )
+		{
+			::gpiod_chip_close( pChip );
+		}
+	}
+};
+
+[[nodiscard]] std::unique_ptr< gpiod_chip, GpiodChipDeleter > MakeGpioChip( std::string_view chipName )
+{
+	return std::unique_ptr< gpiod_chip, GpiodChipDeleter >( ::gpiod_chip_open_by_name( chipName.data() ) );
 }
 
-v1::Rpi5Chip0::~Rpi5Chip0()
+} // namespace
+
+struct v1::Rpi5Chip0::Impl
 {
-	if( m_pChip )
-	{
-		::gpiod_chip_close( m_pChip );
-		m_pChip = nullptr;
-	}
-}
+	Impl( std::string_view chipName )
+		: pChip{ MakeGpioChip( chipName ) }
+	{ }
+
+	std::unique_ptr< gpiod_chip, GpiodChipDeleter > pChip;
+
+	// Using optional here, allows us to lazy initialize the lines,
+	// we don't need to use all the gpio lines always
+	std::array< std::optional< GpioLine >, kGpioLineCount > lines;
+};
+
+v1::Rpi5Chip0::Rpi5Chip0()
+	: m_pImpl{ std::make_unique< Impl >( kChipName ) }
+{ }
+
+v1::Rpi5Chip0::~Rpi5Chip0() = default;
 
 bool v1::Rpi5Chip0::isReady() const noexcept
 {
-	return m_pChip != nullptr;
+	return m_pImpl->pChip != nullptr;
 }
 
 // auto v1::Rpi5Chip0::line( Pin pin ) -> Result< std::reference_wrapper< GpioLine > >
