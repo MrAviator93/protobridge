@@ -66,6 +66,7 @@ enum class ErrorCode : std::uint8_t
 	INVALID_ARGUMENT, ///< Provided argument is not valid in this context.
 	RETRY_LIMIT_EXCEEDED, ///< Exceeded maximum retry attempts for the operation.
 	UNEXPECTED_ERROR, ///< Any unexpected or unknown error.
+	NOT_IMPLEMENTED ///!< Not implemented.
 	//@}
 
 };
@@ -98,6 +99,7 @@ enum class ErrorCode : std::uint8_t
 		case INVALID_ARGUMENT: return "INVALID_ARGUMENT";
 		case RETRY_LIMIT_EXCEEDED: return "RETRY_LIMIT_EXCEEDED";
 		case UNEXPECTED_ERROR: return "UNEXPECTED_ERROR";
+		case NOT_IMPLEMENTED: return "NOT_IMPLEMENTED";
 		default: return kUndefined;
 	}
 
@@ -134,6 +136,7 @@ public:
 	static const Error INVALID_DATA;
 	static const Error RETRY_LIMIT_EXCEEDED;
 	static const Error UNEXPECTED_ERROR;
+	static const Error NOT_IMPLEMENTED;
 
 	/// Implicit conversion to ErrorCode.
 	[[nodiscard]] operator ErrorCode() const noexcept { return m_code; }
@@ -163,6 +166,7 @@ inline const Error Error::UNSUPPORTED_OPERATION{ ErrorCode::UNSUPPORTED_OPERATIO
 inline const Error Error::INVALID_DATA{ ErrorCode::INVALID_DATA };
 inline const Error Error::RETRY_LIMIT_EXCEEDED{ ErrorCode::RETRY_LIMIT_EXCEEDED };
 inline const Error Error::UNEXPECTED_ERROR{ ErrorCode::UNEXPECTED_ERROR };
+inline const Error Error::NOT_IMPLEMENTED{ ErrorCode::NOT_IMPLEMENTED };
 
 } // namespace pbl::utils
 #endif // PBL_UTILS_ERROR_CODE_HPP__
