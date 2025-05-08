@@ -61,7 +61,7 @@ public:
 
 	[[nodiscard]] bool isReady() const noexcept;
 
-	/// TBW
+	/// TBW, The direction is the default direction, that the pin is configured at first instanciation.
 	[[nodiscard]] Result< std::reference_wrapper< GpioLine > >
 	line( Pin pin, GpioLine::Direction direction = GpioLine::Direction::Output );
 
