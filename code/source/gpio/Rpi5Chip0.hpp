@@ -62,7 +62,8 @@ public:
 	[[nodiscard]] bool isReady() const noexcept;
 
 	/// TBW
-	[[nodiscard]] Result< std::reference_wrapper< GpioLine > > line( Pin pin );
+	[[nodiscard]] Result< std::reference_wrapper< GpioLine > >
+	line( Pin pin, GpioLine::Direction direction = GpioLine::Direction::Output );
 
 private:
 	std::unique_ptr< Impl > m_pImpl;
