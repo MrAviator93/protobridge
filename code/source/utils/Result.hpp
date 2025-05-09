@@ -1,7 +1,7 @@
 #ifndef PBL_UTILS_RESULT_HPP__
 #define PBL_UTILS_RESULT_HPP__
 
-#include "ErrorCode.hpp"
+#include "Error.hpp"
 
 // C++
 #include <expected>
