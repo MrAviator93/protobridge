@@ -105,11 +105,7 @@ enum class ErrorCode : std::uint8_t
 	return kUndefined;
 }
 
-/**
- * @brief Represents an error with an associated error code and optional message.
- * 
- * @todo Consider to rename to Status.
- */
+/// Represents an error with an associated error code and optional message.
 class Error final
 {
 public:
