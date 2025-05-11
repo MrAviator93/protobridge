@@ -3,7 +3,7 @@ FROM debian:12 AS gcc-build
 
 LABEL vendor="ProtoBridge Library" \
       type="gcc-build" \
-      version="14.2.0" \
+      version="15.1.0" \
       description="Stage to build GCC from source."
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,18 +19,17 @@ RUN apt-get update && apt-get install -y \
     apt-get clean
 
 # Download and extract GCC
-RUN wget https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.gz && \
-    tar -xvf gcc-14.2.0.tar.gz
+RUN wget https://ftp.gnu.org/gnu/gcc/gcc-15.1.0/gcc-15.1.0.tar.gz && tar -xvf gcc-15.1.0.tar.gz
 
 # Configure and build GCC for native platform (x86-x64)
-RUN cd gcc-14.2.0 && \
+RUN cd gcc-15.1.0 && \
     mkdir build && cd build && \
     ../configure -v \
     --build=x86_64-linux-gnu \
     --host=x86_64-linux-gnu \
     --target=x86_64-linux-gnu \
     --disable-multilib \
-    --prefix=/usr/local/gcc-14.2.0 \
+    --prefix=/usr/local/gcc-15.1.0 \
     --enable-checking=release \
     --enable-default-ssp \
     --disable-fixincludes \
@@ -54,19 +53,19 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y vim && apt-get clean
 
 # Copy GCC binaries and libraries from the build stage
-COPY --from=gcc-build /usr/local/gcc-14.2.0 /usr/local/gcc-14.2.0
+COPY --from=gcc-build /usr/local/gcc-15.1.0 /usr/local/gcc-15.1.0
 
 # Configure environment variables for GCC
-ENV LD_LIBRARY_PATH=/usr/local/gcc-14.2.0/lib64:$LD_LIBRARY_PATH \
-    PATH=/usr/local/gcc-14.2.0/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/gcc-15.1.0/lib64:$LD_LIBRARY_PATH \
+    PATH=/usr/local/gcc-15.1.0/bin:$PATH
 
 # Add the new GCC library path to the dynamic linker configuration and update cache
-RUN echo "/usr/local/gcc-14.2.0/lib64" > /etc/ld.so.conf.d/gcc.conf && ldconfig
+RUN echo "/usr/local/gcc-15.1.0/lib64" > /etc/ld.so.conf.d/gcc.conf && ldconfig
 
-# Set GCC 14.2.0 as the default compiler
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-14.2.0/bin/gcc 60 \
-    --slave /usr/bin/g++ g++ /usr/local/gcc-14.2.0/bin/g++
+# Set GCC 15.1.0 as the default compiler
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-15.1.0/bin/gcc 60 \
+    --slave /usr/bin/g++ g++ /usr/local/gcc-15.1.0/bin/g++
 
 # Verify the installation of GCC and G++
-RUN gcc --version | grep 'gcc (GCC) 14.2.0' || (echo 'GCC version mismatch' && false)
-RUN g++ --version | grep 'g++ (GCC) 14.2.0' || (echo 'G++ version mismatch' && false)
+RUN gcc --version | grep 'gcc (GCC) 15.1.0' || (echo 'GCC version mismatch' && false)
+RUN g++ --version | grep 'g++ (GCC) 15.1.0' || (echo 'G++ version mismatch' && false)
