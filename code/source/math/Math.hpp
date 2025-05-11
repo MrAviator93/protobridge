@@ -213,7 +213,8 @@ template < std::floating_point T >
  * @endcode
  */
 template < std::floating_point T >
-using CelsiusToFarenheit = decltype( [] [[nodiscard]] ( T c ) -> T { return celsiusToFahrenheit( c ); } );
+using CelsiusToFarenheit =
+	decltype( [] [[nodiscard]] ( T c ) constexpr noexcept -> T { return celsiusToFahrenheit( c ); } );
 
 /**
  * @brief Converts a temperature from Fahrenheit to Celsius.
@@ -244,7 +245,8 @@ template < std::floating_point T >
  * @endcode
  */
 template < std::floating_point T >
-using FahrenheitToCelcius = decltype( [] [[nodiscard]] ( T f ) -> T { return fahrenheitToCelsius( f ); } );
+using FahrenheitToCelcius =
+	decltype( [] [[nodiscard]] ( T f ) constexpr noexcept -> T { return fahrenheitToCelsius( f ); } );
 
 } // namespace pbl::math
 #endif // PBL_MATH_MATH_HPP__
