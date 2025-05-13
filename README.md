@@ -158,10 +158,9 @@ private:
 ```
 
 ```cpp
+
 // Include I2C library files
 #include "Thermostat.hpp"
-
-// Inlude Timer utility
 #include <utils/Timer.hpp>
 
 // Output
@@ -194,25 +193,29 @@ int main( const int argc, const char* const* const argv )
 
  while( true )
  {
-  if( timer.hasElapsed() )
-  {
-   auto dt = timer.elapsedSinceSetInSeconds();
+  auto onTick = [ & ] [[nodiscard]] ( auto dt ) -> bool {
    auto rslt = thermostat.update( dt );
 
    std::println( "{:12f}", dt );
 
    if( !rslt )
    {
-    std::println( stderr, "{}", pbl::i2c::toStringView( rslt.error() ) );
-    break;
+    std::println( stderr, "{}", pbl::utils::toStringView( rslt.error() ) );
+    return false;
    }
 
-   timer.set();
+   return true;
+  };
+
+  if( !timer.onTick( std::move( onTick ) ) )
+  {
+   break;
   }
  }
 
  return 0;
 }
+
 ```
 
 For more detailed examples, including how to interact with other types of sensors and devices, please check out the Code/Examples directory in the project repository. These examples provide a broader range of use cases and more complex scenarios, helping you to get the most out of this library.
