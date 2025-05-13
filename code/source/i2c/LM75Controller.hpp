@@ -60,7 +60,7 @@ class LM75Controller final : public ICBase, public utils::Counter< LM75Controlle
 {
 public:
 	template < typename T >
-	using Result = std::expected< T, utils::ErrorCode >;
+	using Result = utils::Result< T >;
 
 	enum class Address : std::uint8_t
 	{

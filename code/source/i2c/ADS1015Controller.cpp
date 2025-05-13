@@ -33,37 +33,30 @@ v1::ADS1015Controller::ADS1015Controller( BusController& busController, Address 
 
 auto v1::ADS1015Controller::setGain( Gain gain ) -> Result< void >
 {
-	const auto currentConfigResult = readConfig();
-	if( !currentConfigResult )
-	{
-		return std::unexpected( currentConfigResult.error() );
-	}
+	return readConfig()
+		.transform( [ gain ]( std::uint16_t config ) -> std::uint16_t {
+			// Clear the gain bits (11-9) and set the new gain
+			config &= ~kGainMask;
 
-	std::uint16_t config = currentConfigResult.value();
-
-	// Clear the gain bits (11-9) and set the new gain
-	config &= ~kGainMask; // Clear gain bits
-	config |= static_cast< std::uint16_t >( gain ); // Set gain bits based on the provided gain
-
-	// Write the updated configuration back to the ADS1015
-	return writeConfig( config );
+			// Set gain bits based on the provided gain
+			config |= static_cast< std::uint16_t >( gain );
+			return config;
+		} )
+		.and_then( [ this ]( std::uint16_t config ) { return writeConfig( config ); } );
 }
 
 auto v1::ADS1015Controller::setSampleRate( SampleRate rate ) -> Result< void >
 {
-	const auto currentConfigResult = readConfig();
-	if( !currentConfigResult )
-	{
-		return std::unexpected( currentConfigResult.error() );
-	}
+	return readConfig()
+		.transform( [ rate ]( std::uint16_t config ) -> std::uint16_t {
+			// Clear the sample rate bits (7-5) and set the new sample rate
+			config &= ~kDataRateMask;
 
-	std::uint16_t config = currentConfigResult.value();
-
-	// Clear the sample rate bits (7-5) and set the new sample rate
-	config &= ~kDataRateMask; // Clear data rate bits
-	config |= static_cast< std::uint16_t >( rate ); // Set rate bits based on the provided rate
-
-	return writeConfig( config );
+			// Set rate bits based on the provided rate
+			config |= static_cast< std::uint16_t >( rate );
+			return config;
+		} )
+		.and_then( [ this ]( std::uint16_t config ) { return writeConfig( config ); } );
 }
 
 auto v1::ADS1015Controller::readConfig() -> Result< std::uint16_t >
@@ -75,7 +68,8 @@ auto v1::ADS1015Controller::readConfig() -> Result< std::uint16_t >
 		std::uint16_t config = ( data[ 0 ] << 8 ) | data[ 1 ];
 		return config;
 	}
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+
+	return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 }
 
 auto v1::ADS1015Controller::writeConfig( std::uint16_t config ) -> Result< void >
@@ -90,7 +84,7 @@ auto v1::ADS1015Controller::writeConfig( std::uint16_t config ) -> Result< void 
 	if( !write( kPointerConfig, data ) )
 	{
 		// If the write failed, return an error
-		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
 	}
 
 	// Update the internal configuration state if the write was successful
