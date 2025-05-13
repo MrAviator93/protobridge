@@ -27,7 +27,8 @@ auto v1::PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result
 {
 	if( frequency < 24 || frequency > 1526 )
 	{
-		throw std::out_of_range( "PWM frequency must be between 24 Hz and 1526 Hz." );
+		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT,
+								 "PWM frequency must be between 24 Hz and 1526 Hz." );
 	}
 
 	// Calculate prescale value

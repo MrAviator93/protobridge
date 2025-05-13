@@ -1,7 +1,7 @@
 #ifndef PBL_I2C_IC_BASE_HPP__
 #define PBL_I2C_IC_BASE_HPP__
 
-#include <utils/ErrorCode.hpp>
+#include <utils/Result.hpp>
 
 // C++
 #include <span>

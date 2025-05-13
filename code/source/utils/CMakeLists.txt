@@ -17,6 +17,7 @@ set(PBL_LIB_HEADERS
 )
 
 set(PBL_LIB_SOURCE
+    Error.cpp
     Timer.cpp
     SpinLock.cpp
     TimeStamp.cpp
