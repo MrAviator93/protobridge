@@ -52,8 +52,6 @@ public:
 		return std::chrono::duration< float >( elapsedTime ).count();
 	}
 
-	/// TODO: This needs a bit more work, maybe we want to return
-	/// std::expected<bool, utils::ErrorCode or utils::Error>
 	template < typename Callback >
 		requires std::invocable< Callback, Dt >
 	auto onTick( Callback&& callback ) -> std::invoke_result_t< Callback, Dt >
@@ -62,13 +60,12 @@ public:
 		{
 			Dt dt = elapsedSinceSetInSeconds();
 
-			// If lambda returns void
 			if constexpr( std::is_void_v< std::invoke_result_t< Callback, Dt > > )
 			{
 				std::forward< Callback >( callback )( dt );
 				set();
 			}
-			else // We return the result of invocation
+			else
 			{
 				auto result = std::forward< Callback >( callback )( dt );
 				set();
@@ -76,7 +73,10 @@ public:
 			}
 		}
 
-		return {};
+		if constexpr( !std::is_void_v< std::invoke_result_t< Callback, Dt > > )
+		{
+			return {}; // Only return if the return type is not void
+		}
 	}
 
 private:
