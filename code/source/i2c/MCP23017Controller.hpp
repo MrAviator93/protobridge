@@ -19,6 +19,9 @@ struct Overloaded : Ts...
 	using Ts::operator()...;
 };
 
+template < typename... Ts >
+Overloaded( Ts... ) -> Overloaded< Ts... >;
+
 /**
  * @class MCP23017Controller
  * @brief Manages interaction with the MCP23017 16-bit I/O expander.
@@ -197,8 +200,14 @@ public:
 			PIN_8 = 8
 		};
 
+		template < typename Dispatcher >
 		class Pin
 		{
+			class ModeTag
+			{ };
+
+			static_assert( std::is_invocable_v< Dispatcher, ModeTag, Pins >, "Dispatcher must support ModeTag" );
+
 		public:
 			// using GetPinModeCb = std::function< PinMode( Pins ) >;
 			// using SetPinModeCb = std::function< Result< void >( Pins, PinMode ) >;
@@ -207,28 +216,29 @@ public:
 			// using SetPullUpCb = std::function< Result< void >( Pins, bool ) >;
 			// using EnableInterruptCb = std::function< Result< void >( Pins, bool, bool, PinState ) >;
 
-			Pin( Port& port, Pins pin, PinTag )
+			Pin( Port& port, Pins pin, Dispatcher dispatcher, PinTag )
 				: m_port{ port }
 				, m_pin{ pin }
+				, m_dispatcher{ std::move( dispatcher ) }
 			{ }
 
 			/// TBW
 			[[nodiscard]] auto pin() const { return m_pin; }
 
-			[[nodiscard]] PinMode mode() const
+			/// Retrieves pin mode from MCP23017 iodir register
+			[[nodiscard]] Result< PinMode > mode() const { return std::invoke( m_dispatcher, ModeTag{}, m_pin ); }
+
+			[[nodiscard]] Result< bool > isInput() const
 			{
-				// TODO: return m_getPinModeCb(m_pin);
-				return PinMode::INPUT;
+				return mode().transform( []( PinMode mode ) { return mode == PinMode::INPUT; } );
 			}
 
-			[[nodiscard]] bool isInput() const { return mode() == PinMode::INPUT; }
-			[[nodiscard]] bool isOutput() const { return mode() == PinMode::OUTPUT; }
-
-			Result< void > setMode( const PinMode mode )
+			[[nodiscard]] Result< bool > isOutput() const
 			{
-				// TODO: return m_setPinModeCb(m_pin, mode);
-				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+				return mode().transform( []( PinMode mode ) { return mode == PinMode::OUTPUT; } );
 			}
+
+			Result< void > setMode( const PinMode mode ) { return std::invoke( m_dispatcher, ModeTag{}, m_pin, mode ); }
 
 			[[nodiscard]] Result< PinState > pinState()
 			{
@@ -272,10 +282,27 @@ public:
 		private:
 			Port& m_port;
 			Pins m_pin;
+			Dispatcher m_dispatcher;
 		};
 
 		/// Returns a specific pin
-		[[nodiscard]] Pin pin( Pins pin );
+		[[nodiscard]] auto pin( Pins pin )
+		{
+			auto dispatcher = Overloaded{
+				[]( auto, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
+					// Handle GetMode
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+				[]( auto, [[maybe_unused]] Pins pin, [[maybe_unused]] PinMode mode ) -> Result< void > {
+					// Handle SetMode
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				}
+				// Add more overloads for other tags
+			};
+
+			// TODO: This will get more complicated
+			return Pin{ *this, pin, dispatcher, PinTag{} };
+		}
 
 		/// Returns all pin modes
 		// [[nodiscard]] Result< PinModes > pinModes();

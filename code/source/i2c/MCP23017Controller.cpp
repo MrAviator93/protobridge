@@ -43,11 +43,7 @@ MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Addres
 	// TODO
 }
 
-auto MCP23017ControllerV2::Port::pin( Pins pin ) -> Pin
-{
-	// TODO: This will get more complicated
-	return Pin{ *this, pin, PinTag{} };
-}
+ 
 
 // auto MCP23017ControllerV2::Port::Pin::mode() const -> PinMode
 // {
