@@ -4,6 +4,7 @@
 #include "ICBase.hpp"
 #include <utils/Counter.hpp>
 #include <utils/PinConfig.hpp>
+#include <utils/Overloaded.hpp>
 
 // C++
 #include <array>
@@ -129,15 +130,6 @@ using PinInterruptFlags = utils::PinConfig< bool, false >;
 
 } // namespace detail::port
 
-template < typename... Ts >
-struct Overloaded : Ts...
-{
-	using Ts::operator()...;
-};
-
-template < typename... Ts >
-Overloaded( Ts... ) -> Overloaded< Ts... >;
-
 /**
  * @class MCP23017Controller
  * @brief Manages interaction with the MCP23017 16-bit I/O expander.
@@ -232,7 +224,10 @@ public:
 			[[nodiscard]] auto pin() const { return m_pin; }
 
 			/// Retrieves pin mode from MCP23017 iodir register
-			[[nodiscard]] Result< PinMode > mode() const { return std::invoke( m_dispatcher, ModeTag{}, m_pin ); }
+			[[nodiscard]] Result< PinMode > mode() const
+			{
+				return std::invoke( m_dispatcher, detail::port::PinModes{}, m_pin );
+			}
 
 			[[nodiscard]] Result< bool > isInput() const
 			{
@@ -244,7 +239,10 @@ public:
 				return mode().transform( []( PinMode mode ) { return mode == PinMode::OUTPUT; } );
 			}
 
-			Result< void > setMode( const PinMode mode ) { return std::invoke( m_dispatcher, ModeTag{}, m_pin, mode ); }
+			Result< void > setMode( const PinMode mode )
+			{
+				return std::invoke( m_dispatcher, detail::port::PinModes{}, m_pin, mode );
+			}
 
 			[[nodiscard]] Result< PinState > pinState()
 			{
@@ -294,12 +292,14 @@ public:
 		/// Returns a specific pin
 		[[nodiscard]] auto pin( Pins pin )
 		{
-			auto dispatcher = Overloaded{
-				[]( ModeTag, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
+			auto dispatcher = utils::Overloaded{
+				[]( detail::port::PinModes, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
 					// Handle GetMode
 					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 				},
-				[]( ModeTag, [[maybe_unused]] Pins pin, [[maybe_unused]] PinMode mode ) -> Result< void > {
+				[]( detail::port::PinModes,
+					[[maybe_unused]] Pins pin,
+					[[maybe_unused]] PinMode mode ) -> Result< void > {
 					// Handle SetMode
 					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 				}
