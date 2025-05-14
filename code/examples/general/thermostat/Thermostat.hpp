@@ -21,7 +21,7 @@ class ThermostatController
 public:
 	ThermostatController( pbl::i2c::BusController& ) { }
 
-	[[nodiscard]] std::expected< void, pbl::utils::ErrorCode > adjust( float value )
+	[[nodiscard]] utils::Result< void > adjust( float value )
 	{
 		std::println( "Adjust: {}", value );
 		return {};
@@ -33,7 +33,7 @@ class ADCController
 public:
 	ADCController( pbl::i2c::BusController& ) { }
 
-	[[nodiscard]] std::expected< float, pbl::utils::ErrorCode > readDesiredTemp()
+	[[nodiscard]] utils::Result< float > readDesiredTemp()
 	{
 		// You would get it using I2C from
 		return 25.0f;
@@ -58,26 +58,35 @@ public:
 
 	{ }
 
-	[[nodiscard]] std::expected< void, pbl::utils::ErrorCode > update( float dt )
+	[[nodiscard]] utils::Result< void > update( float dt )
 	{
 		using PIDInput = PIDController::Input;
 
-		return m_adc.readDesiredTemp()
-			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::utils::ErrorCode > {
-				const auto currTemp = m_lm75.getTemperatureC();
-				if( !currTemp )
-				{
-					return std::unexpected( currTemp.error() );
-				}
+		return m_adc
+			.readDesiredTemp()
+			// Step 1: Read the desired temperature from the ADC (returns Result<float>)
+			.and_then( [ this ]( float desiredTemp ) -> utils::Result< PIDInput > {
+				// Step 2: Try to get the current temperature from the LM75 sensor (returns Result<float>)
+				// If successful, combine both temperatures into a PIDInput structure
+				// If getTemperatureC() fails, the failure propagates automatically
+				return m_lm75.getTemperatureC().transform( [ & ]( float currentTemp ) {
+					// If successful, produce a PIDInput with both temps
+					return PIDInput{ desiredTemp, currentTemp };
+				} );
+			} )
 
-				return PIDInput{ desiredTemp, *currTemp };
+			// Step 3: Apply the PID controller to compute the control signal
+			.transform( [ this, dt ]( PIDInput input ) -> float {
+				// The result is post-processed:
+				// - Clamped to [0.0, 10.0] using `Cap`
+				// - Squared using `Pow2`
+				return m_pid( dt, input ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{};
 			} )
-			.and_then( [ this, dt ]( PIDInput values ) -> std::expected< float, pbl::utils::ErrorCode > {
-				return ( m_pid( dt, values ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
-			} )
-			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
-			.or_else( []( const auto error ) -> std::expected< void, pbl::utils::ErrorCode > {
-				return std::unexpected( error );
+
+			// Step 4: Use the control signal to adjust the thermostat (returns Result<void>)
+			.and_then( [ this ]( float controlSignal ) {
+				// If this fails, the error also propagates
+				return m_thermostat.adjust( controlSignal );
 			} );
 	}
 

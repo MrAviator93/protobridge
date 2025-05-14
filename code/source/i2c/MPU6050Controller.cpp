@@ -147,7 +147,7 @@ void v1::MPU6050Controller::calculateImuError()
 auto v1::MPU6050Controller::angles() -> Result< math::Vector3f >
 {
 	// TODO (AK)
-	return std::unexpected( utils::ErrorCode::UNEXPECTED_ERROR );
+	return utils::MakeError( utils::ErrorCode::UNEXPECTED_ERROR );
 }
 
 // A way to extract the angles

@@ -19,7 +19,7 @@ class CheckActive
 	{
 		return std::apply(
 			[ & ]( const auto&... args ) {
-				auto isActive = []< typename T >( const T& arg ) -> bool {
+				const auto isActive = [] [[nodiscard]]< typename T >( const T& arg ) -> bool {
 					if constexpr( requires { arg.isActive(); } )
 					{
 						return arg.isActive();

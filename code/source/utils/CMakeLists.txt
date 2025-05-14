@@ -1,6 +1,7 @@
 
 set(PBL_LIB_HEADERS
     Timer.hpp
+    Error.hpp
     Result.hpp
     Counter.hpp
     TimeStep.hpp
@@ -17,6 +18,7 @@ set(PBL_LIB_HEADERS
 )
 
 set(PBL_LIB_SOURCE
+    Error.cpp
     Timer.cpp
     SpinLock.cpp
     TimeStamp.cpp

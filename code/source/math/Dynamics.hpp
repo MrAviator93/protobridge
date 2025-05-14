@@ -46,7 +46,7 @@ template < typename T >
  * @endcode
  */
 template < typename T >
-using PressureToAltitude = decltype( []( T pressurePa, T referencePressurePa ) -> T {
+using PressureToAltitude = decltype( [] [[nodiscard]] ( T pressurePa, T referencePressurePa ) -> T {
 	return pressureToAltitude( pressurePa, referencePressurePa );
 } );
 
@@ -93,8 +93,9 @@ template < typename T >
  * @endcode
  */
 template < typename T >
-using DewPoint =
-	decltype( []( T temperatureC, T humidityPercent ) -> T { return dewPoint( temperatureC, humidityPercent ); } );
+using DewPoint = decltype( [] [[nodiscard]] ( T temperatureC, T humidityPercent ) -> T {
+	return dewPoint( temperatureC, humidityPercent );
+} );
 
 /**
  * @brief Estimate the heat index ("feels like" temperature) in Celsius.
@@ -146,8 +147,9 @@ template < typename T >
  * @endcode
  */
 template < typename T >
-using HeatIndexCelsius =
-	decltype( []( T tempC, T humidityPercent ) -> T { return heatIndexCelsius( tempC, humidityPercent ); } );
+using HeatIndexCelsius = decltype( [] [[nodiscard]] ( T tempC, T humidityPercent ) -> T {
+	return heatIndexCelsius( tempC, humidityPercent );
+} );
 
 } // namespace pbl::math
 #endif // PBL_MATH_DYNAMICS_HPP__

@@ -106,45 +106,54 @@ This simple program initializes the I2C bus, sets up the LM75 sensor, reads the 
 ```cpp
 class Thermostat
 {
-	using PIDController = pbl::math::PIDController< float >;
+ using PIDController = pbl::math::PIDController< float >;
 
 public:
-	Thermostat( pbl::i2c::BusController& busController )
-		: m_pid{ 0.5, 0.2, 0.25 }
-		, m_adc{ busController }
-		, m_lm75{ busController }
-		, m_thermostat{ busController }
+ Thermostat( pbl::i2c::BusController& busController )
+  : m_pid{ 0.5, 0.2, 0.25 }
+  , m_adc{ busController }
+  , m_lm75{ busController }
+  , m_thermostat{ busController }
 
-	{ }
+ { }
 
-	[[nodiscard]] std::expected< void, pbl::utils::ErrorCode > update( float dt )
-	{
-		using PIDInput = PIDController::Input;
+ [[nodiscard]] utils::Result< void > update( float dt )
+ {
+  using PIDInput = PIDController::Input;
 
-		return m_adc.readDesiredTemp()
-			.and_then( [ this ]( float desiredTemp ) -> std::expected< PIDInput, pbl::utils::ErrorCode > {
-				const auto currTemp = m_lm75.getTemperatureC();
-				if( !currTemp )
-				{
-					return std::unexpected( currTemp.error() );
-				}
+  return m_adc
+   .readDesiredTemp()
+   // Step 1: Read the desired temperature from the ADC (returns Result<float>)
+   .and_then( [ this ]( float desiredTemp ) -> utils::Result< PIDInput > {
+    // Step 2: Try to get the current temperature from the LM75 sensor (returns Result<float>)
+    // If successful, combine both temperatures into a PIDInput structure
+    // If getTemperatureC() fails, the failure propagates automatically
+    return m_lm75.getTemperatureC().transform( [ & ]( float currentTemp ) {
+     // If successful, produce a PIDInput with both temps
+     return PIDInput{ desiredTemp, currentTemp };
+    } );
+   } )
 
-				return PIDInput{ desiredTemp, *currTemp };
-			} )
-			.and_then( [ this, dt ]( PIDInput values ) -> std::expected< float, pbl::utils::ErrorCode > {
-				return ( m_pid( dt, values ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{} );
-			} )
-			.and_then( [ this ]( float controlSignal ) { return m_thermostat.adjust( controlSignal ); } )
-			.or_else( []( const auto error ) -> std::expected< void, pbl::utils::ErrorCode > {
-				return std::unexpected( error );
-			} );
-	}
+   // Step 3: Apply the PID controller to compute the control signal
+   .transform( [ this, dt ]( PIDInput input ) -> float {
+    // The result is post-processed:
+    // - Clamped to [0.0, 10.0] using `Cap`
+    // - Squared using `Pow2`
+    return m_pid( dt, input ) | pbl::math::Cap{ 0.0f, 10.0f } | pbl::math::Pow2{};
+   } )
+
+   // Step 4: Use the control signal to adjust the thermostat (returns Result<void>)
+   .and_then( [ this ]( float controlSignal ) {
+    // If this fails, the error also propagates
+    return m_thermostat.adjust( controlSignal );
+   } );
+ }
 
 private:
-	PIDController m_pid;
-	pbl::i2c::ADCController m_adc;
-	pbl::i2c::LM75Controller m_lm75;
-	pbl::i2c::ThermostatController m_thermostat;
+ PIDController m_pid;
+ pbl::i2c::ADCController m_adc;
+ pbl::i2c::LM75Controller m_lm75;
+ pbl::i2c::ThermostatController m_thermostat;
 };
 ```
 
@@ -152,8 +161,6 @@ private:
 
 // Include I2C library files
 #include "Thermostat.hpp"
-
-// Inlude Timer utility
 #include <utils/Timer.hpp>
 
 // Output
@@ -161,50 +168,54 @@ private:
 
 int main( const int argc, const char* const* const argv )
 {
-	const std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
+ const std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
 
-	// Default name of i2c bus on RPI 4
-	std::string deviceName{ "/dev/i2c-1" };
+ // Default name of i2c bus on RPI 4
+ std::string deviceName{ "/dev/i2c-1" };
 
-	if( args.size() >= 2 )
-	{
-		deviceName = args[ 1 ];
-	}
+ if( args.size() >= 2 )
+ {
+  deviceName = args[ 1 ];
+ }
 
-	// Create a bus controller for the I2C bus
-	pbl::i2c::BusController busController{ deviceName };
+ // Create a bus controller for the I2C bus
+ pbl::i2c::BusController busController{ deviceName };
 
-	// Check if the I2C bus is open and accessible
-	if( !busController.isOpen() )
-	{
-		std::println( "Failed to open I2C device" );
-		return 1;
-	}
+ // Check if the I2C bus is open and accessible
+ if( !busController.isOpen() )
+ {
+  std::println( "Failed to open I2C device" );
+  return 1;
+ }
 
-	pbl::examples::Thermostat thermostat{ busController };
-	pbl::utils::Timer timer{ std::chrono::milliseconds( 100 ) };
+ pbl::examples::Thermostat thermostat{ busController };
+ pbl::utils::Timer timer{ std::chrono::milliseconds( 100 ) };
 
-	while( true )
-	{
-		if( timer.hasElapsed() )
-		{
-			auto dt = timer.elapsedSinceSetInSeconds();
-			auto rslt = thermostat.update( dt );
+ while( true )
+ {
+  auto onTick = [ & ] [[nodiscard]] ( auto dt ) -> bool {
+   auto rslt = thermostat.update( dt );
 
-			std::println( "{:12f}", dt );
+   std::println( "{:12f}", dt );
 
-			if( !rslt )
-			{
-				std::println( stderr, "{}", pbl::i2c::toStringView( rslt.error() ) );
-				break;
-			}
+   if( !rslt )
+   {
+    std::println( stderr, "{}", pbl::utils::toStringView( rslt.error() ) );
+    return false;
+   }
 
-			timer.set();
-		}
-	}
+   return true;
+  };
 
-	return 0;
+  if( !timer.onTick( std::move( onTick ) ) )
+  {
+   break;
+  }
+ }
+
+ return 0;
 }
+
 ```
 
 For more detailed examples, including how to interact with other types of sensors and devices, please check out the Code/Examples directory in the project repository. These examples provide a broader range of use cases and more complex scenarios, helping you to get the most out of this library.

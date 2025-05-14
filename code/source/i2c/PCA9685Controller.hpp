@@ -22,7 +22,7 @@ class PCA9685Controller final : public ICBase, public utils::Counter< PCA9685Con
 {
 public:
 	template < typename T >
-	using Result = std::expected< T, utils::ErrorCode >;
+	using Result = utils::Result< T >;
 
 	enum class Address : std::uint8_t
 	{

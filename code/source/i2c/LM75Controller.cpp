@@ -71,7 +71,7 @@ auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 	std::uint8_t config{};
 	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	std::bitset< 8 > configBits{ config };
@@ -88,7 +88,7 @@ auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 	std::uint8_t config{};
 	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	std::bitset< 8 > configBits{ config };
@@ -105,7 +105,7 @@ auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 	std::uint8_t config{};
 	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	std::bitset< 8 > configBits( config );
@@ -117,7 +117,7 @@ auto v1::LM75Controller::getTemperatureC() -> Result< float >
 	std::array< std::uint8_t, 2 > data{ 0x00, 0x00 };
 	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size < 2 ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	// Calculate temperature in Celsius
