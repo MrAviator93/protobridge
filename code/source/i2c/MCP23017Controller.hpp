@@ -195,6 +195,9 @@ public:
 		struct PinTag
 		{ };
 
+		class ModeTag
+		{ };
+
 	public:
 		using Pins = detail::port::Pins;
 		using PinMode = detail::port::PinMode;
@@ -215,9 +218,6 @@ public:
 		template < typename Dispatcher >
 		class Pin
 		{
-
-			class ModeTag
-			{ };
 
 			static_assert( std::is_invocable_v< Dispatcher, ModeTag, Pins >, "Dispatcher must support ModeTag" );
 
@@ -295,11 +295,11 @@ public:
 		[[nodiscard]] auto pin( Pins pin )
 		{
 			auto dispatcher = Overloaded{
-				[]( auto, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
+				[]( ModeTag, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
 					// Handle GetMode
 					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 				},
-				[]( auto, [[maybe_unused]] Pins pin, [[maybe_unused]] PinMode mode ) -> Result< void > {
+				[]( ModeTag, [[maybe_unused]] Pins pin, [[maybe_unused]] PinMode mode ) -> Result< void > {
 					// Handle SetMode
 					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 				}
