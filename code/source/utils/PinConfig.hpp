@@ -8,6 +8,22 @@
 namespace pbl::utils
 {
 
+namespace detail
+{
+template < typename T >
+struct DefaultToBool
+{
+	[[nodiscard]] constexpr bool operator()( T v ) const noexcept { return static_cast< bool >( v ); }
+};
+
+template < typename T >
+struct DefaultFromBool
+{
+	[[nodiscard]] constexpr T operator()( bool v ) const noexcept { return static_cast< T >( v ); }
+};
+
+} // namespace detail
+
 /**
  * @brief Configuration for an 8-bit pin set.
  * 
@@ -23,8 +39,8 @@ namespace pbl::utils
  */
 template < typename T,
 		   T Default,
-		   typename ToBool = decltype( [] [[nodiscard]] ( T v ) noexcept -> bool { return static_cast< bool >( v ); } ),
-		   typename FromBool = decltype( [] [[nodiscard]] ( bool v ) noexcept -> T { return static_cast< T >( v ); } ) >
+		   typename ToBool = detail::DefaultToBool< T >,
+		   typename FromBool = detail::DefaultFromBool< T > >
 	requires( std::same_as< T, bool > || std::is_enum_v< T > ) && std::is_nothrow_invocable_r_v< bool, ToBool, T > &&
 			std::is_nothrow_invocable_r_v< T, FromBool, bool >
 struct PinConfig final
