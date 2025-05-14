@@ -63,7 +63,7 @@ class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP2301
 
 public:
 	template < typename T >
-	using Result = std::expected< T, std::string >;
+	using Result = utils::Result< T >;
 
 	class Port
 	{
@@ -211,32 +211,32 @@ public:
 			Result< void > setMode( const PinMode mode )
 			{
 				// TODO: return m_setPinModeCb(m_pin, mode);
-				return std::unexpected( "Not implemented ..." );
+				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 			}
 
 			[[nodiscard]] Result< PinState > pinState()
 			{
 				// TODO: return m_pinStateCb(m_pin);
-				return std::unexpected( "Not implemented ..." );
+				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 			}
 
 			Result< void > setPinState( const PinState state )
 			{
 				// TODO: return m_setPinState(m_pin, state);
-				return std::unexpected( "Not implemented ..." );
+				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 			}
 
 			Result< void > switchPinState()
 			{
 				// TODO: return m_switchPinState(m_pin, state);
-				return std::unexpected( "Not implemented ..." );
+				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 			}
 
 			// Enable or disable the pull-up resistor for this pin
 			Result< void > setPullUpResistor( bool enable )
 			{
 				// TODO return m_setPullUpCb( m_pin, enable );
-				return std::unexpected( "Not implemented ..." );
+				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 			}
 
 			// Enable or disable interrupts for this pin
@@ -244,7 +244,7 @@ public:
 			enableInterrupt( bool enable, bool compareWithDefault = false, PinState defaultValue = PinState::LOW )
 			{
 				// TODO: return m_enableInterruptCb( m_pin, enable, compareWithDefault, defaultValue );
-				return std::unexpected( "Not implemented ..." );
+				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 			}
 
 			// Result<void> setInterruptTrigger(Pins pin, bool onChange, PinState triggerState = PinState::LOW);
