@@ -64,53 +64,41 @@ enum class InterruptControl : std::uint8_t
 
 namespace calls
 {
-	// using PinModeTo = decltype( [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == PinMode::INPUT; } );
-	// using PinModeFrom = decltype( [] [[nodiscard]] ( auto b ) noexcept -> PinMode {
-	// 	return b == true ? PinMode::INPUT : PinMode::OUTPUT;
-	// } );
 
-	// using PinStatesTo = decltype( [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == PinState::HIGH; } );
-	// using PinStatesFrom = decltype( [] [[nodiscard]] ( auto b ) noexcept -> PinState {
-	// 	return b == true ? PinState::HIGH : PinState::LOW;
-	// } );
-
-	// using InterruptControlTo =
-	// 	decltype( [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == InterruptControl::COMPARE; } );
-	// using InterruptControlFrom = decltype( [] [[nodiscard]] ( auto b ) noexcept -> InterruptControl {
-	// 	return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
-	// } );
-
-	inline constexpr auto PinModeTo = []( auto v ) noexcept -> bool { return v == PinMode::INPUT; };
-
-	inline constexpr auto PinModeFrom = []( auto b ) noexcept -> PinMode {
-		return b ? PinMode::INPUT : PinMode::OUTPUT;
-	};
-
-	inline constexpr auto PinStatesTo = []( auto v ) noexcept -> bool { return v == PinState::HIGH; };
-
-	inline constexpr auto PinStatesFrom = []( auto b ) noexcept -> PinState {
-		return b ? PinState::HIGH : PinState::LOW;
-	};
-
-	inline constexpr auto InterruptControlTo = []( auto v ) noexcept -> bool { return v == InterruptControl::COMPARE; };
-
-	inline constexpr auto InterruptControlFrom = []( auto b ) noexcept -> InterruptControl {
-		return b ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
-	};
+inline constexpr auto PinModeTo = [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == PinMode::INPUT; };
+inline constexpr auto PinModeFrom = [] [[nodiscard]] ( auto b ) noexcept -> PinMode {
+	return b ? PinMode::INPUT : PinMode::OUTPUT;
 };
+
+inline constexpr auto PinStatesTo = [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == PinState::HIGH; };
+inline constexpr auto PinStatesFrom = [] [[nodiscard]] ( auto b ) noexcept -> PinState {
+	return b ? PinState::HIGH : PinState::LOW;
+};
+
+inline constexpr auto InterruptControlTo = [] [[nodiscard]] ( auto v ) noexcept -> bool {
+	return v == InterruptControl::COMPARE;
+};
+inline constexpr auto InterruptControlFrom = [] [[nodiscard]] ( auto b ) noexcept -> InterruptControl {
+	return b ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
+};
+}; // namespace calls
 
 /// PinModes represents IODIR register for pin direction configuration.
 /// Each bit indicates whether the corresponding pin is set to INPUT (1) or OUTPUT (0).
-using PinModes = utils::PinConfig< PinMode, PinMode::OUTPUT, decltype(calls::PinModeTo), decltype(calls::PinModeFrom) >;
+using PinModes =
+	utils::PinConfig< PinMode, PinMode::OUTPUT, decltype( calls::PinModeTo ), decltype( calls::PinModeFrom ) >;
 
 /// PinStates represents the GPIO register, reflecting current pin states.
 /// Each bit indicates the actual logic level (HIGH or LOW) of each pin.
-using PinStates = utils::PinConfig< PinState, PinState::LOW, decltype(calls::PinStatesTo), decltype(calls::PinStatesFrom) >;
+using PinStates =
+	utils::PinConfig< PinState, PinState::LOW, decltype( calls::PinStatesTo ), decltype( calls::PinStatesFrom ) >;
 
 /// PinInterruptControl represents the INTCON register for interrupt conditions.
 /// Each bit indicates whether a pin triggers an interrupt on comparison with DEFVAL (1) or change from previous state (0).
-using PinInterruptControl = utils::
-	PinConfig< InterruptControl, InterruptControl::PREVIOUS, decltype(calls::InterruptControlTo), decltype(calls::InterruptControlFrom) >;
+using PinInterruptControl = utils::PinConfig< InterruptControl,
+											  InterruptControl::PREVIOUS,
+											  decltype( calls::InterruptControlTo ),
+											  decltype( calls::InterruptControlFrom ) >;
 
 /// PinDefaultComparison represents DEFVAL register, setting default values for interrupt comparison.
 /// Each bit represents the comparison value (0 or 1) for each pin.
@@ -132,7 +120,8 @@ using PinPullUps = utils::PinConfig< bool, false >;
 
 /// Captured pin states at interrupt time, reflecting INTCAP register.
 /// This is a read-only configuration, storing the state of each pin at the time an interrupt was triggered.
-using PinInterruptCapture = utils::PinConfig< PinState, PinState::LOW, decltype(calls::PinStatesTo), decltype(calls::PinStatesFrom) >;
+using PinInterruptCapture =
+	utils::PinConfig< PinState, PinState::LOW, decltype( calls::PinStatesTo ), decltype( calls::PinStatesFrom ) >;
 
 /// Interrupt flags indicating which pins triggered an interrupt, reflecting INTF register.
 /// This is a read-only configuration, showing which pins currently have an interrupt pending.
