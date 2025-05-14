@@ -13,6 +13,12 @@
 namespace pbl::i2c
 {
 
+template < typename... Ts >
+struct Overloaded : Ts...
+{
+	using Ts::operator()...;
+};
+
 /**
  * @class MCP23017Controller
  * @brief Manages interaction with the MCP23017 16-bit I/O expander.
@@ -104,31 +110,40 @@ public:
 			COMPARE = 1 // Interrupt on comparison with DEFVAL
 		};
 
-		using PinModeTo = decltype( []( auto v ) noexcept -> bool { return v == PinMode::INPUT; } );
-		using PinModeFrom =
-			decltype( []( auto b ) noexcept -> PinMode { return b == true ? PinMode::INPUT : PinMode::OUTPUT; } );
+		struct detail
+		{
+			using PinModeTo = decltype( [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == PinMode::INPUT; } );
+			using PinModeFrom = decltype( [] [[nodiscard]] ( auto b ) noexcept -> PinMode {
+				return b == true ? PinMode::INPUT : PinMode::OUTPUT;
+			} );
+
+			using PinStatesTo =
+				decltype( [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == PinState::HIGH; } );
+			using PinStatesFrom = decltype( [] [[nodiscard]] ( auto b ) noexcept -> PinState {
+				return b == true ? PinState::HIGH : PinState::LOW;
+			} );
+
+			using InterruptControlTo =
+				decltype( [] [[nodiscard]] ( auto v ) noexcept -> bool { return v == InterruptControl::COMPARE; } );
+			using InterruptControlFrom = decltype( [] [[nodiscard]] ( auto b ) noexcept -> InterruptControl {
+				return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
+			} );
+		};
 
 		/// PinModes represents IODIR register for pin direction configuration.
 		/// Each bit indicates whether the corresponding pin is set to INPUT (1) or OUTPUT (0).
-		using PinModes = utils::PinConfig< PinMode, PinMode::OUTPUT, PinModeTo, PinModeFrom >;
-
-		using PinStatesTo = decltype( []( auto v ) noexcept -> bool { return v == PinState::HIGH; } );
-		using PinStatesFrom =
-			decltype( []( auto b ) noexcept -> PinState { return b == true ? PinState::HIGH : PinState::LOW; } );
+		using PinModes = utils::PinConfig< PinMode, PinMode::OUTPUT, detail::PinModeTo, detail::PinModeFrom >;
 
 		/// PinStates represents the GPIO register, reflecting current pin states.
 		/// Each bit indicates the actual logic level (HIGH or LOW) of each pin.
-		using PinStates = utils::PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
-
-		using InterruptControlTo = decltype( []( auto v ) noexcept -> bool { return v == InterruptControl::COMPARE; } );
-		using InterruptControlFrom = decltype( []( auto b ) noexcept -> InterruptControl {
-			return b == true ? InterruptControl::COMPARE : InterruptControl::PREVIOUS;
-		} );
+		using PinStates = utils::PinConfig< PinState, PinState::LOW, detail::PinStatesTo, detail::PinStatesFrom >;
 
 		/// PinInterruptControl represents the INTCON register for interrupt conditions.
 		/// Each bit indicates whether a pin triggers an interrupt on comparison with DEFVAL (1) or change from previous state (0).
-		using PinInterruptControl =
-			utils::PinConfig< InterruptControl, InterruptControl::PREVIOUS, InterruptControlTo, InterruptControlFrom >;
+		using PinInterruptControl = utils::PinConfig< InterruptControl,
+													  InterruptControl::PREVIOUS,
+													  detail::InterruptControlTo,
+													  detail::InterruptControlFrom >;
 
 		/// PinDefaultComparison represents DEFVAL register, setting default values for interrupt comparison.
 		/// Each bit represents the comparison value (0 or 1) for each pin.
@@ -150,7 +165,8 @@ public:
 
 		/// Captured pin states at interrupt time, reflecting INTCAP register.
 		/// This is a read-only configuration, storing the state of each pin at the time an interrupt was triggered.
-		using PinInterruptCapture = utils::PinConfig< PinState, PinState::LOW, PinStatesTo, PinStatesFrom >;
+		using PinInterruptCapture =
+			utils::PinConfig< PinState, PinState::LOW, detail::PinStatesTo, detail::PinStatesFrom >;
 
 		/// Interrupt flags indicating which pins triggered an interrupt, reflecting INTF register.
 		/// This is a read-only configuration, showing which pins currently have an interrupt pending.
@@ -184,12 +200,12 @@ public:
 		class Pin
 		{
 		public:
-			using GetPinModeCb = std::function< PinMode( Pins ) >;
-			using SetPinModeCb = std::function< Result< void >( Pins, PinMode ) >;
-			using GetPinStateCb = std::function< Result< PinState >( Pins ) >;
-			using SetPinStateCb = std::function< Result< void >( Pins, PinState ) >;
-			using SetPullUpCb = std::function< Result< void >( Pins, bool ) >;
-			using EnableInterruptCb = std::function< Result< void >( Pins, bool, bool, PinState ) >;
+			// using GetPinModeCb = std::function< PinMode( Pins ) >;
+			// using SetPinModeCb = std::function< Result< void >( Pins, PinMode ) >;
+			// using GetPinStateCb = std::function< Result< PinState >( Pins ) >;
+			// using SetPinStateCb = std::function< Result< void >( Pins, PinState ) >;
+			// using SetPullUpCb = std::function< Result< void >( Pins, bool ) >;
+			// using EnableInterruptCb = std::function< Result< void >( Pins, bool, bool, PinState ) >;
 
 			Pin( Port& port, Pins pin, PinTag )
 				: m_port{ port }
@@ -277,15 +293,15 @@ public:
 		MCP23017ControllerV2& m_controller;
 		Address m_address;
 
-		// There are configurations saved in the registers!
-		// std::bitset< 8 > m_iodir; // IODIR register for input/output direction
-		// std::bitset< 8 > m_gpio; // GPIO register for pin states
-		// std::bitset< 8 > m_gppu; // GPPU register for pull-up configuration
-		// std::bitset< 8 > m_intcon; // INTCON register for interrupt configuration
-		// std::bitset< 8 > m_defval; // DEFVAL register for default comparison value for interrupts
-		// std::bitset< 8 > m_gpinten; // GPINTEN register for enabling/disabling interrupts
-		// std::bitset< 8 > m_intcap; // INTCAP register for capturing the state at interrupt time
-		// std::bitset< 8 > m_intf; // INTF register for interrupt flags (which pin triggered)
+		// These are configurations saved in the registers!
+		PinModes m_iodir; // IODIR register for input/output direction
+		PinStates m_gpio; // GPIO register for pin states
+		PinPullUps m_gppu; // GPPU register for pull-up configuration
+		PinInterruptControl m_intcon; // INTCON register for interrupt configuration
+		PinDefaultComparison m_defval; // DEFVAL register for default comparison value for interrupts
+		PinInterruptEnable m_gpinten; // GPINTEN register for enabling/disabling interrupts
+		PinInterruptCapture m_intcap; // INTCAP register for capturing the state at interrupt time
+		PinInterruptFlags m_intf; // INTF register for interrupt flags (which pin triggered)
 	};
 
 	enum class Address : std::uint8_t
