@@ -14,6 +14,7 @@
 namespace pbl::i2c
 {
 
+// TODO: Add here one more nested namespace detail::mcp23017::port
 namespace detail::port
 {
 
