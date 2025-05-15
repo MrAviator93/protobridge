@@ -210,9 +210,6 @@ public:
 		template < typename Dispatcher >
 		class Pin
 		{
-
-			static_assert( std::is_invocable_v< Dispatcher, ModeTag, Pins >, "Dispatcher must support ModeTag" );
-
 		public:
 			Pin( Port& port, Pins pin, Dispatcher dispatcher, PinTag )
 				: m_port{ port }
@@ -246,42 +243,71 @@ public:
 
 			[[nodiscard]] Result< PinState > pinState()
 			{
-				// TODO: return m_pinStateCb(m_pin);
-				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+				return std::invoke( m_dispatcher, detail::port::PinState{}, m_pin );
 			}
 
-			Result< void > setPinState( const PinState state )
+			[[nodiscard]] Result< void > setPinState( const PinState state )
 			{
-				// TODO: return m_setPinState(m_pin, state);
-				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+				return std::invoke( m_dispatcher, detail::port::PinState{}, m_pin, state );
 			}
 
-			Result< void > switchPinState()
+			[[nodiscard]] Result< void > switchPinState()
 			{
-				// TODO: return m_switchPinState(m_pin, state);
-				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+				return pinState()
+					.transform( []( PinState state ) -> PinState {
+						if( state == PinState::HIGH )
+						{
+							return PinState::LOW;
+						}
+
+						return PinState::HIGH;
+					} )
+					.and_then( [ this ]( PinState newState ) -> Result< void > { return setPinState( newState ); } );
 			}
 
 			// Enable or disable the pull-up resistor for this pin
-			Result< void > setPullUpResistor( bool enable )
+			[[nodiscard]] Result< void > setPullUpResistor( bool enable )
 			{
-				// TODO return m_setPullUpCb( m_pin, enable );
-				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+				return std::invoke( m_dispatcher, detail::port::PinPullUps{}, m_pin, enable );
 			}
 
 			// Enable or disable interrupts for this pin
-			Result< void >
+			[[nodiscard]] Result< void >
 			enableInterrupt( bool enable, bool compareWithDefault = false, PinState defaultValue = PinState::LOW )
 			{
-				// TODO: return m_enableInterruptCb( m_pin, enable, compareWithDefault, defaultValue );
-				return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+				return std::invoke(
+					m_dispatcher, detail::port::PinInterruptControl{}, enable, compareWithDefault, defaultValue );
 			}
 
-			// Result<void> setInterruptTrigger(Pins pin, bool onChange, PinState triggerState = PinState::LOW);
+			[[nodiscard]] Result< void > setInterruptTrigger( detail::port::InterruptControl controlMode,
+															  PinState defaultValue = PinState::LOW )
+			{
+				return std::invoke( m_dispatcher,
+									detail::port::PinInterruptControl{},
+									m_pin,
+									true, // enable
+									controlMode == detail::port::InterruptControl::COMPARE,
+									defaultValue );
+			}
 
-			// Result<void> clearInterruptFlag();
+			[[nodiscard]] Result< void > clearInterruptFlag()
+			{
+				return std::invoke( m_dispatcher,
+									detail::port::PinInterruptFlags{},
+									m_pin,
+									false // Writing false to clear flag (if modeled this way)
+				);
+			}
 
-			// [[nodiscard]] bool isInterruptTriggered() const;
+			[[nodiscard]] Result< bool > isInterruptTriggered()
+			{
+				return std::invoke( m_dispatcher, detail::port::PinInterruptFlags{}, m_pin );
+			}
+
+			[[nodiscard]] Result< PinState > interruptCaptureState() const
+			{
+				return std::invoke( m_dispatcher, detail::port::PinInterruptCapture{}, m_pin );
+			}
 
 		private:
 			Port& m_port;
@@ -293,48 +319,127 @@ public:
 		[[nodiscard]] auto pin( Pins pin )
 		{
 			auto dispatcher = utils::Overloaded{
-				[]( detail::port::PinModes, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
-					// Handle GetMode
+				//  IODIR (PinModes)
+
+				[ this ]( detail::port::PinModes, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
+					// TODO: Handle GetMode
 					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 				},
-				[]( detail::port::PinModes,
-					[[maybe_unused]] Pins pin,
-					[[maybe_unused]] PinMode mode ) -> Result< void > {
-					// Handle SetMode
+				[ this ]( detail::port::PinModes,
+						  [[maybe_unused]] Pins pin,
+						  [[maybe_unused]] PinMode mode ) -> Result< void > {
+					// TODO: Handle SetMode
 					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
-				}
-				// Add more overloads for other tags
-			};
+				},
+
+				//  GPIO (PinState)
+				[ this ]( detail::port::PinState, [[maybe_unused]] Pins pin ) -> Result< PinState > {
+					// TODO: Handle GetPinState
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+				[ this ]( detail::port::PinState, [[maybe_unused]] Pins pin, [[maybe_unused]] PinState state ) {
+					// TODO: Handle SetPinState
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+
+				//  GPPU (Pull-Up Resistor)
+				[ this ]( detail::port::PinPullUps, [[maybe_unused]] Pins pin, [[maybe_unused]] bool enable ) {
+					// TODO: Handle ...
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+
+				// INTCON, DEFVAL, GPINTEN (Interrupt Control)
+				[ this ]( detail::port::PinInterruptControl,
+						  [[maybe_unused]] Pins pin,
+						  [[maybe_unused]] bool enable,
+						  [[maybe_unused]] bool compareWithDefault,
+						  [[maybe_unused]] PinState defaultValue ) {
+					// TODO: Handle ...
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+
+				// INTF (Interrupt Flag): clear flag
+				[ this ]( detail::port::PinInterruptFlags,
+						  [[maybe_unused]] Pins pin,
+						  [[maybe_unused]] bool clear ) -> Result< void > {
+					// TODO: Handle ...
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+
+				// INTF (Interrupt Flag): check flag
+				[ this ]( detail::port::PinInterruptFlags, [[maybe_unused]] Pins pin ) -> Result< bool > {
+					// TODO: Handle ...
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				},
+
+				//  INTCAP (Interrupt Capture)
+				[ this ]( detail::port::PinInterruptCapture, [[maybe_unused]] Pins pin ) -> Result< PinState > {
+					// TODO: Handle ...
+					return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+				} };
 
 			// TODO: This will get more complicated
 			return Pin{ *this, pin, dispatcher, PinTag{} };
 		}
 
-		/// Returns all pin modes
-		// [[nodiscard]] Result< PinModes > pinModes();
+		/// Reads the direction (input/output) for all pins on the port (IODIR register).
+		[[nodiscard]] Result< detail::port::PinModes > pinModes();
 
-		/// Returns all pin states
-		// [[nodiscard]] Result< PinStates > pinStates();
+		/// Sets the direction (input/output) for all pins on the port (IODIR register).
+		[[nodiscard]] Result< void > setPinModes( const detail::port::PinModes& modes );
 
-		/// TBW, Read Only (Should be easy to implement, just read)
-		// [[nodiscard]] Result<PinInterruptCapture> pinInterruptCapture();
+		/// Reads the current logic state (HIGH/LOW) of all pins on the port (GPIO register).
+		[[nodiscard]] Result< detail::port::PinStates > pinStates();
 
-		/// TBW, Read Only (Should be easy to implement, just read)
-		// [[nodiscard]] Result<PinInterruptFlags> pinInterruptFlags();
+		/// Sets the logic state (HIGH/LOW) of all output pins on the port (GPIO register).
+		[[nodiscard]] Result< void > setPinStates( const detail::port::PinStates& states );
+
+		/// Reads the pull-up configuration (GPPU register).
+		[[nodiscard]] Result< detail::port::PinPullUps > pullUps();
+
+		/// Sets the pull-up configuration (GPPU register).
+		[[nodiscard]] Result< void > setPullUps( const detail::port::PinPullUps& pullUps );
+
+		/// Reads the captured pin states at the time of the last interrupt (INTCAP register).
+		[[nodiscard]] Result< detail::port::PinInterruptCapture > pinInterruptCapture();
+
+		/// Reads which pins triggered an interrupt (INTF register).
+		[[nodiscard]] Result< detail::port::PinInterruptFlags > pinInterruptFlags();
+
+		/// Clears all interrupt flags for the port (INTF register).
+		[[nodiscard]] Result< void > clearInterruptFlags();
+
+		/// Reads which pins have interrupts enabled (GPINTEN register).
+		[[nodiscard]] Result< detail::port::PinInterruptEnable > interruptEnable();
+
+		/// Sets which pins have interrupts enabled (GPINTEN register).
+		[[nodiscard]] Result< void > setInterruptEnable( const detail::port::PinInterruptEnable& mask );
+
+		/// Reads the interrupt control mode for each pin (INTCON register).
+		[[nodiscard]] Result< detail::port::PinInterruptControl > interruptControl();
+
+		/// Sets the interrupt control mode for each pin (INTCON register).
+		[[nodiscard]] Result< void > setInterruptControl( const detail::port::PinInterruptControl& control );
+
+		/// Reads the default comparison values for interrupts (DEFVAL register).
+		[[nodiscard]] Result< detail::port::PinDefaultComparison > interruptDefaults();
+
+		/// Sets the default comparison values for interrupts (DEFVAL register).
+		[[nodiscard]] Result< void > setInterruptDefaults( const detail::port::PinDefaultComparison& defaults );
 
 	private:
 		MCP23017ControllerV2& m_controller;
 		Address m_address;
 
 		// These are configurations saved in the registers!
-		detail::port::PinModes m_iodir; // IODIR register for input/output direction
-		detail::port::PinStates m_gpio; // GPIO register for pin states
-		detail::port::PinPullUps m_gppu; // GPPU register for pull-up configuration
-		detail::port::PinInterruptControl m_intcon; // INTCON register for interrupt configuration
-		detail::port::PinDefaultComparison m_defval; // DEFVAL register for default comparison value for interrupts
-		detail::port::PinInterruptEnable m_gpinten; // GPINTEN register for enabling/disabling interrupts
-		detail::port::PinInterruptCapture m_intcap; // INTCAP register for capturing the state at interrupt time
-		detail::port::PinInterruptFlags m_intf; // INTF register for interrupt flags (which pin triggered)
+		// detail::port::PinModes m_iodir; // IODIR register for input/output direction
+		// detail::port::PinStates m_gpio; // GPIO register for pin states
+		// detail::port::PinPullUps m_gppu; // GPPU register for pull-up configuration
+		// detail::port::PinInterruptControl m_intcon; // INTCON register for interrupt configuration
+		// detail::port::PinDefaultComparison m_defval; // DEFVAL register for default comparison value for interrupts
+		// detail::port::PinInterruptEnable m_gpinten; // GPINTEN register for enabling/disabling interrupts
+		// detail::port::PinInterruptCapture m_intcap; // INTCAP register for capturing the state at interrupt time
+		// detail::port::PinInterruptFlags m_intf; // INTF register for interrupt flags (which pin triggered)
 	};
 
 	enum class Address : std::uint8_t

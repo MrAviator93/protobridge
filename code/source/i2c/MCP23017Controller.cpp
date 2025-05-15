@@ -43,14 +43,92 @@ MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Addres
 	// TODO
 }
 
- 
+auto MCP23017ControllerV2::Port::pinModes() -> Result< detail::port::PinModes >
+{
+	return utils::MakeError< detail::port::PinModes >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setPinModes( [[maybe_unused]] const detail::port::PinModes& modes ) -> Result< void >
+{
+	return utils::MakeError< void >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pinStates() -> Result< detail::port::PinStates >
+{
+	return utils::MakeError< detail::port::PinStates >( utils::Error{ utils::ErrorCode::NOT_IMPLEMENTED } );
+}
+
+auto MCP23017ControllerV2::Port::setPinStates( [[maybe_unused]] const detail::port::PinStates& states )
+	-> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pullUps() -> Result< detail::port::PinPullUps >
+{
+	return utils::MakeError< detail::port::PinPullUps >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setPullUps( [[maybe_unused]] const detail::port::PinPullUps& pullUps )
+	-> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pinInterruptCapture() -> Result< detail::port::PinInterruptCapture >
+{
+	return utils::MakeError< detail::port::PinInterruptCapture >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pinInterruptFlags() -> Result< detail::port::PinInterruptFlags >
+{
+	return utils::MakeError< detail::port::PinInterruptFlags >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::clearInterruptFlags() -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::interruptEnable() -> Result< detail::port::PinInterruptEnable >
+{
+	return utils::MakeError< detail::port::PinInterruptEnable >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setInterruptEnable( [[maybe_unused]] const detail::port::PinInterruptEnable& mask )
+	-> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::interruptControl() -> Result< detail::port::PinInterruptControl >
+{
+	return utils::MakeError< detail::port::PinInterruptControl >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setInterruptControl(
+	[[maybe_unused]] const detail::port::PinInterruptControl& control ) -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::interruptDefaults() -> Result< detail::port::PinDefaultComparison >
+{
+	return utils::MakeError< detail::port::PinDefaultComparison >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setInterruptDefaults(
+	[[maybe_unused]] const detail::port::PinDefaultComparison& defaults ) -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
 
 // auto MCP23017ControllerV2::Port::Pin::mode() const -> PinMode
 // {
 // 	return PinMode::OUTPUT;
 // }
 
-// auto MCP23017ControllerV2::Port::Pin::setMode( const PinMode mode ) -> Result< void >
+// auto MCP23017ControllerV2::Port::Pin::setMode( const PinMode mode ) -> auto -> Result< void >
 // {
 // 	// // Convert the enum-based pin to its bitmask value
 // 	// auto pinMask = static_cast< std::uint8_t >( m_pin );
@@ -79,7 +157,7 @@ MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Addres
 // 	return std::unexpected( "Not implemented ..." );
 // }
 
-// auto MCP23017ControllerV2::Port::Pin::setPinState( const PinState state ) -> Result< void >
+// auto MCP23017ControllerV2::Port::Pin::setPinState( const PinState state ) -> auto -> Result< void >
 // {
 // 	if( !isOutput() )
 // 	{
