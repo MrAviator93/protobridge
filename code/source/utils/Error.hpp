@@ -39,12 +39,13 @@ public:
 	/// Returns the optional error message.
 	[[nodiscard]] auto& message() const noexcept { return m_message; }
 
+	/// Returns a formatted string containing the error code and optional message.
+	[[nodiscard]] std::string description() const;
+
 private:
 	ErrorCode m_code;
 	std::optional< std::string > m_message;
 };
-
-
 
 } // namespace pbl::utils
 #endif // PBL_UTILS_ERROR_HPP__

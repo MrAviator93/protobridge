@@ -1,4 +1,5 @@
 #include "Error.hpp"
+#include "ErrorCodeFmt.hpp"
 
 namespace pbl::utils
 {
@@ -20,5 +21,15 @@ inline const Error Error::INVALID_DATA{ ErrorCode::INVALID_DATA };
 inline const Error Error::RETRY_LIMIT_EXCEEDED{ ErrorCode::RETRY_LIMIT_EXCEEDED };
 inline const Error Error::UNEXPECTED_ERROR{ ErrorCode::UNEXPECTED_ERROR };
 inline const Error Error::NOT_IMPLEMENTED{ ErrorCode::NOT_IMPLEMENTED };
+
+std::string Error::description() const
+{
+	if( m_message.has_value() )
+	{
+		return std::format( "[{}] {}", m_code, m_message.value() );
+	}
+
+	return std::format( "[{}]", m_code );
+}
 
 } // namespace pbl::utils
