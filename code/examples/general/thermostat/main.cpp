@@ -33,9 +33,7 @@ int main( const int argc, const char* const* const argv )
 
 	while( true )
 	{
-		if( timer.hasElapsed() )
-		{
-			auto dt = timer.elapsedSinceSetInSeconds();
+		auto onTick = [ & ] [[nodiscard]] ( auto dt ) -> bool {
 			auto rslt = thermostat.update( dt );
 
 			std::println( "{:12f}", dt );
@@ -43,10 +41,15 @@ int main( const int argc, const char* const* const argv )
 			if( !rslt )
 			{
 				std::println( stderr, "{}", pbl::utils::toStringView( rslt.error() ) );
-				break;
+				return false;
 			}
 
-			timer.set();
+			return true;
+		};
+
+		if( !timer.onTick( std::move( onTick ) ) )
+		{
+			break;
 		}
 	}
 

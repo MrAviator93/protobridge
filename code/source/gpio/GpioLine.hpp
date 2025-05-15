@@ -6,6 +6,7 @@
 
 // C++
 #include <cstdint>
+#include <expected>
 
 namespace pbl::gpio
 {

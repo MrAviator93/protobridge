@@ -51,46 +51,46 @@ public:
 	/**
      * @brief Read a single byte from specified register
      * 
-     * @param slaveAddr 
+     * @param deviceAddr 
      * @param reg 
      * @param result 
      * @return true 
      * @return false 
      */
-	[[nodiscard]] bool read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result );
+	[[nodiscard]] bool read( const std::uint8_t deviceAddr, const std::uint8_t reg, std::uint8_t& result );
 
 	/**
      * @brief Read a two byte array from specified register
      * 
-     * @param slaveAddr 
+     * @param deviceAddr 
      * @param reg 
      * @param result 
      * @return true 
      * @return false 
      */
 	[[nodiscard]] bool
-	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 2 >& result );
+	read( const std::uint8_t deviceAddr, const std::uint8_t reg, std::array< std::uint8_t, 2 >& result );
 
 	/**
      * @brief Read a four byte array from specified register
      * 
-     * @param slaveAddr 
+     * @param deviceAddr 
      * @param reg 
      * @param result 
      * @return true 
      * @return false 
      */
 	[[nodiscard]] bool
-	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::array< std::uint8_t, 4 >& result );
+	read( const std::uint8_t deviceAddr, const std::uint8_t reg, std::array< std::uint8_t, 4 >& result );
 
 	/// TODO: To be introduced, default endian in i2c comms is big, if mismatch convert to native
-	[[nodiscard]] bool read( const std::uint8_t slaveAddr,
+	[[nodiscard]] bool read( const std::uint8_t deviceAddr,
 							 const std::uint8_t reg,
 							 std::int16_t& value,
 							 const std::endian endian = std::endian::big );
 
 	/// TODO: To be introduced, default endian in i2c comms is big, if mismatch convert to native
-	[[nodiscard]] bool read( const std::uint8_t slaveAddr,
+	[[nodiscard]] bool read( const std::uint8_t deviceAddr,
 							 const std::uint8_t reg,
 							 std::int32_t& value,
 							 const std::endian endian = std::endian::big );
@@ -101,56 +101,56 @@ public:
 	 * @todo There is a mismatch in types dataSize is uint16_t but the real read size is int16_t
 	 * this needs to be fixed.
      * 
-     * @param slaveAddr 
+     * @param deviceAddr 
      * @param reg 
      * @param pData 
      * @param dataSize
      * @return std::int16_t 
      */
 	[[nodiscard]] std::int16_t
-	read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize );
+	read( const std::uint8_t deviceAddr, const std::uint8_t reg, std::uint8_t* pData, std::uint16_t dataSize );
 
 	/**
      * @brief Read a data buffer from specified register (std::vector version)
 	 * 
-	 * @param slaveAdd 
+	 * @param deviceAdd 
 	 * @param reg 
 	 * @param data 
 	 * @return std::int16_t 
 	 */
 	[[nodiscard]] std::int16_t
-	read( const std::uint8_t slaveAdd, const std::uint8_t reg, std::vector< std::uint8_t >& data )
+	read( const std::uint8_t deviceAdd, const std::uint8_t reg, std::vector< std::uint8_t >& data )
 	{
-		return read( slaveAdd, reg, data.data(), static_cast< std::uint16_t >( data.size() ) );
+		return read( deviceAdd, reg, data.data(), static_cast< std::uint16_t >( data.size() ) );
 	}
 
 	/**
      * @brief Write a single byte to the specified register
      * 
-     * @param slaveAddr 
+     * @param deviceAddr 
      * @param reg 
      * @param data 
      * @return true 
      * @return false 
      */
-	bool write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data );
+	bool write( const std::uint8_t deviceAddr, const std::uint8_t reg, const std::uint8_t data );
 
 	/**
 	 * @brief Write a data buffer to specified register
 	 * 
-	 * @param slaveAddr 
+	 * @param deviceAddr 
 	 * @param reg 
 	 * @param data 
 	 * @return true 
 	 * @return false 
 	 */
 	virtual bool
-	write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::span< const std::uint8_t > data );
+	write( const std::uint8_t deviceAddr, const std::uint8_t reg, const std::span< const std::uint8_t > data );
 
 	/**
      * @brief Write a data buffer to specified register
      * 
-     * @param slaveAddr 
+     * @param deviceAddr 
      * @param reg 
      * @param data 
      * @param size 
@@ -158,7 +158,7 @@ public:
      * @return false 
      */
 	bool
-	write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t* data, const std::uint8_t size );
+	write( const std::uint8_t deviceAddr, const std::uint8_t reg, const std::uint8_t* data, const std::uint8_t size );
 
 	/// An accessor to the last error
 	[[nodiscard]] std::string lastError() const

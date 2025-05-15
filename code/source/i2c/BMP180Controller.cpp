@@ -85,12 +85,12 @@ bool readCalibConst( T& value,
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
 
-	if( !busController.read( bmp180Addr, msb, highByte ) )
+	if( !busController.read( bmp180Addr, msb, highByte ) ) [[unlikely]]
 	{
 		return false;
 	}
 
-	if( !busController.read( bmp180Addr, lsb, lowByte ) )
+	if( !busController.read( bmp180Addr, lsb, lowByte ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -142,10 +142,10 @@ v1::BMP180Controller::BMP180Controller( BusController& busController, Address ad
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
 {
-	if( !m_constants->read( busController, static_cast< std::uint8_t >( address ) ) )
+	if( !m_constants->read( busController, static_cast< std::uint8_t >( address ) ) ) [[unlikely]]
 	{
 		// TODO: We need to do something about this ...
-		// return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		// return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 }
 
@@ -156,18 +156,18 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 	using namespace std::chrono_literals;
 
 	// Read uncompensated temperature (UT) value
-	if( !write( kBmp180Control, kBmp180CmdTemp ) ) // Start temperature measurement
+	if( !write( kBmp180Control, kBmp180CmdTemp ) ) [[unlikely]] // Start temperature measurement
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
 	}
 
 	sleep( 4500us );
 
 	// Read raw temperature measurement
 	std::array< std::uint8_t, 2 > rawUT{};
-	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) )
+	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	const std::int16_t UT = ( ( int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
@@ -185,13 +185,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 
 auto v1::BMP180Controller::getTemperatureF() -> Result< float >
 {
-	const auto temp = getTrueTemperatureC();
-	if( temp.has_value() )
-	{
-		return math::celsiusToFahrenheit( temp.value() );
-	}
-
-	return std::unexpected( temp.error() );
+	return getTrueTemperatureC().transform( math::CelsiusToFarenheit< float >{} );
 }
 
 auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
@@ -202,27 +196,27 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	const std::uint8_t OSS = static_cast< std::uint8_t >( m_samplingAccuracy );
 
 	// Start temperature measurement
-	if( !write( kBmp180Control, kBmp180CmdTemp ) )
+	if( !write( kBmp180Control, kBmp180CmdTemp ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
 	}
 
 	sleep( 4500us );
 
 	// Read uncompensated temperature value
 	std::array< std::uint8_t, 2 > rawUT{};
-	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) )
+	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	const std::int16_t UT = ( ( std::int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
 	// Start pressure measurement
 	std::uint8_t cmdOss = commandForMode( m_samplingAccuracy );
-	if( !write( kBmp180Control, cmdOss ) )
+	if( !write( kBmp180Control, cmdOss ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_WRITE );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
 	}
 
 	sleep( std::chrono::milliseconds( static_cast< int >( ( 5.0f + 8.0f * OSS ) ) ) );
@@ -230,9 +224,9 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	// Read uncompensated pressure value
 	// UP = ( MSB << 16 + LSB << 8 + XLSB ) >> ( 8 - oss );
 	std::array< std::uint8_t, 3 > upRawData{};
-	if( !read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) )
+	if( !read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	// + or | here?
@@ -282,15 +276,10 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	return static_cast< float >( p );
 }
 
-// TODO: Consider moving this function to utils/Math.hpp
 auto v1::BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
 {
-	if( auto truePressure = getTruePressurePa(); truePressure.has_value() )
-	{
-		return math::pressureToAltitude(truePressure.value(), localPressure);
-	}
-
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	const auto transform = [ = ]( float pressurePa ) { return math::pressureToAltitude( pressurePa, localPressure ); };
+	return getTruePressurePa().transform( transform );
 }
 
 } // namespace pbl::i2c

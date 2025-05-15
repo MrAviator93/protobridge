@@ -32,7 +32,7 @@ public:
 	class DifferentialReader;
 
 	template < typename T >
-	using Result = std::expected< T, utils::ErrorCode >;
+	using Result = utils::Result< T >;
 
 	using Success = Result< void >;
 

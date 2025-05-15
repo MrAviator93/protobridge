@@ -200,6 +200,23 @@ template < std::floating_point T >
 }
 
 /**
+ * @brief Type alias for a callable that converts Celsius to Fahrenheit.
+ * 
+ * @tparam T Numeric floating point type.
+ * 
+ * This alias defines the type of a stateless lambda that takes a value of type T
+ * (assumed to be in degrees Celsius) and returns the corresponding value in degrees Fahrenheit.
+ * It can be used with higher-order functions such as std::transform or std::expected::transform.
+ * 
+ * @code
+ * auto tempF = tempC.transform(CelsiusToFahrenheit<float>{});
+ * @endcode
+ */
+template < std::floating_point T >
+using CelsiusToFarenheit =
+	decltype( [] [[nodiscard]] ( T c ) constexpr noexcept -> T { return celsiusToFahrenheit( c ); } );
+
+/**
  * @brief Converts a temperature from Fahrenheit to Celsius.
  * 
  * @tparam T Numeric floating point type.
@@ -213,6 +230,23 @@ template < std::floating_point T >
 {
 	return ( fahrenheit - T{ 32.0 } ) / T{ 0.5556 };
 }
+
+/**
+ * @brief Type alias for a callable that converts Fahrenheit to Celsius.
+ * 
+ * @tparam T Numeric floating point type.
+ * 
+ * This alias defines the type of a stateless lambda that takes a value of type T
+ * (assumed to be in degrees Fahrenheit) and returns the corresponding value in degrees Celsius.
+ * It can be used in functional pipelines or monadic contexts (e.g., with std::expected::transform).
+ * 
+ * @code
+ * auto tempC = tempF.transform(FahrenheitToCelsius<float>{});
+ * @endcode
+ */
+template < std::floating_point T >
+using FahrenheitToCelcius =
+	decltype( [] [[nodiscard]] ( T f ) constexpr noexcept -> T { return fahrenheitToCelsius( f ); } );
 
 } // namespace pbl::math
 #endif // PBL_MATH_MATH_HPP__

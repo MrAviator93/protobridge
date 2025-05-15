@@ -43,97 +43,91 @@ v1::LM75Controller::LM75Controller( BusController& busController, Address addres
 bool v1::LM75Controller::setPowerMode( PowerMode mode )
 {
 	std::uint8_t config{};
-	if( read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		std::bitset< 8 > configBits{ config };
-		configBits.set( kShutdownModeBit, static_cast< std::uint8_t >( mode ) );
-		return write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) );
+		return false;
 	}
 
-	return false;
+	std::bitset< 8 > configBits{ config };
+	configBits.set( kShutdownModeBit, static_cast< std::uint8_t >( mode ) );
+	return write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) );
 }
 
 bool v1::LM75Controller::setThermostatMode( ThermostatMode mode )
 {
 	std::uint8_t config{};
-	if( read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		std::bitset< 8 > configBits{ config };
-		configBits.set( kThermostatModeBit, static_cast< std::uint8_t >( mode ) );
-		return write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) );
+		return false;
 	}
 
-	return false;
+	std::bitset< 8 > configBits{ config };
+	configBits.set( kThermostatModeBit, static_cast< std::uint8_t >( mode ) );
+	return write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) );
 }
 
 auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 {
 	std::uint8_t config{};
-	if( read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		std::bitset< 8 > configBits{ config };
-		if( configBits.test( kShutdownModeBit ) )
-		{
-			return PowerMode::LOW_POWER;
-		}
-
-		return PowerMode::NORMAL;
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	std::bitset< 8 > configBits{ config };
+	if( configBits.test( kShutdownModeBit ) )
+	{
+		return PowerMode::LOW_POWER;
+	}
+
+	return PowerMode::NORMAL;
 }
 
 auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 {
 	std::uint8_t config{};
-	if( read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		std::bitset< 8 > configBits{ config };
-		if( configBits.test( kThermostatModeBit ) )
-		{
-			return ThermostatMode::INTERRUPT;
-		}
-
-		return ThermostatMode::COMPARATOR;
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	std::bitset< 8 > configBits{ config };
+	if( configBits.test( kThermostatModeBit ) )
+	{
+		return ThermostatMode::INTERRUPT;
+	}
+
+	return ThermostatMode::COMPARATOR;
 }
 
 auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 {
 	std::uint8_t config{};
-	if( read( kConfigurationRegister, config ) )
+	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		std::bitset< 8 > configBits( config );
-		return configBits.test( kAlertStatusBit );
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	std::bitset< 8 > configBits( config );
+	return configBits.test( kAlertStatusBit );
 }
 
 auto v1::LM75Controller::getTemperatureC() -> Result< float >
 {
 	std::array< std::uint8_t, 2 > data{ 0x00, 0x00 };
-	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size > 0 )
+	if( const auto size = read( kTempReadRegister, data.data(), data.size() ); size < 2 ) [[unlikely]]
 	{
-		// Calculate temperature in Celsius
-		std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
-		return static_cast< float >( iTemp ) / 256.0f;
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	return std::unexpected( utils::ErrorCode::FAILED_TO_READ );
+	// Calculate temperature in Celsius
+	std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
+	return static_cast< float >( iTemp ) / 256.0f;
 }
 
 auto v1::LM75Controller::getTemperatureF() -> Result< float >
 {
-	auto temp = getTemperatureC();
-	if( temp.has_value() )
-	{
-		return math::celsiusToFahrenheit( temp.value() );
-	}
-
-	return temp;
+	return getTemperatureC().transform( math::CelsiusToFarenheit< float >{} );
 }
 
 } // namespace pbl::i2c

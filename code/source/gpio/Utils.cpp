@@ -12,7 +12,7 @@ std::vector< GpioInfo > listAvailableGpioChips()
 	std::vector< GpioInfo > iffos;
 
 	auto it = ::gpiod_chip_iter_new();
-	if( !it )
+	if( !it ) [[unlikely]]
 	{
 		// Not a single gpio chip is available
 		return iffos;
