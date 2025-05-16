@@ -66,6 +66,7 @@ enum class ErrorCode : std::uint8_t
 	INVALID_ARGUMENT, ///< Provided argument is not valid in this context.
 	RETRY_LIMIT_EXCEEDED, ///< Exceeded maximum retry attempts for the operation.
 	UNEXPECTED_ERROR, ///< Any unexpected or unknown error.
+	NOT_IMPLEMENTED ///!< Not implemented.
 	//@}
 
 };
@@ -98,6 +99,7 @@ enum class ErrorCode : std::uint8_t
 		case INVALID_ARGUMENT: return "INVALID_ARGUMENT";
 		case RETRY_LIMIT_EXCEEDED: return "RETRY_LIMIT_EXCEEDED";
 		case UNEXPECTED_ERROR: return "UNEXPECTED_ERROR";
+		case NOT_IMPLEMENTED: return "NOT_IMPLEMENTED";
 		default: return kUndefined;
 	}
 

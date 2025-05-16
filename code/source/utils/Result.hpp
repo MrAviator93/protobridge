@@ -40,6 +40,12 @@ struct MakeErrorFromInstanceHelper
 
 } // namespace detail
 
+template < typename T >
+[[nodiscard]] inline Result< T > MakeError( ErrorCode code, std::optional< std::string > msg = std::nullopt )
+{
+	return std::unexpected( Error( code, std::move( msg ) ) );
+}
+
 /// Creates a Result<T> from an error code + optional message
 [[nodiscard]] inline auto MakeError( ErrorCode code, std::optional< std::string > message = std::nullopt )
 {

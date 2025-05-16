@@ -31,6 +31,7 @@ public:
 	static const Error INVALID_DATA;
 	static const Error RETRY_LIMIT_EXCEEDED;
 	static const Error UNEXPECTED_ERROR;
+	static const Error NOT_IMPLEMENTED;
 
 	/// Implicit conversion to ErrorCode.
 	[[nodiscard]] operator ErrorCode() const noexcept { return m_code; }

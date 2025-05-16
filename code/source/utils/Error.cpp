@@ -20,6 +20,7 @@ inline const Error Error::UNSUPPORTED_OPERATION{ ErrorCode::UNSUPPORTED_OPERATIO
 inline const Error Error::INVALID_DATA{ ErrorCode::INVALID_DATA };
 inline const Error Error::RETRY_LIMIT_EXCEEDED{ ErrorCode::RETRY_LIMIT_EXCEEDED };
 inline const Error Error::UNEXPECTED_ERROR{ ErrorCode::UNEXPECTED_ERROR };
+inline const Error Error::NOT_IMPLEMENTED{ ErrorCode::NOT_IMPLEMENTED };
 
 std::string Error::description() const
 {

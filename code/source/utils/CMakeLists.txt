@@ -10,6 +10,8 @@ set(PBL_LIB_HEADERS
     TimeTypes.hpp
     FastPimpl.hpp
     TimeStamp.hpp
+    PinConfig.hpp
+    Overloaded.hpp
     FixedString.hpp
     EnumFlagSet.hpp
     CompactBitset.hpp

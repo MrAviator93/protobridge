@@ -4,23 +4,13 @@
 namespace pbl::i2c
 {
 
-/**
- * Note:
- * To configure pull up resistor (enable do the following) you need to enable them through configuration
- * of registers GPPUA (address either 0x06 or 0x0C, see below) and GPPUB (address either 0x16 or 0x0D, 
- * see below) according to this pattern (from the datasheet):
- * 
- * 0x20, 0x0C, 0b00000001 we enable pull up resistor for pin 1 on port A
- * 0x20, 0x0D, 0b00000001 we enable pull up resistor for pin 1 on port B
- */
-
 namespace
 {
 
 // MCP23017 Register Addresses
 constexpr std::uint8_t kIodirARegister{ 0x00 }; //!< PORT A: Configures I/O direction (1=input, 0=output).
 constexpr std::uint8_t kIodirBRegister{ 0x01 }; //!< PORT B: Configures I/O direction (1=input, 0=output).
-constexpr std::uint8_t kIpolaRegister{ 0x02 }; //!< PORT A: Input polarity (1=inverts input, 0=default).
+constexpr std::uint8_t kIpolaARegister{ 0x02 }; //!< PORT A: Input polarity (1=inverts input, 0=default).
 constexpr std::uint8_t kIpolaBRegister{ 0x03 }; //!< PORT B: Input polarity (1=inverts input, 0=default).
 constexpr std::uint8_t kGpintenARegister{ 0x04 }; //!< PORT A: Interrupt-on-change enable (1=enabled).
 constexpr std::uint8_t kGpintenBRegister{ 0x05 }; //!< PORT B: Interrupt-on-change enable (1=enabled).
@@ -45,118 +35,139 @@ constexpr std::uint8_t kOlatBRegister{ 0x15 }; //!< PORT B: Output latch registe
 
 } // namespace
 
-MCP23017Controller::MCP23017Controller( BusController& busController, Address address ) noexcept
-	: ICBase{ busController, address }
-{
-	configure();
-}
-
-MCP23017Controller::MCP23017Controller( BusController& busController,
-										std::uint8_t portAConfig,
-										std::uint8_t portBConfig,
-										Address address ) noexcept
-	: ICBase{ busController, address }
-	, m_portAConfiguration{ portAConfig }
-	, m_portBConfiguration{ portBConfig }
-{
-	configure();
-}
-
-bool MCP23017Controller::setPortConfig( Port port, std::uint8_t config )
-{
-	bool rslt{};
-
-	if( port == Port::PORT_A )
-	{
-		if( m_portAConfiguration != config )
-		{
-			m_portAConfiguration = config;
-			rslt = configure();
-		}
-	}
-
-	if( port == Port::PORT_B )
-	{
-		if( m_portBConfiguration != config )
-		{
-			m_portBConfiguration = config;
-			rslt = configure();
-		}
-	}
-
-	return rslt;
-}
-
-bool MCP23017Controller::setOnPortA( Pins pin )
-{
-	// Check if the pin is configured to be an output
-	if( ( m_portAConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
-	{
-		m_portAPinStates &= ~static_cast< std::uint8_t >( pin );
-		return write( 0x14, m_portAPinStates );
-	}
-
-	return false;
-}
-
-bool MCP23017Controller::setOffPortA( Pins pin )
-{
-	// Check if pin is configured to be an output
-	if( ( m_portAConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
-	{
-		m_portAPinStates |= static_cast< std::uint8_t >( pin );
-		return write( 0x14, m_portAPinStates );
-	}
-
-	return false;
-}
-
-bool MCP23017Controller::setOnPortB( Pins pin )
-{
-	// Check if the pin is configured to be an output
-	if( ( m_portBConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
-	{
-		m_portBPinStates &= ~static_cast< std::uint8_t >( pin );
-		return write( 0x15, m_portBPinStates );
-	}
-
-	return false;
-}
-
-bool MCP23017Controller::setOffPortB( Pins pin )
-{
-	// Check if the pin is configured to be an output
-	if( ( m_portBConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
-	{
-		m_portBPinStates &= ~static_cast< std::uint8_t >( pin );
-		return write( 0x15, m_portBPinStates );
-	}
-
-	return false;
-}
-
-bool MCP23017Controller::configure()
-{
-	bool rslt{};
-	rslt = write( kIodirARegister, m_portAConfiguration );
-	rslt = rslt && write( kIodirBRegister, m_portBConfiguration );
-	return rslt && retrieve();
-}
-
-bool MCP23017Controller::retrieve()
-{
-	bool rslt{};
-	rslt = read( 0x12, m_portAPinStates );
-	rslt = rslt && read( 0x13, m_portBPinStates );
-	return rslt;
-}
-
 MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
-	, m_portA{ *this, PortTag{} }
-	, m_portB{ *this, PortTag{} }
+	, m_portA{ *this, Port::Address::PORT_A, PortTag{} }
+	, m_portB{ *this, Port::Address::PORT_B, PortTag{} }
 {
 	// TODO
 }
+
+auto MCP23017ControllerV2::Port::pinModes() -> Result< detail::mcp23017::port::PinModes >
+{
+	return utils::MakeError< detail::mcp23017::port::PinModes >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setPinModes( [[maybe_unused]] const detail::mcp23017::port::PinModes& modes )
+	-> Result< void >
+{
+	return utils::MakeError< void >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pinStates() -> Result< detail::mcp23017::port::PinStates >
+{
+	return utils::MakeError< detail::mcp23017::port::PinStates >( utils::Error{ utils::ErrorCode::NOT_IMPLEMENTED } );
+}
+
+auto MCP23017ControllerV2::Port::setPinStates( [[maybe_unused]] const detail::mcp23017::port::PinStates& states )
+	-> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pullUps() -> Result< detail::mcp23017::port::PinPullUps >
+{
+	return utils::MakeError< detail::mcp23017::port::PinPullUps >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setPullUps( [[maybe_unused]] const detail::mcp23017::port::PinPullUps& pullUps )
+	-> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pinInterruptCapture() -> Result< detail::mcp23017::port::PinInterruptCapture >
+{
+	return utils::MakeError< detail::mcp23017::port::PinInterruptCapture >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::pinInterruptFlags() -> Result< detail::mcp23017::port::PinInterruptFlags >
+{
+	return utils::MakeError< detail::mcp23017::port::PinInterruptFlags >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::clearInterruptFlags() -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::interruptEnable() -> Result< detail::mcp23017::port::PinInterruptEnable >
+{
+	return utils::MakeError< detail::mcp23017::port::PinInterruptEnable >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setInterruptEnable(
+	[[maybe_unused]] const detail::mcp23017::port::PinInterruptEnable& mask ) -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::interruptControl() -> Result< detail::mcp23017::port::PinInterruptControl >
+{
+	return utils::MakeError< detail::mcp23017::port::PinInterruptControl >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setInterruptControl(
+	[[maybe_unused]] const detail::mcp23017::port::PinInterruptControl& control ) -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::interruptDefaults() -> Result< detail::mcp23017::port::PinDefaultComparison >
+{
+	return utils::MakeError< detail::mcp23017::port::PinDefaultComparison >( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+auto MCP23017ControllerV2::Port::setInterruptDefaults(
+	[[maybe_unused]] const detail::mcp23017::port::PinDefaultComparison& defaults ) -> Result< void >
+{
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+}
+
+// auto MCP23017ControllerV2::Port::Pin::mode() const -> PinMode
+// {
+// 	return PinMode::OUTPUT;
+// }
+
+// auto MCP23017ControllerV2::Port::Pin::setMode( const PinMode mode ) -> auto -> Result< void >
+// {
+// 	// // Convert the enum-based pin to its bitmask value
+// 	// auto pinMask = static_cast< std::uint8_t >( m_pin );
+
+// 	// if( mode == PinMode::INPUT )
+// 	// {
+// 	// 	m_port.m_iodir |= pinMask; // Set the bit to 1 for input mode
+// 	// }
+// 	// else
+// 	// {
+// 	// 	m_port.m_iodir &= ~pinMask; // Clear the bit to 0 for output mode
+// 	// }
+
+// 	// // Write the updated IODIR register to the MCP23017
+// 	// if( auto result = m_port.writeRegister( static_cast< uint8_t >( m_port.m_address ), m_port.m_iodir.to_ulong() );
+// 	// 	!result )
+// 	// {
+// 	// 	return std::unexpected( "Failed to write to IODIR register" );
+// 	// }
+
+// 	return std::unexpected( "Not implemented ..." );
+// }
+
+// auto MCP23017ControllerV2::Port::Pin::pinState() -> Result< PinState >
+// {
+// 	return std::unexpected( "Not implemented ..." );
+// }
+
+// auto MCP23017ControllerV2::Port::Pin::setPinState( const PinState state ) -> auto -> Result< void >
+// {
+// 	if( !isOutput() )
+// 	{
+// 		return std::unexpected( "Can't set pin state, as pin not configured as an output pin ..." );
+// 	}
+
+// 	// TODO: Implement
+
+// 	return std::unexpected( "Not implemented ..." );
+// }
 
 } // namespace pbl::i2c
