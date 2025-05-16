@@ -2,6 +2,7 @@
 #define PBL_GPIO_RPI_5_CHIP_0_HPP__
 
 #include "GpioLine.hpp"
+#include <utils/Result.hpp>
 
 // C++
 #include <memory>
@@ -23,7 +24,7 @@ class Rpi5Chip0 final
 
 public:
 	template < typename T >
-	using Result = std::expected< T, utils::ErrorCode >;
+	using Result = utils::Result< T >;
 
 	/// Usable GPIOs from the 40-pin header (BCM numbers)
 	enum class Pin : std::uint8_t

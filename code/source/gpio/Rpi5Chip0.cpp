@@ -61,7 +61,7 @@ auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction directio
 
 	if( !m_pImpl->pChip ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::HARDWARE_NOT_AVAILABLE );
+		return utils::MakeError< std::reference_wrapper< GpioLine > >( utils::ErrorCode::HARDWARE_NOT_AVAILABLE );
 	}
 
 	const std::uint8_t lineNumber = static_cast< std::uint8_t >( pin );
@@ -70,7 +70,7 @@ auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction directio
 	auto& lines = m_pImpl->lines;
 	if( storageIndex >= lines.size() ) [[unlikely]]
 	{
-		return std::unexpected( utils::ErrorCode::INVALID_ARGUMENT );
+		return utils::MakeError< std::reference_wrapper< GpioLine > >( utils::ErrorCode::HARDWARE_NOT_AVAILABLE );
 	}
 
 	if( !lines[ storageIndex ].has_value() )
@@ -85,7 +85,7 @@ auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction directio
 
 		// lines[ storageIndex ].emplace( std::move( gpioLine ) );
 
-		return std::unexpected( utils::ErrorCode::UNEXPECTED_ERROR );
+		return utils::MakeError< std::reference_wrapper< GpioLine > >( utils::ErrorCode::HARDWARE_NOT_AVAILABLE );
 	}
 
 	return std::ref( lines[ storageIndex ].value() );
