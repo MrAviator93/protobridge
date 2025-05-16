@@ -55,8 +55,7 @@ bool v1::Rpi5Chip0::isReady() const noexcept
 	return m_pImpl->pChip != nullptr;
 }
 
-auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction direction )
-	-> Result< std::reference_wrapper< GpioLine > >
+auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction direction ) -> RefResult< GpioLine >
 {
 
 	if( !m_pImpl->pChip ) [[unlikely]]

@@ -26,6 +26,9 @@ public:
 	template < typename T >
 	using Result = utils::Result< T >;
 
+	template < typename T >
+	using RefResult = utils::Result< std::reference_wrapper< T > >;
+
 	/// Usable GPIOs from the 40-pin header (BCM numbers)
 	enum class Pin : std::uint8_t
 	{
@@ -63,8 +66,7 @@ public:
 	[[nodiscard]] bool isReady() const noexcept;
 
 	/// TBW, The direction is the default direction, that the pin is configured at first instanciation.
-	[[nodiscard]] Result< std::reference_wrapper< GpioLine > >
-	line( Pin pin, GpioLine::Direction direction = GpioLine::Direction::Output );
+	[[nodiscard]] RefResult< GpioLine > line( Pin pin, GpioLine::Direction direction = GpioLine::Direction::Output );
 
 private:
 	std::unique_ptr< Impl > m_pImpl;
