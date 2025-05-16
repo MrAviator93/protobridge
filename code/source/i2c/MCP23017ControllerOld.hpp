@@ -119,7 +119,8 @@ public:
 	using enum PinState;
 
 	/// Default ctor, all pins are configured as output by default
-	explicit MCP23017Controller( BusController& busController, Address address = H20 ) noexcept;
+	[[deprecated( "Use the new version of MCP23017Controller" )]] explicit MCP23017Controller(
+		BusController& busController, Address address = H20 ) noexcept;
 
 	/// The secondary ctor, which enables the individual port configuration
 	MCP23017Controller( BusController& busController,
