@@ -46,6 +46,12 @@ public:
 		return std::chrono::duration< double, std::ratio< 1 > >( m_duration ).count();
 	}
 
+	/// Provides the duration value in milliseconds as a floating-point number
+	[[nodiscard]] double toMilliseconds() const
+	{
+		return std::chrono::duration< double, std::milli >( m_duration ).count();
+	}
+
 	/// Assignment operator that accepts a std::chrono::duration of the same type
 	TimeStep& operator=( const T& duration )
 	{
