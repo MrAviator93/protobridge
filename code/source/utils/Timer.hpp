@@ -4,6 +4,7 @@
 #include "TimeTypes.hpp"
 
 // C++
+#include <utility>
 #include <type_traits>
 
 namespace pbl::utils
@@ -72,10 +73,16 @@ public:
 				return result;
 			}
 		}
-
-		if constexpr( !std::is_void_v< std::invoke_result_t< Callback, Dt > > )
+		else
 		{
-			return {}; // Only return if the return type is not void
+			if constexpr( !std::is_void_v< std::invoke_result_t< Callback, Dt > > )
+			{
+				return {}; // Only return if the return type is not void
+			}
+			else
+			{
+				return;
+			}
 		}
 	}
 

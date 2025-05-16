@@ -35,13 +35,15 @@ auto v1::PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result
 	std::uint8_t prescale = static_cast< std::uint8_t >( 25000000.0 / ( 4096 * frequency ) - 1 );
 
 	// Put the device in sleep mode before setting prescale
-	write( MODE1, MODE1_SLEEP );
+	std::ignore = write( MODE1, MODE1_SLEEP );
 
 	// Write the prescale value to the prescale register
-	write( PRESCALE, prescale );
+	std::ignore = write( PRESCALE, prescale );
 
 	// Restart the device and enable auto-increment
-	write( MODE1, MODE1_RESTART | MODE1_AI );
+	std::ignore = write( MODE1, MODE1_RESTART | MODE1_AI );
+
+	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
 // // Set the PWM duty cycle for a specific channel

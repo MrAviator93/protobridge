@@ -76,9 +76,9 @@ void v1::MPU6050Controller::calculateImuError()
 	double AccErrorX{};
 	double AccErrorY{};
 
-	double AccX{};
-	double AccY{};
-	double AccZ{};
+	[[maybe_unused]] double AccX{};
+	[[maybe_unused]] double AccY{};
+	[[maybe_unused]] double AccZ{};
 
 	// Read accelerometer values for kAccelCalibReadIterations times
 	while( count < kAccelCalibReadIterations )
@@ -113,9 +113,9 @@ void v1::MPU6050Controller::calculateImuError()
 	double GyroErrorY{};
 	double GyroErrorZ{};
 
-	double GyroX{};
-	double GyroY{};
-	double GyroZ{};
+	[[maybe_unused]] double GyroX{};
+	[[maybe_unused]] double GyroY{};
+	[[maybe_unused]] double GyroZ{};
 
 	// Read gyro values kGyroCalibReadIterations times
 	while( count < kGyroCalibReadIterations )

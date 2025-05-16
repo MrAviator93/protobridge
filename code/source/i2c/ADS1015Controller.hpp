@@ -170,7 +170,7 @@ public:
 		// controller.setMode(Mode::SINGLE_SHOT);
 	}
 
-	std::int16_t read( Channel channel )
+	std::int16_t read( [[maybe_unused]] Channel channel )
 	{
 		// controller.setChannel(channel);
 		// controller.startConversion();
@@ -235,7 +235,7 @@ public:
 		// controller.setMode(Mode::SINGLE_SHOT);
 	}
 
-	std::int16_t read( Channel positive, Channel negative )
+	std::int16_t read( [[maybe_unused]] Channel positive, [[maybe_unused]] Channel negative )
 	{
 		// controller.configureDifferential(positive, negative);
 		// controller.startConversion();
