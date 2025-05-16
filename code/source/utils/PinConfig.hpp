@@ -10,6 +10,7 @@ namespace pbl::utils
 
 namespace detail
 {
+
 template < typename T >
 struct DefaultToBool
 {

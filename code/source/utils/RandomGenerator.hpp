@@ -13,6 +13,7 @@ namespace pbl::utils
 
 namespace detail
 {
+
 template < typename T >
 struct DistributionSelector;
 
@@ -205,5 +206,4 @@ private:
 };
 
 } // namespace pbl::utils
-
 #endif // PBL_UTILS_RANDOM_GENERATOR_HPP__
