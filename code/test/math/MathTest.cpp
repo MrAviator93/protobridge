@@ -1,83 +1,56 @@
-
+// PBL
 #include <math/Math.hpp>
 
-// 3rd Party
-#include <doctest/doctest.h>
+// Third Party
+#include <gtest/gtest.h>
 
-SCENARIO( "Converting degrees to radians" )
+namespace pbl::math
 {
-	GIVEN( "A value in degrees" )
-	{
-		WHEN( "the value is 0" )
-		{
-			double degrees{ 0.0 };
-			double radians = pbl::math::degreesToRadians( degrees );
 
-			THEN( "the result should be 0 radians" )
-			{
-				CHECK( radians == doctest::Approx( 0.0 ) );
-			}
-		}
+constexpr double kEpsilon = 1e-9;
 
-		WHEN( "the value is 90" )
-		{
-			double degrees{ 90.0 };
-			double radians = pbl::math::degreesToRadians( degrees );
-
-			THEN( "the result should be pi/2 radians" )
-			{
-				CHECK( radians == doctest::Approx( pbl::math::PI / 2.0 ) );
-			}
-		}
-
-		WHEN( "the value is 180" )
-		{
-			double degrees{ 180.0 };
-			double radians = pbl::math::degreesToRadians( degrees );
-
-			THEN( "the result should be pi radians" )
-			{
-				CHECK( radians == doctest::Approx( pbl::math::PI ) );
-			}
-		}
-	}
+// Degrees to Radians Tests
+TEST( AngleConversionTest, DegreesToRadians_Zero )
+{
+	double degrees = 0.0;
+	double radians = degreesToRadians( degrees );
+	EXPECT_NEAR( radians, 0.0, kEpsilon );
 }
 
-SCENARIO( "Converting radians to degrees" )
+TEST( AngleConversionTest, DegreesToRadians_Ninety )
 {
-	GIVEN( "A value in radians" )
-	{
-		WHEN( "the value is 0" )
-		{
-			double radians{ 0.0 };
-			double degrees{ pbl::math::radiansToDegrees( radians ) };
-
-			THEN( "the result should be 0 degrees" )
-			{
-				CHECK( degrees == doctest::Approx( 0.0 ) );
-			}
-		}
-
-		WHEN( "the value is pi/2" )
-		{
-			double radians = pbl::math::PI / 2.0;
-			double degrees{ pbl::math::radiansToDegrees( radians ) };
-
-			THEN( "the result should be 90 degrees" )
-			{
-				CHECK( degrees == doctest::Approx( 90.0 ) );
-			}
-		}
-
-		WHEN( "the value is pi" )
-		{
-			double radians = pbl::math::PI;
-			double degrees{ pbl::math::radiansToDegrees( radians ) };
-			
-			THEN( "the result should be 180 degrees" )
-			{
-				CHECK( degrees == doctest::Approx( 180.0 ) );
-			}
-		}
-	}
+	double degrees = 90.0;
+	double radians = degreesToRadians( degrees );
+	EXPECT_NEAR( radians, PI / 2.0, kEpsilon );
 }
+
+TEST( AngleConversionTest, DegreesToRadians_OneEighty )
+{
+	double degrees = 180.0;
+	double radians = degreesToRadians( degrees );
+	EXPECT_NEAR( radians, PI, kEpsilon );
+}
+
+// Radians to Degrees Tests
+TEST( AngleConversionTest, RadiansToDegrees_Zero )
+{
+	double radians = 0.0;
+	double degrees = radiansToDegrees( radians );
+	EXPECT_NEAR( degrees, 0.0, kEpsilon );
+}
+
+TEST( AngleConversionTest, RadiansToDegrees_PiOverTwo )
+{
+	double radians = PI / 2.0;
+	double degrees = radiansToDegrees( radians );
+	EXPECT_NEAR( degrees, 90.0, kEpsilon );
+}
+
+TEST( AngleConversionTest, RadiansToDegrees_Pi )
+{
+	double radians = PI;
+	double degrees = radiansToDegrees( radians );
+	EXPECT_NEAR( degrees, 180.0, kEpsilon );
+}
+
+} // namespace pbl::math

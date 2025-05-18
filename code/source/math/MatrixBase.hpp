@@ -40,10 +40,13 @@ public:
 			return m_data[ idx ];
 		}
 
-		return {};
+		return std::nullopt;
 	}
 
-	[[nodiscard]] constexpr std::optional< T > at( std::size_t column, std::size_t row ) const noexcept { return at( column * row ); }
+	[[nodiscard]] constexpr std::optional< T > at( std::size_t column, std::size_t row ) const noexcept
+	{
+		return at( column * row );
+	}
 
 	[[nodiscard]] constexpr auto& data() noexcept { return m_data; }
 	[[nodiscard]] constexpr auto& data() const noexcept { return m_data; }

@@ -4,7 +4,6 @@ set(PRIVATE_DEPS
 )
 
 set(SRC
-    main.cpp
     CompactBitsetTest.cpp
 )
 
