@@ -53,7 +53,7 @@ if (PBL_BUILD_BENCH)
 endif()
 
 if (PBL_BUILD_TESTS)
-    find_package(doctest CONFIG REQUIRED)
+    find_package(GTest CONFIG REQUIRED)
     include(CTest)
     set(BUILD_TESTING ON)
     set(CMAKE_CTEST_ARGUMENTS "--verbose")

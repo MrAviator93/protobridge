@@ -17,7 +17,25 @@ function(create_application)
     target_link_libraries(${ARG_TARGET} PUBLIC ${ARG_PUBLIC_DEPENDENCIES})
 endfunction()
 
+
 function(create_test_application)
-    create_application(${ARGN})
-    add_test(NAME ${ARGV1} COMMAND ${ARGV1})
+    set(options)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs PRIVATE_DEPENDENCIES PUBLIC_DEPENDENCIES SRC_FILES)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    # Prepend GTest::gmock_main to PRIVATE_DEPENDENCIES
+    list(APPEND ARG_PRIVATE_DEPENDENCIES GTest::gmock_main)
+
+    # Call the generic app creation function
+    create_application(
+        TARGET ${ARG_TARGET}
+        SRC_FILES ${ARG_SRC_FILES}
+        PRIVATE_DEPENDENCIES ${ARG_PRIVATE_DEPENDENCIES}
+        PUBLIC_DEPENDENCIES ${ARG_PUBLIC_DEPENDENCIES}
+    )
+
+    # Register tests via gtest_discover_tests
+    include(GoogleTest)
+    gtest_discover_tests(${ARG_TARGET})
 endfunction()

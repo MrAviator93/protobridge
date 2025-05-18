@@ -5,7 +5,6 @@ set(PRIVATE_DEPS
 )
 
 set(SRC
-    main.cpp
     MathTest.cpp
     Matrix2x2Test.cpp
     Matrix3x3Test.cpp
