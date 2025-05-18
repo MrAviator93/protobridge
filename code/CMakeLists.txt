@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION "3.29.0")
 
+project(protobridge VERSION 1.0 LANGUAGES C CXX)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
@@ -17,10 +21,6 @@ option(PBL_BUILD_SPI_LIB "Build SPI library" ON)
 option(PBL_BUILD_GPIO_LIB "Build Gpio library" ON)
 option(PBL_BUILD_SERIAL_LIB "Build Serial library" ON)
 option(PBL_BUILD_DEVICES_LIB "Build Devices library" ON)
-
-project(protobridge VERSION 1.0 LANGUAGES C CXX)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 include(CreateApplication)
 include(CreateStaticLibrary)
