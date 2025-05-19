@@ -1,6 +1,7 @@
 #ifndef PBL_I2C_BUS_CONTROLLER_HPP__
 #define PBL_I2C_BUS_CONTROLLER_HPP__
 
+#include <utils/Result.hpp>
 #include <utils/Counter.hpp>
 
 // C++
@@ -36,17 +37,60 @@ inline namespace v1
 class BusController : public utils::Counter< BusController >
 {
 public:
+	template < typename T >
+	using Result = utils::Result< T >;
+
 	/// Default ctor opens a file descriptor.
 	explicit BusController( const std::string& busName );
 
+	BusController( BusController&& other ) noexcept
+		: m_busName( std::move( other.m_busName ) )
+		, m_open( other.m_open.load() )
+		, m_fd( other.m_fd )
+		, m_lastError( std::move( other.m_lastError ) )
+	{
+		other.m_fd = -1;
+		other.m_open = false;
+	}
+
+	BusController& operator=( BusController&& other ) noexcept
+	{
+		if( this != &other )
+		{
+			std::scoped_lock lock{ m_fdMtx, m_lastErrMtx }; // lock before touching state
+
+			m_fd = other.m_fd;
+			m_open.store( other.m_open.load() );
+			m_lastError = std::move( other.m_lastError );
+			// busName is const — can't be moved, but it's okay to stay the same
+
+			other.m_fd = -1;
+			other.m_open = false;
+		}
+		return *this;
+	}
+
 	/// Default dtor, closes file m_fd file.
 	virtual ~BusController();
+
+	static Result< BusController > open( const std::string& busName )
+	{
+		BusController bus{ busName };
+		if( !bus.isOpen() )
+		{
+			return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+		}
+		return std::expected< BusController, utils::Error >{ std::move( bus ) };
+	}
 
 	/// Returns the OS name of the physical bus name
 	[[nodiscard]] auto& bus() const { return m_busName; }
 
 	/// Returns whether the I2C is open on the device.
-	[[nodiscard]] bool isOpen() const { return m_open.load(); }
+	[[deprecated( "Use open rather than ctor and isOpen combination." )]] [[nodiscard]] bool isOpen() const
+	{
+		return m_open.load();
+	}
 
 	/**
      * @brief Read a single byte from specified register
@@ -180,11 +224,9 @@ public:
 	void sleep( const std::chrono::microseconds sleepTimeUs );
 
 private:
-	// This class is non-copyable and non-movable
+	// This class is non-copyable
 	BusController( const BusController& ) = delete;
-	BusController( BusController&& ) = delete;
 	BusController operator=( const BusController& ) = delete;
-	BusController operator=( BusController&& ) = delete;
 
 	/// Retrieves error buffer
 	void reportError();
