@@ -52,9 +52,6 @@ public:
 	/// Returns the OS name of the physical bus name
 	[[nodiscard]] auto& bus() const { return m_busName; }
 
-	/// Returns whether the I2C is open on the device.
-	[[nodiscard]] bool isOpen() const { return m_open.load(); }
-
 	/// Puts asleep calling thread for specified sleep time in milliseconds
 	void sleep( const std::chrono::milliseconds sleepTimeMs );
 
