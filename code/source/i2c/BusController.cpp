@@ -28,6 +28,22 @@ namespace pbl::i2c
 namespace
 {
 
+[[nodiscard]] utils::ErrorCode mapErrnoToErrorCode( int err ) noexcept
+{
+	using enum pbl::utils::ErrorCode;
+
+	switch( err )
+	{
+		case ENOENT: return DEVICE_NOT_FOUND; // /dev/i2c-X not present
+		case EACCES: return ACCESS_DENIED; // No permission to access
+		case EBUSY: return BUS_BUSY; // Already in use
+		case ENODEV: return HARDWARE_NOT_AVAILABLE; // No device responding
+		case EINVAL: return INVALID_ARGUMENT; // Malformed path, etc.
+		case ENXIO: return DEVICE_NOT_RESPONDING; // Device not on bus
+		default: return UNEXPECTED_ERROR; // Fallback
+	}
+}
+
 [[nodiscard]] bool check( std::uint64_t fs, const std::pair< std::uint64_t, std::string_view >& element )
 {
 	if( fs & element.first )
@@ -95,6 +111,8 @@ readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::
 }
 
 } // namespace
+
+
 
 v1::BusController::BusController( const std::string& busName )
 	: m_busName{ busName }
