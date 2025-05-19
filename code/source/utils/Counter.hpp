@@ -22,28 +22,11 @@ public:
 	Counter() { ++m_counter; }
 
 	Counter( const Counter& ) { ++m_counter; }
-
-	Counter& operator=( const Counter& c )
-	{
-		if( this != &c )
-		{
-			--m_counter;
-		}
-		return *this;
-	}
-
 	Counter( Counter&& ) { ++m_counter; }
-
-	Counter& operator=( Counter&& c )
-	{
-		if( this != &c )
-		{
-			--m_counter;
-		}
-		return *this;
-	}
-
 	~Counter() { --m_counter; }
+
+	Counter& operator=( const Counter& ) = default;
+	Counter& operator=( Counter&& ) = default;
 
 	/// Returns the current count of instances.
 	[[nodiscard]] static std::size_t count() { return m_counter; }

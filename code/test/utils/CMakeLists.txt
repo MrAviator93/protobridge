@@ -4,6 +4,8 @@ set(PRIVATE_DEPS
 )
 
 set(SRC
+    CounterTests.cpp
+    FastPimplTests.cpp
     FixedStringTests.cpp
     CompactBitsetTests.cpp
 )
