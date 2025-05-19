@@ -244,7 +244,7 @@ int main( const int argc, const char* const* const argv )
  auto busController = pbl::i2c::BusController::open(deviceName);
 
  // Check if the I2C bus is open and accessible
- if( !busController )
+ if( !busController ) [[unlikely]]
  {
   std::println( "Failed to open I2C device" );
   return 1;
@@ -260,7 +260,7 @@ int main( const int argc, const char* const* const argv )
 
    std::println( "{:12f}", dt );
 
-   if( !rslt )
+   if( !rslt ) [[unlikely]]
    {
     std::println( stderr, "{}", pbl::utils::toStringView( rslt.error() ) );
     return false;
