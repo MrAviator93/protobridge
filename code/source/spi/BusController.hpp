@@ -25,6 +25,7 @@ public:
 	using Result = utils::Result< T >;
 
 	using ByteSpan = std::span< std::uint8_t >;
+	using ConstByteSpan = std::span< const std::uint8_t >;
 
 	/// SPI mode
 	enum class Mode : std::uint8_t
