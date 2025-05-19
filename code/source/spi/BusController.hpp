@@ -1,12 +1,15 @@
 #ifndef PBL_SPI_BUS_CONTROLLER_HPP__
 #define PBL_SPI_BUS_CONTROLLER_HPP__
 
+#include <utils/Result.hpp>
+
 // C++
 #include <mutex>
 #include <chrono>
 #include <atomic>
 #include <string>
 #include <cstdint>
+#include <utility>
 #include <shared_mutex>
 
 namespace pbl::spi
@@ -18,6 +21,11 @@ inline namespace v1
 class BusController
 {
 public:
+	template < typename T >
+	using Result = utils::Result< T >;
+
+	using ByteSpan = std::span< std::uint8_t >;
+
 	/// SPI mode
 	enum class Mode : std::uint8_t
 	{
@@ -43,8 +51,26 @@ public:
 		BITS_16 = 16
 	};
 
-	/// Default ctor opens a file descriptor.
-	explicit BusController( const std::string& busName );
+	[[nodiscard]] static Result< BusController > open( const std::string& device,
+													   Mode mode = Mode::MODE_0,
+													   Speed speed = Speed::SPEED_1MHZ,
+													   BitsPerWord bits = BitsPerWord::BITS_8 );
+
+	BusController( BusController&& other ) noexcept
+		: m_busName( std::move( other.m_busName ) )
+		, m_open( other.m_open.load() )
+		, m_fd( std::exchange( other.m_fd, -1 ) )
+	{ }
+
+	BusController& operator=( BusController&& other ) noexcept
+	{
+		if( this != &other )
+		{
+			m_fd = std::exchange( other.m_fd, -1 );
+			m_open = other.m_open.load();
+		}
+		return *this;
+	}
 
 	/// Default dtor, closes file m_fd file.
 	virtual ~BusController();
@@ -59,23 +85,17 @@ public:
 	void sleep( const std::chrono::microseconds sleepTimeUs );
 
 private:
-	// This class is non-copyable and non-movable
+	explicit BusController( const std::string& busName );
+
+	// This class is non-copyable
 	BusController( const BusController& ) = delete;
-	BusController( BusController&& ) = delete;
 	BusController operator=( const BusController& ) = delete;
-	BusController operator=( BusController&& ) = delete;
 
 	/// Configures the SPI bus
-	[[nodiscard]] bool configure( Mode mode, Speed speed, BitsPerWord bitsPerWord );
+	[[nodiscard]] Result< void > configure( Mode mode, Speed speed, BitsPerWord bitsPerWord );
 
-	/// Retrieves error buffer and outputs it into the logger using make_error method.
-	void reportError();
-
-	void setLastError( std::string&& lastError )
-	{
-		std::lock_guard _{ m_lastErrMtx };
-		m_lastError = std::move( lastError );
-	}
+	/// TBW
+	[[nodiscard]] static std::string getError();
 
 private:
 	const std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
@@ -83,9 +103,6 @@ private:
 
 	mutable std::mutex m_fdMtx; //!< Locks the read write operations
 	int m_fd{ -1 }; //!< File/device descriptor
-
-	mutable std::shared_mutex m_lastErrMtx; //!< Locks the last_error string operations
-	std::string m_lastError; //<! Stores the string of the last occurred error.
 };
 
 } // namespace v1

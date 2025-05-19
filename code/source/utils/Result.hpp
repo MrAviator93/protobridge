@@ -38,6 +38,24 @@ struct MakeErrorFromInstanceHelper
 	Error error;
 };
 
+struct MakeSuccessHelper
+{
+	template < typename T = void >
+	operator Result< T >() const
+	{
+		static_assert( std::is_void_v< T >, "Use MakeSuccess(value) for non-void types." );
+		return {};
+	}
+};
+
+template < typename T >
+struct MakeSuccessFromValueHelper
+{
+	T value;
+
+	operator Result< T >() && { return Result< T >{ std::move( value ) }; }
+};
+
 } // namespace detail
 
 template < typename T >
@@ -56,6 +74,19 @@ template < typename T >
 [[nodiscard]] inline auto MakeError( const Error& error )
 {
 	return detail::MakeErrorFromInstanceHelper{ error };
+}
+
+/// For Result<void>
+[[nodiscard]] inline auto MakeSuccess()
+{
+	return detail::MakeSuccessHelper{};
+}
+
+/// For Result<T> (non-void)
+template < typename T >
+[[nodiscard]] inline auto MakeSuccess( T&& value )
+{
+	return detail::MakeSuccessFromValueHelper< std::decay_t< T > >{ std::forward< T >( value ) };
 }
 
 } // namespace pbl::utils
