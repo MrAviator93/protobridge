@@ -23,7 +23,7 @@ public:
 	inline void lock() noexcept
 	{
 		// Quick locking attempt
-		if( !m_locked.test_and_set( std::memory_order::acquire ) )
+		if( !m_locked.test_and_set( std::memory_order::acquire ) ) [[likely]]
 		{
 			return;
 		}

@@ -4,7 +4,8 @@ set(PRIVATE_DEPS
 )
 
 set(SRC
-    CompactBitsetTest.cpp
+    FixedStringTests.cpp
+    CompactBitsetTests.cpp
 )
 
 create_test_application(

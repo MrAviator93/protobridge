@@ -133,8 +133,12 @@ struct FixedString final
 	/// Returns the last character of the stored string.
 	[[nodiscard]] constexpr char back() const noexcept { return chars[ N - 1 ]; }
 
-	/// Accesses the specified character by index.
-	[[nodiscard]] constexpr char operator[]( const std::size_t index ) const noexcept { return chars[ index ]; }
+	template < std::size_t Index >
+		requires( Index < N )
+	[[nodiscard]] constexpr char at() const noexcept
+	{
+		return chars[ Index ];
+	}
 
 	/// Provides bounds-checked access to the specified character by index.
 	[[nodiscard]] constexpr char at( std::size_t index ) const
@@ -162,8 +166,17 @@ struct FixedString final
 		return chars[ index ];
 	}
 
+	/// Accesses the specified character by index (performs bounds check).
+	[[nodiscard]] constexpr char operator[]( const std::size_t index ) const { return at( index ); }
+
+	/// Accesses the specified character by index, returns default on error via std::error_code.
+	[[nodiscard]] constexpr char operator[]( std::size_t index, std::error_code& ec ) const noexcept
+	{
+		return at( index, ec );
+	}
+
 	char chars[ N + 1 ];
-};
+}; // namespace pbl::utils
 
 /// Deduction guide to allow the creation of a FixedString without specifying the size explicitly.
 template < std::size_t N >
