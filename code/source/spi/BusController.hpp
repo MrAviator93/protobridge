@@ -85,6 +85,9 @@ public:
 	/// Puts asleep calling thread for specified sleep time in microseconds
 	void sleep( const std::chrono::microseconds sleepTimeUs );
 
+	// Full-duplex: tx -> rx (must be same size)
+	[[nodiscard]] Result< void > transfer( ConstByteSpan tx, ByteSpan rx );
+
 private:
 	explicit BusController( const std::string& busName );
 

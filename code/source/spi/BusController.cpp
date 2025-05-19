@@ -117,4 +117,36 @@ std::string v1::BusController::getError()
 	return std::string{ buffer.data() };
 }
 
+auto v1::BusController::transfer( ConstByteSpan tx, ByteSpan rx ) -> Result< void >
+{
+	if( !m_open )
+	{
+		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "SPI device not open" );
+	}
+
+	if( tx.size() != rx.size() )
+	{
+		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "TX and RX buffer sizes must match" );
+	}
+
+	std::scoped_lock _{ m_fdMtx };
+
+	spi_ioc_transfer tr{};
+	tr.tx_buf = reinterpret_cast< __u64 >( tx.data() );
+	tr.rx_buf = reinterpret_cast< __u64 >( rx.data() );
+	tr.len = tx.size();
+
+	// TODO: In the future consider introducing TransferConfig to be able to configure per transfer
+	tr.delay_usecs = 0;
+	tr.speed_hz = 0; // use default
+	tr.bits_per_word = 0; // use default
+
+	if( ::ioctl( m_fd, SPI_IOC_MESSAGE( 1 ), &tr ) < 0 )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE, getError() );
+	}
+
+	return utils::MakeSuccess();
+}
+
 } // namespace pbl::spi
