@@ -29,11 +29,11 @@ template < typename T >
 }
 
 /**
- * @brief Type alias for a callable that converts pressure to altitude.
+ * @brief Functor that converts pressure to altitude.
  * 
  * @tparam T Numeric floating point type.
  * 
- * This alias defines the type of a stateless lambda that takes two arguments:
+ * This functor defines a callable object that takes two arguments:
  * - `pressurePa`: the measured atmospheric pressure in pascals
  * - `referencePressurePa`: a baseline pressure (e.g. sea level or calibrated ground pressure)
  * 
@@ -42,13 +42,18 @@ template < typename T >
  * Useful in functional contexts such as `std::expected::transform` with tuples, pairs, or structured bindings.
  * 
  * @code
- * auto altitude = pressureToAltitudeFn<float>(98000.0f, 101325.0f); // ~274 m
+ * PressureToAltitude<float> toAltitude;
+ * auto altitude = toAltitude(98000.0f, 101325.0f); // ~274 m
  * @endcode
  */
 template < typename T >
-using PressureToAltitude = decltype( [] [[nodiscard]] ( T pressurePa, T referencePressurePa ) -> T {
-	return pressureToAltitude( pressurePa, referencePressurePa );
-} );
+struct PressureToAltitude
+{
+	[[nodiscard]] constexpr T operator()( T pressurePa, T referencePressurePa ) const
+	{
+		return pressureToAltitude( pressurePa, referencePressurePa );
+	}
+};
 
 /**
  * @brief Calculate the dew point temperature (in Celsius) based on ambient temperature and relative humidity.
@@ -75,27 +80,32 @@ template < typename T >
 }
 
 /**
- * @brief Type alias for a callable that calculates the dew point temperature.
+ * @brief Functor that calculates the dew point temperature.
  * 
  * @tparam T Numeric floating point type.
  * 
- * This alias defines the type of a stateless lambda that takes:
+ * This functor defines a callable object that takes:
  * - `temperatureC`: ambient temperature in Celsius
  * - `humidityPercent`: relative humidity (0–100%)
  * 
  * and returns the estimated dew point temperature in Celsius using the Magnus-Tetens formula.
  * 
- * This is suitable for use in weather-related data processing, and in functional pipelines
- * or monadic transformations (e.g., with structured sensor input).
+ * Suitable for weather-related data processing and functional pipelines,
+ * including monadic transformations with structured sensor inputs.
  * 
  * @code
- * auto dew = DewPoint<float>{}(25.0f, 60.0f); // ≈ 16.7°C
+ * DewPoint<float> dewCalc;
+ * auto dew = dewCalc(25.0f, 60.0f); // ≈ 16.7°C
  * @endcode
  */
 template < typename T >
-using DewPoint = decltype( [] [[nodiscard]] ( T temperatureC, T humidityPercent ) -> T {
-	return dewPoint( temperatureC, humidityPercent );
-} );
+struct DewPoint
+{
+	[[nodiscard]] constexpr T operator()( T temperatureC, T humidityPercent ) const
+	{
+		return dewPoint( temperatureC, humidityPercent );
+	}
+};
 
 /**
  * @brief Estimate the heat index ("feels like" temperature) in Celsius.
@@ -129,27 +139,32 @@ template < typename T >
 }
 
 /**
- * @brief Type alias for a callable that estimates the heat index ("feels like" temperature).
+ * @brief Functor that estimates the heat index ("feels like" temperature).
  * 
  * @tparam T Numeric floating point type.
  * 
- * This alias defines the type of a stateless lambda that takes:
+ * This functor defines a callable object that takes:
  * - `tempC`: ambient temperature in Celsius
  * - `humidityPercent`: relative humidity (0–100%)
  * 
- * and returns the estimated heat index in Celsius, based on the Rothfusz regression formula.
- * Internally converts to Fahrenheit for calculation, then returns the result in Celsius.
+ * and returns the estimated heat index in Celsius, using the Rothfusz regression formula.
+ * Internally converts to Fahrenheit for computation and converts back to Celsius.
  * 
  * Suitable for weather UIs, health alerts, and climate-aware systems.
  * 
  * @code
- * auto hi = HeatIndexCelsius<float>{}(30.0f, 70.0f); // ≈ 35.6°C
+ * HeatIndexCelsius<float> hiCalc;
+ * auto hi = hiCalc(30.0f, 70.0f); // ≈ 35.6°C
  * @endcode
  */
 template < typename T >
-using HeatIndexCelsius = decltype( [] [[nodiscard]] ( T tempC, T humidityPercent ) -> T {
-	return heatIndexCelsius( tempC, humidityPercent );
-} );
+struct HeatIndexCelsius
+{
+	[[nodiscard]] constexpr T operator()( T tempC, T humidityPercent ) const
+	{
+		return heatIndexCelsius( tempC, humidityPercent );
+	}
+};
 
 } // namespace pbl::math
 #endif // PBL_MATH_DYNAMICS_HPP__
