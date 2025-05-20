@@ -200,21 +200,19 @@ template < std::floating_point T >
 }
 
 /**
- * @brief Type alias for a callable that converts Celsius to Fahrenheit.
+ * @brief A functor that converts Celsius to Fahrenheit.
  * 
- * @tparam T Numeric floating point type.
- * 
- * This alias defines the type of a stateless lambda that takes a value of type T
- * (assumed to be in degrees Celsius) and returns the corresponding value in degrees Fahrenheit.
  * It can be used with higher-order functions such as std::transform or std::expected::transform.
  * 
  * @code
- * auto tempF = tempC.transform(CelsiusToFahrenheit<float>{});
+ * auto tempF = tempC.transform(CelsiusToFahrenheit{});
  * @endcode
  */
 template < std::floating_point T >
-using CelsiusToFarenheit =
-	decltype( [] [[nodiscard]] ( T c ) constexpr noexcept -> T { return celsiusToFahrenheit( c ); } );
+struct CelsiusToFarenheit
+{
+	[[nodiscard]] constexpr T operator()( T c ) noexcept { return celsiusToFahrenheit( c ); }
+};
 
 /**
  * @brief Converts a temperature from Fahrenheit to Celsius.
@@ -232,21 +230,19 @@ template < std::floating_point T >
 }
 
 /**
- * @brief Type alias for a callable that converts Fahrenheit to Celsius.
+ * @brief Functor that converts Fahrenheit to Celsius.
  * 
- * @tparam T Numeric floating point type.
- * 
- * This alias defines the type of a stateless lambda that takes a value of type T
- * (assumed to be in degrees Fahrenheit) and returns the corresponding value in degrees Celsius.
  * It can be used in functional pipelines or monadic contexts (e.g., with std::expected::transform).
  * 
  * @code
- * auto tempC = tempF.transform(FahrenheitToCelsius<float>{});
+ * auto tempC = tempF.transform(FahrenheitToCelsius{});
  * @endcode
  */
 template < std::floating_point T >
-using FahrenheitToCelcius =
-	decltype( [] [[nodiscard]] ( T f ) constexpr noexcept -> T { return fahrenheitToCelsius( f ); } );
+struct FahrenheitToCelsius
+{
+	[[nodiscard]] constexpr T operator()( T f ) noexcept { return fahrenheitToCelsius( f ); }
+};
 
 } // namespace pbl::math
 #endif // PBL_MATH_MATH_HPP__
