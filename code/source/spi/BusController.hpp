@@ -18,6 +18,7 @@ namespace pbl::spi
 inline namespace v1
 {
 
+/// TODO: Rename to Device, there is no concept of Bus in SPI.
 class BusController
 {
 public:
