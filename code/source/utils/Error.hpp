@@ -18,6 +18,7 @@ public:
 		, m_message{ std::move( message ) }
 	{ }
 
+	static const Error END_OF_FILE;
 	static const Error FAILED_TO_READ;
 	static const Error FAILED_TO_WRITE;
 	static const Error DEVICE_NOT_FOUND;

@@ -14,7 +14,7 @@ if(PBL_BUILD_GPIO_LIB)
 endif()
 
 if(PBL_BUILD_SERIAL_LIB)
-    # TODO
+    add_subdirectory(serial)
 endif()
 
 if(PBL_BUILD_DEVICES)
