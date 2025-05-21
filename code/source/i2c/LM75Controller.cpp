@@ -80,7 +80,7 @@ auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 		return PowerMode::LOW_POWER;
 	}
 
-	return PowerMode::NORMAL;
+	return utils::MakeSuccess( PowerMode::NORMAL );
 }
 
 auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
@@ -97,7 +97,7 @@ auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 		return ThermostatMode::INTERRUPT;
 	}
 
-	return ThermostatMode::COMPARATOR;
+	return utils::MakeSuccess( ThermostatMode::COMPARATOR );
 }
 
 auto v1::LM75Controller::getAlertStatus() -> Result< bool >
@@ -109,7 +109,7 @@ auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 	}
 
 	const std::bitset< 8 > configBits( config );
-	return configBits.test( kAlertStatusBit );
+	return utils::MakeSuccess( configBits.test( kAlertStatusBit ) );
 }
 
 auto v1::LM75Controller::getTemperatureC() -> Result< float >
@@ -122,7 +122,7 @@ auto v1::LM75Controller::getTemperatureC() -> Result< float >
 
 	// Calculate temperature in Celsius
 	const std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
-	return static_cast< float >( iTemp ) / 256.0f;
+	return utils::MakeSuccess( static_cast< float >( iTemp ) / 256.0f );
 }
 
 auto v1::LM75Controller::getTemperatureF() -> Result< float >

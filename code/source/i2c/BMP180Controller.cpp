@@ -180,7 +180,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 	// Temperature calculated here will be in units of 0.1 deg C
 	const std::int64_t T = ( B5 + 8 ) / 16;
 
-	return static_cast< float >( T ) * 0.1f;
+	return utils::MakeSuccess( static_cast< float >( T ) * 0.1f );
 }
 
 auto v1::BMP180Controller::getTemperatureF() -> Result< float >
@@ -273,7 +273,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	X2 = ( -7357 * p ) / 65536;
 	p = p + ( X1 + X2 + 3791 ) / 16; // Pressure in units of Pa.
 
-	return static_cast< float >( p );
+	return utils::MakeSuccess( static_cast< float >( p ) );
 }
 
 auto v1::BMP180Controller::getAbsoluteAltitude( float localPressure ) -> Result< float >
