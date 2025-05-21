@@ -73,7 +73,7 @@ public:
 				return result;
 			}
 		}
-		else
+		else // The timer is not yet elapsed
 		{
 			if constexpr( !std::is_void_v< std::invoke_result_t< Callback, Dt > > )
 			{
