@@ -59,7 +59,7 @@ public:
 	{
 		if( hasElapsed() )
 		{
-			Dt dt = elapsedSinceSetInSeconds();
+			const auto dt = elapsedSinceSetInSeconds();
 
 			if constexpr( std::is_void_v< std::invoke_result_t< Callback, Dt > > )
 			{
