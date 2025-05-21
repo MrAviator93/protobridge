@@ -77,7 +77,7 @@ auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 	const std::bitset< 8 > configBits{ config };
 	if( configBits.test( kShutdownModeBit ) )
 	{
-		return PowerMode::LOW_POWER;
+		return utils::MakeSuccess( PowerMode::LOW_POWER );
 	}
 
 	return utils::MakeSuccess( PowerMode::NORMAL );
@@ -94,7 +94,7 @@ auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 	const std::bitset< 8 > configBits{ config };
 	if( configBits.test( kThermostatModeBit ) )
 	{
-		return ThermostatMode::INTERRUPT;
+		return utils::MakeSuccess( ThermostatMode::INTERRUPT );
 	}
 
 	return utils::MakeSuccess( ThermostatMode::COMPARATOR );
