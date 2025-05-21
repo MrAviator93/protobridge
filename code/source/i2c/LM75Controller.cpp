@@ -74,7 +74,7 @@ auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	std::bitset< 8 > configBits{ config };
+	const std::bitset< 8 > configBits{ config };
 	if( configBits.test( kShutdownModeBit ) )
 	{
 		return PowerMode::LOW_POWER;
@@ -91,7 +91,7 @@ auto v1::LM75Controller::getThermostatMode() -> Result< ThermostatMode >
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	std::bitset< 8 > configBits{ config };
+	const std::bitset< 8 > configBits{ config };
 	if( configBits.test( kThermostatModeBit ) )
 	{
 		return ThermostatMode::INTERRUPT;
@@ -108,7 +108,7 @@ auto v1::LM75Controller::getAlertStatus() -> Result< bool >
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
-	std::bitset< 8 > configBits( config );
+	const std::bitset< 8 > configBits( config );
 	return configBits.test( kAlertStatusBit );
 }
 
@@ -121,7 +121,7 @@ auto v1::LM75Controller::getTemperatureC() -> Result< float >
 	}
 
 	// Calculate temperature in Celsius
-	std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
+	const std::int16_t iTemp = ( std::int16_t{ data[ 0 ] } << 8 ) | data[ 1 ];
 	return static_cast< float >( iTemp ) / 256.0f;
 }
 
