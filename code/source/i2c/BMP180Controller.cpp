@@ -178,7 +178,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 	const std::int64_t B5 = X1 + X2;
 
 	// Temperature calculated here will be in units of 0.1 deg C
-	std::int64_t T = ( B5 + 8 ) / 16;
+	const std::int64_t T = ( B5 + 8 ) / 16;
 
 	return static_cast< float >( T ) * 0.1f;
 }
@@ -213,7 +213,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	const std::int16_t UT = ( ( std::int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
 	// Start pressure measurement
-	std::uint8_t cmdOss = commandForMode( m_samplingAccuracy );
+	const std::uint8_t cmdOss = commandForMode( m_samplingAccuracy );
 	if( !write( kBmp180Control, cmdOss ) ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );

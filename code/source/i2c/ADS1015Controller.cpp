@@ -89,7 +89,7 @@ auto v1::ADS1015Controller::writeConfig( std::uint16_t config ) -> Result< void 
 
 	// Update the internal configuration state if the write was successful
 	// currentConfig = config;
-	return Success{};
+	return utils::MakeSuccess();
 }
 
 // // Helper to configure channel for single-ended reading

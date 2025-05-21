@@ -34,8 +34,6 @@ public:
 	template < typename T >
 	using Result = utils::Result< T >;
 
-	using Success = Result< void >;
-
 	enum class Address : std::uint8_t
 	{
 		H48 = 0x48, // ADDR connected to GND
