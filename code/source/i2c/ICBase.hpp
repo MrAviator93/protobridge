@@ -51,10 +51,12 @@ public:
 	/// The address of the IC on the I2C bus.
 	[[nodiscard]] auto address() const noexcept { return m_icAddress; }
 
+	[[nodiscard]] bool write( const std::span< const std::uint8_t > data );
 	[[nodiscard]] bool write( const std::uint8_t reg, const std::uint8_t value );
 	[[nodiscard]] bool write( const std::uint8_t reg, const std::span< const std::uint8_t > data );
 	[[nodiscard]] bool write( const std::uint8_t reg, const std::uint8_t* pData, const std::uint8_t size );
 
+	[[nodiscard]] std::int16_t read( std::span< std::uint8_t > data );
 	[[nodiscard]] bool read( const std::uint8_t reg, std::uint8_t& result );
 	[[nodiscard]] std::int16_t read( const std::uint8_t reg, std::uint8_t* pData, std::uint16_t size );
 

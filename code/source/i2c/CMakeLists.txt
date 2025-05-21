@@ -4,6 +4,7 @@ set(PBL_LIB_HEADERS
     Controllers.hpp
     BusController.hpp
     LM75Controller.hpp
+    SHT31Controller.hpp
     BMP180Controller.hpp
     MPU6050Controller.hpp
     MPU9250Controller.hpp
@@ -16,6 +17,7 @@ set(PBL_LIB_SOURCE
     BusController.cpp
     ICBase.cpp
     LM75Controller.cpp
+    SHT31Controller.cpp
     BMP180Controller.cpp
     ADS1015Controller.cpp
     MPU6050Controller.cpp

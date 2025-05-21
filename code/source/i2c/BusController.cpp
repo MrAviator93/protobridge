@@ -308,12 +308,70 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 	return dataSize;
 }
 
+std::int16_t v1::BusController::read( const std::uint8_t deviceAddr, std::span< std::uint8_t > data )
+{
+	if( !isOpen() ) [[unlikely]]
+	{
+		setLastError( "I2C bus is closed" );
+		return -1;
+	}
+
+	std::lock_guard _{ m_fdMtx };
+
+	::i2c_msg msgs[ 1 ];
+	msgs[ 0 ].addr = deviceAddr;
+	msgs[ 0 ].flags = I2C_M_RD;
+	msgs[ 0 ].len = static_cast< unsigned short >( data.size() );
+	msgs[ 0 ].buf = data.data();
+
+	::i2c_rdwr_ioctl_data msgset;
+	msgset.msgs = msgs;
+	msgset.nmsgs = 1;
+
+	::memset( data.data(), 0x00, data.size() );
+
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
+	{
+		reportError();
+		return -1;
+	}
+
+	return static_cast< std::int16_t >( data.size() );
+}
+
+bool v1::BusController::write( const std::uint8_t deviceAddr, const std::span< const std::uint8_t > data )
+{
+	if( !isOpen() ) [[unlikely]]
+	{
+		setLastError( "I2C bus is closed" );
+		return false;
+	}
+
+	::i2c_msg msgs[ 1 ];
+	msgs[ 0 ].addr = deviceAddr;
+	msgs[ 0 ].flags = 0;
+	msgs[ 0 ].len = static_cast< unsigned short >( data.size() );
+	msgs[ 0 ].buf = const_cast< std::uint8_t* >( data.data() );
+
+	::i2c_rdwr_ioctl_data msgset[ 1 ];
+	msgset[ 0 ].nmsgs = 1;
+	msgset[ 0 ].msgs = msgs;
+
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
+	{
+		reportError();
+		return false;
+	}
+
+	return true;
+}
+
 bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )
 {
 	if( !isOpen() ) [[unlikely]]
 	{
 		setLastError( "I2C bus is closed" );
-		return {};
+		return false;
 	}
 
 	std::lock_guard _{ m_fdMtx };

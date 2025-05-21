@@ -124,6 +124,12 @@ public:
 		return read( deviceAdd, reg, data.data(), static_cast< std::uint16_t >( data.size() ) );
 	}
 
+	/// TBW
+	std::int16_t read( const std::uint8_t deviceAddr, std::span< std::uint8_t > data );
+
+	/// TBW
+	bool write( const std::uint8_t deviceAddr, const std::span< const std::uint8_t > data );
+
 	/**
      * @brief Write a single byte to the specified register
      * 
