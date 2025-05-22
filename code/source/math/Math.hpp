@@ -1,13 +1,14 @@
 #ifndef PBL_MATH_MATH_HPP__
 #define PBL_MATH_MATH_HPP__
 
+#include "Constants.hpp"
+
+// C++
 #include <cmath>
 #include <type_traits>
 
 namespace pbl::math
 {
-
-constexpr double PI{ 3.14159265358979323846 };
 
 /**
  * @brief Converts degrees to radians.
@@ -21,7 +22,7 @@ constexpr double PI{ 3.14159265358979323846 };
 template < std::floating_point T >
 [[nodiscard]] constexpr T degreesToRadians( T degrees ) noexcept
 {
-	return ( degrees * PI / 180.0 );
+	return ( degrees * constants::Pi< T > / static_cast< T >( 180.0 ) );
 }
 
 /**
@@ -36,7 +37,7 @@ template < std::floating_point T >
 template < std::floating_point T >
 [[nodiscard]] constexpr T radiansToDegrees( T radians ) noexcept
 {
-	return ( radians * 180.0 / PI );
+	return ( radians * static_cast< T >( 180.0 ) / constants::Pi< T > );
 }
 
 /**
@@ -54,7 +55,21 @@ template < std::floating_point T >
 template < std::floating_point T >
 [[nodiscard]] T sin2( T value )
 {
-	return std::pow( std::sin( value ), 2 );
+	if constexpr( std::is_same_v< T, float > )
+	{
+		float s = std::sinf( value );
+		return s * s;
+	}
+	else if constexpr( std::is_same_v< T, double > )
+	{
+		double s = std::sin( value );
+		return s * s;
+	}
+	else if constexpr( std::is_same_v< T, long double > )
+	{
+		long double s = std::sinl( value );
+		return s * s;
+	}
 }
 
 /**
@@ -72,7 +87,21 @@ template < std::floating_point T >
 template < std::floating_point T >
 [[nodiscard]] T cos2( T value )
 {
-	return std::pow( std::cos( value ), 2 );
+	if constexpr( std::is_same_v< T, float > )
+	{
+		float c = std::cosf( value );
+		return c * c;
+	}
+	else if constexpr( std::is_same_v< T, double > )
+	{
+		double c = std::cos( value );
+		return c * c;
+	}
+	else if constexpr( std::is_same_v< T, long double > )
+	{
+		long double c = std::cosl( value );
+		return c * c;
+	}
 }
 
 /**
@@ -103,7 +132,7 @@ template < std::floating_point T >
 template < std::floating_point T >
 [[nodiscard]] constexpr T map( T value, T inMin, T inMax, T outMin, T outMax ) noexcept
 {
-	if( inMax == inMin )
+	if( inMax == inMin ) [[unlikely]]
 	{
 		// Return outMin if input range is zero
 		return outMin;
@@ -171,14 +200,19 @@ template < std::floating_point T >
 template < std::floating_point T >
 [[nodiscard]] constexpr T cubic( T y1, T y2, T dy1, T dy2, T x, T x1, T x2 ) noexcept
 {
+	// Constants
+	constexpr auto a = static_cast< T >( 1.0 );
+	constexpr auto b = static_cast< T >( 2.0 );
+	constexpr auto c = static_cast< T >( 3.0 );
+
 	// Calculate normalized parameter t
-	T t = ( x - x1 ) / ( x2 - x1 );
+	const auto t = ( x - x1 ) / ( x2 - x1 );
 
 	// Calculate the Hermite basis functions for t
-	T h00 = ( 1.0 + 2.0 * t ) * ( 1.0 - t ) * ( 1.0 - t );
-	T h10 = t * ( 1.0 - t ) * ( 1.0 - t );
-	T h01 = t * t * ( 3.0 - 2.0 * t );
-	T h11 = t * t * ( t - 1.0 );
+	const auto h00 = ( a + b * t ) * ( a - t ) * ( a - t );
+	const auto h10 = t * ( a - t ) * ( a - t );
+	const auto h01 = t * t * ( c - b * t );
+	const auto h11 = t * t * ( t - a );
 
 	// Compute the interpolated y value
 	return ( h00 * y1 ) + ( h10 * ( x2 - x1 ) * dy1 ) + ( h01 * y2 ) + ( h11 * ( x2 - x1 ) * dy2 );
@@ -196,7 +230,7 @@ template < std::floating_point T >
 template < std::floating_point T >
 [[nodiscard]] constexpr T celsiusToFahrenheit( const T celsius ) noexcept
 {
-	return ( celsius * T{ 1.8 } ) + T{ 32.0 };
+	return ( celsius * static_cast< T >( 1.8 ) ) + static_cast< T >( 32.0 );
 }
 
 /**
@@ -211,7 +245,7 @@ template < std::floating_point T >
 template < std::floating_point T >
 struct CelsiusToFarenheit
 {
-	[[nodiscard]] constexpr T operator()( T c ) noexcept { return celsiusToFahrenheit( c ); }
+	[[nodiscard]] constexpr T operator()( T c ) noexcept { return celsiusToFahrenheit< T >( c ); }
 };
 
 /**
@@ -226,7 +260,7 @@ struct CelsiusToFarenheit
 template < std::floating_point T >
 [[nodiscard]] constexpr T fahrenheitToCelsius( const T fahrenheit ) noexcept
 {
-	return ( fahrenheit - T{ 32.0 } ) / T{ 0.5556 };
+	return ( fahrenheit - static_cast< T >( 32.0 ) ) / static_cast< T >( 0.5556 );
 }
 
 /**
@@ -241,7 +275,7 @@ template < std::floating_point T >
 template < std::floating_point T >
 struct FahrenheitToCelsius
 {
-	[[nodiscard]] constexpr T operator()( T f ) noexcept { return fahrenheitToCelsius( f ); }
+	[[nodiscard]] constexpr T operator()( T f ) noexcept { return fahrenheitToCelsius< T >( f ); }
 };
 
 } // namespace pbl::math

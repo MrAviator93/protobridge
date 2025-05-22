@@ -261,17 +261,21 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	std::int32_t p{};
 	if( B7 < 0x80000000 )
 	{
-		p = ( ( B7 * 2 ) / B4 );
+		// TODO: Check if this cast is safe
+		p = static_cast< std::int32_t >( ( B7 * 2 ) / B4 );
 	}
 	else
 	{
-		p = ( B7 / B4 ) * 2;
+		// TODO: Check if this cast is safe
+		p = static_cast< std::int32_t >( ( B7 / B4 ) * 2 );
 	}
 
 	X1 = ( p / 256 * ( p / 256 ) );
 	X1 = ( X1 * 3038 ) / 65536;
 	X2 = ( -7357 * p ) / 65536;
-	p = p + ( X1 + X2 + 3791 ) / 16; // Pressure in units of Pa.
+
+	// TODO: Check if this cast is safe
+	p = p + static_cast< std::int32_t >( X1 + X2 + 3791 ) / 16; // Pressure in units of Pa.
 
 	return utils::MakeSuccess( static_cast< float >( p ) );
 }

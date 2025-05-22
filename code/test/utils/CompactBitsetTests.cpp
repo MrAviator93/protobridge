@@ -14,10 +14,10 @@ TEST( CompactBitsetTest, AllBitsInitiallyUnset )
 TEST( CompactBitsetTest, SetBitsReflectNewState )
 {
 	pbl::utils::CompactBitset< 2 > bitset;
-	bitset.set( 0 );
-	bitset.set( 1 );
-	EXPECT_TRUE( bitset.test( 0 ) );
-	EXPECT_TRUE( bitset.test( 1 ) );
+	bitset.set( 0u );
+	bitset.set( 1u );
+	EXPECT_TRUE( bitset.test( 0u ) );
+	EXPECT_TRUE( bitset.test( 1u ) );
 }
 
 TEST( CompactBitsetTest, ResetAllBitsUnsetsThem )

@@ -10,6 +10,7 @@ set(PBL_LIB_HEADERS
     Matrix4x4.hpp
     Matrix6x6.hpp
     Modifiers.hpp
+    Constants.hpp
     MatrixBase.hpp
     LinearBase.hpp
     Matrix12x12.hpp

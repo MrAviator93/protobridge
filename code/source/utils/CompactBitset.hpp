@@ -32,7 +32,7 @@ namespace pbl::utils
 template < std::size_t N >
 class CompactBitset final
 {
-	static_assert(N > 0, "The bitset size must be greater than zero.");
+	static_assert( N > 0, "The bitset size must be greater than zero." );
 
 	// Determine whether we need an array or a single byte
 	static constexpr bool kIsArray = N > 8;
@@ -150,7 +150,7 @@ constexpr void CompactBitset< N >::set( std::size_t bit, bool value ) noexcept
 		}
 		else
 		{
-			m_storage &= ~( 1u << bit );
+			m_storage &= static_cast< std::uint8_t >( ~( 1u << bit ) );
 		}
 	}
 }
@@ -200,7 +200,7 @@ constexpr void CompactBitset< N >::reset( std::size_t bit ) noexcept
 	}
 	else
 	{
-		m_storage &= ~( 1u << bit );
+		m_storage &= static_cast< std::uint8_t >( ~( 1u << bit ) );
 	}
 }
 

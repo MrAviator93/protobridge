@@ -21,14 +21,14 @@ TEST( AngleConversionTest, DegreesToRadians_Ninety )
 {
 	double degrees = 90.0;
 	double radians = degreesToRadians( degrees );
-	EXPECT_NEAR( radians, PI / 2.0, kEpsilon );
+	EXPECT_NEAR( radians, constants::Pi< double > / 2.0, kEpsilon );
 }
 
 TEST( AngleConversionTest, DegreesToRadians_OneEighty )
 {
 	double degrees = 180.0;
 	double radians = degreesToRadians( degrees );
-	EXPECT_NEAR( radians, PI, kEpsilon );
+	EXPECT_NEAR( radians, constants::Pi< double >, kEpsilon );
 }
 
 // Radians to Degrees Tests
@@ -41,14 +41,14 @@ TEST( AngleConversionTest, RadiansToDegrees_Zero )
 
 TEST( AngleConversionTest, RadiansToDegrees_PiOverTwo )
 {
-	double radians = PI / 2.0;
+	double radians = constants::Pi< double > / 2.0;
 	double degrees = radiansToDegrees( radians );
 	EXPECT_NEAR( degrees, 90.0, kEpsilon );
 }
 
 TEST( AngleConversionTest, RadiansToDegrees_Pi )
 {
-	double radians = PI;
+	double radians = constants::Pi< double >;
 	double degrees = radiansToDegrees( radians );
 	EXPECT_NEAR( degrees, 180.0, kEpsilon );
 }

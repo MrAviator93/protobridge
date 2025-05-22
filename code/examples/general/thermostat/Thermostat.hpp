@@ -51,7 +51,7 @@ class Thermostat
 
 public:
 	Thermostat( pbl::i2c::BusController& busController )
-		: m_pid{ 0.5, 0.2, 0.25 }
+		: m_pid{ 0.5f, 0.2f, 0.25f }
 		, m_adc{ busController }
 		, m_lm75{ busController }
 		, m_thermostat{ busController }

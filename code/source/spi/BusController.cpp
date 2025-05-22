@@ -134,7 +134,7 @@ auto v1::BusController::transfer( ConstByteSpan tx, ByteSpan rx ) -> Result< voi
 	spi_ioc_transfer tr{};
 	tr.tx_buf = reinterpret_cast< __u64 >( tx.data() );
 	tr.rx_buf = reinterpret_cast< __u64 >( rx.data() );
-	tr.len = tx.size();
+	tr.len = static_cast< unsigned int >( tx.size() );
 
 	// TODO: In the future consider introducing TransferConfig to be able to configure per transfer
 	tr.delay_usecs = 0;

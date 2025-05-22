@@ -1,5 +1,6 @@
 
 set(PBL_LIB_HEADERS
+    Bit.hpp
     Timer.hpp
     Error.hpp
     Result.hpp
