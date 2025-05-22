@@ -69,7 +69,7 @@ readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::
 	std::uint8_t outbuf[ 2 ];
 	outbuf[ 0 ] = reg;
 
-	i2c_msg msgs[ 2 ];
+	::i2c_msg msgs[ 2 ];
 	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
@@ -80,7 +80,7 @@ readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::
 	msgs[ 1 ].len = N;
 	msgs[ 1 ].buf = result.data();
 
-	i2c_rdwr_ioctl_data msgset[ 1 ];
+	::i2c_rdwr_ioctl_data msgset[ 1 ];
 	msgset[ 0 ].msgs = msgs;
 	msgset[ 0 ].nmsgs = 2;
 
@@ -130,7 +130,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t r
 	std::uint8_t outbuf[ 1 ];
 	std::uint8_t inbuf[ 1 ];
 
-	i2c_msg msgs[ 2 ];
+	::i2c_msg msgs[ 2 ];
 	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
@@ -141,7 +141,7 @@ bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t r
 	msgs[ 1 ].len = 1;
 	msgs[ 1 ].buf = inbuf;
 
-	i2c_rdwr_ioctl_data msgset[ 1 ];
+	::i2c_rdwr_ioctl_data msgset[ 1 ];
 	msgset[ 0 ].msgs = msgs;
 	msgset[ 0 ].nmsgs = 2;
 
@@ -282,7 +282,7 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 	std::uint8_t outbuf[ 2 ];
 	outbuf[ 0 ] = reg;
 
-	i2c_msg msgs[ 2 ];
+	::i2c_msg msgs[ 2 ];
 	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 1;
@@ -293,7 +293,7 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 	msgs[ 1 ].len = dataSize;
 	msgs[ 1 ].buf = pData;
 
-	i2c_rdwr_ioctl_data msgset[ 1 ];
+	::i2c_rdwr_ioctl_data msgset[ 1 ];
 	msgset[ 0 ].msgs = msgs;
 	msgset[ 0 ].nmsgs = 2;
 
@@ -322,13 +322,13 @@ bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t 
 	outbuf[ 0 ] = reg;
 	outbuf[ 1 ] = data;
 
-	i2c_msg msgs[ 1 ];
+	::i2c_msg msgs[ 1 ];
 	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = 2;
 	msgs[ 0 ].buf = outbuf;
 
-	i2c_rdwr_ioctl_data msgset[ 1 ];
+	::i2c_rdwr_ioctl_data msgset[ 1 ];
 	msgset[ 0 ].nmsgs = 1;
 	msgset[ 0 ].msgs = msgs;
 
@@ -374,13 +374,13 @@ bool v1::BusController::write( const std::uint8_t slaveAddr,
 		dataBuffer[ i ] = data[ i - 1 ];
 	}
 
-	i2c_msg msgs[ 1 ];
+	::i2c_msg msgs[ 1 ];
 	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
 	msgs[ 0 ].len = static_cast< unsigned short >( dataBuffer.size() );
 	msgs[ 0 ].buf = dataBuffer.data();
 
-	i2c_rdwr_ioctl_data msgset[ 1 ];
+	::i2c_rdwr_ioctl_data msgset[ 1 ];
 	msgset[ 0 ].nmsgs = 1;
 	msgset[ 0 ].msgs = msgs;
 
