@@ -345,7 +345,7 @@ bool BusController::write( const std::uint8_t slaveAddr,
 						   const std::uint8_t reg,
 						   const std::span< const std::uint8_t > data )
 {
-	return write( slaveAddr, reg, data.data(), data.size() );
+	return write( slaveAddr, reg, data.data(), static_cast< std::uint8_t >( data.size() ) );
 }
 
 bool v1::BusController::write( const std::uint8_t slaveAddr,
@@ -377,7 +377,7 @@ bool v1::BusController::write( const std::uint8_t slaveAddr,
 	i2c_msg msgs[ 1 ];
 	msgs[ 0 ].addr = slaveAddr;
 	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = dataBuffer.size();
+	msgs[ 0 ].len = static_cast< unsigned short >( dataBuffer.size() );
 	msgs[ 0 ].buf = dataBuffer.data();
 
 	i2c_rdwr_ioctl_data msgset[ 1 ];

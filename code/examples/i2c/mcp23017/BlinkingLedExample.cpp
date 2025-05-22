@@ -36,7 +36,6 @@
  *  For license details, see the LICENSE file in the project root.
  */
 
-
 // Include I2C library files
 #include <utils/Timer.hpp>
 #include <i2c/Controllers.hpp>
@@ -46,7 +45,7 @@
 
 int main( const int argc, const char* const* const argv )
 {
-	const std::vector< std::string_view > args( argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) );
+	const std::vector< std::string_view > args{ argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) };
 
 	// Default name of i2c bus on RPI 4
 	std::string deviceName{ "/dev/i2c-1" };
@@ -85,17 +84,9 @@ int main( const int argc, const char* const* const argv )
 	{
 		if( timer.hasElapsed() )
 		{
-			using Port = MCP23017::Port;
-
-			auto pin = mcp.portA().pin( Port::Pins::PIN_1 );
-
-			// A good thing to do, is to check if the pin is set as output
-			if( pin.isOutput() )
+			if( !pin.switchPinState() )
 			{
-				if( !pin.switchPinState() )
-				{
-					std::println( "Failed to set pin state to ON..." );
-				}
+				std::println( "Failed to set pin state to ON..." );
 			}
 
 			// Reset the timer

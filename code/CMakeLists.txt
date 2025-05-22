@@ -38,7 +38,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     # TODO: Add more stricter compiler flags
-    add_compile_options("-Wall" "-Wextra" "-Wcast-align" "-Wunused" "-O2" "-fexceptions" "-pedantic")
+    add_compile_options(-O2 -Wall -Wextra -Wcast-align -Wcast-qual -Wconversion -Wshadow -Wunused -fexceptions -pedantic)
 endif()
 
 find_package(Threads REQUIRED)

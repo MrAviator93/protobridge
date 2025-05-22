@@ -417,36 +417,36 @@ private:
 	auto dispatcher = utils::Overloaded{
 		//  IODIR (PinModes)
 
-		[ this ]( detail::mcp23017::port::PinModes, [[maybe_unused]] Pins pin ) -> Result< PinMode > {
+		[ this ]( detail::mcp23017::port::PinModes, [[maybe_unused]] Pins inPin ) -> Result< PinMode > {
 			// TODO: Handle GetMode
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
 		[ this ]( detail::mcp23017::port::PinModes,
-				  [[maybe_unused]] Pins pin,
+				  [[maybe_unused]] Pins inPin,
 				  [[maybe_unused]] PinMode mode ) -> Result< void > {
 			// TODO: Handle SetMode
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
 
 		//  GPIO (PinState)
-		[ this ]( detail::mcp23017::port::PinState, [[maybe_unused]] Pins pin ) -> Result< PinState > {
+		[ this ]( detail::mcp23017::port::PinState, [[maybe_unused]] Pins inPin ) -> Result< PinState > {
 			// TODO: Handle GetPinState
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
-		[ this ]( detail::mcp23017::port::PinState, [[maybe_unused]] Pins pin, [[maybe_unused]] PinState state ) {
+		[ this ]( detail::mcp23017::port::PinState, [[maybe_unused]] Pins inPin, [[maybe_unused]] PinState state ) {
 			// TODO: Handle SetPinState
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
 
 		//  GPPU (Pull-Up Resistor)
-		[ this ]( detail::mcp23017::port::PinPullUps, [[maybe_unused]] Pins pin, [[maybe_unused]] bool enable ) {
+		[ this ]( detail::mcp23017::port::PinPullUps, [[maybe_unused]] Pins inPin, [[maybe_unused]] bool enable ) {
 			// TODO: Handle ...
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
 
 		// INTCON, DEFVAL, GPINTEN (Interrupt Control)
 		[ this ]( detail::mcp23017::port::PinInterruptControl,
-				  [[maybe_unused]] Pins pin,
+				  [[maybe_unused]] Pins inPin,
 				  [[maybe_unused]] bool enable,
 				  [[maybe_unused]] bool compareWithDefault,
 				  [[maybe_unused]] PinState defaultValue ) {
@@ -456,20 +456,20 @@ private:
 
 		// INTF (Interrupt Flag): clear flag
 		[ this ]( detail::mcp23017::port::PinInterruptFlags,
-				  [[maybe_unused]] Pins pin,
+				  [[maybe_unused]] Pins inPin,
 				  [[maybe_unused]] bool clear ) -> Result< void > {
 			// TODO: Handle ...
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
 
 		// INTF (Interrupt Flag): check flag
-		[ this ]( detail::mcp23017::port::PinInterruptFlags, [[maybe_unused]] Pins pin ) -> Result< bool > {
+		[ this ]( detail::mcp23017::port::PinInterruptFlags, [[maybe_unused]] Pins inPin ) -> Result< bool > {
 			// TODO: Handle ...
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		},
 
 		//  INTCAP (Interrupt Capture)
-		[ this ]( detail::mcp23017::port::PinInterruptCapture, [[maybe_unused]] Pins pin ) -> Result< PinState > {
+		[ this ]( detail::mcp23017::port::PinInterruptCapture, [[maybe_unused]] Pins inPin ) -> Result< PinState > {
 			// TODO: Handle ...
 			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 		} };
