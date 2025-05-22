@@ -4,16 +4,19 @@ project(protobridge VERSION 1.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-find_program(CCACHE_PROGRAM ccache)
-if(CCACHE_PROGRAM)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-endif()
-
 option(PBL_BUILD_BENCH "Build benchmarks" ON)
 option(PBL_BUILD_TESTS "Build unit tests" ON)
 option(PBL_BUILD_EXAMPLES "Build examples" ON)
 option(PBL_BUILD_UTILITIES "Build utilities" ON)
 option(PBL_CORE_GENERATE_DOC "Generate documentation." ON)
+option(PBL_USE_CCACHE "Use ccache to speed up recompilation" ON)
+
+if(PBL_USE_CCACHE)
+    find_program(CCACHE_PROGRAM ccache)
+    if(CCACHE_PROGRAM)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+    endif()
+endif()
 
 # Enable/Disable build individual libraries
 option(PBL_BUILD_I2C_LIB "Build I2C library" ON)
