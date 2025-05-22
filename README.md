@@ -10,7 +10,7 @@ Whether your aim is to configure an environmental sensor or manage an I/O expand
 
 ![ProtoBridge](assets/image.png "ProtoBridge")
 
-Please note that the ProtoBridge Library is currently a work in progress, and a stable release is not yet available.
+Please note that the ProtoBridge Library is currently a work in progress, and a stable release is not yet available, see [roadmap](#roadmap) for more details.
 
 ## Table of contents
 
@@ -27,6 +27,7 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
     - [Building from Source](#building-from-source)
   - [Generating documentation](#generating-documentation)
   - [Motivation](#motivation)
+  - [Roadmap](#roadmap)
   - [Contributing](#contributing)
     - [Branch Naming Conventions](#branch-naming-conventions)
     - [Commit Message Guidelines](#commit-message-guidelines)
@@ -276,9 +277,61 @@ Diving into embedded systems and single-board computers opened a whole new world
 
 What I sought was something clean, something elegant—a single library, written in a consistent style, harnessing the full power of modern C++. I dreamt of something cleaner, more intuitive. A tool that didn't force us to get lost in the weeds with every new IC, but rather, one that cleared the path, making device interaction almost second nature.
 
-That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++ 23's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for I2C communication, accommodating numerous configurations for various ICs all under one roof.
+That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++ 23's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for all kinds of SBC to IC communication, accommodating numerous configurations for various ICs all under one roof.
 
 This library is the fruit of that ambition: a testament to a belief in a world where sophisticated development doesn't have to be synonymous with complexity. It's here to provide a seamless, enjoyable experience for fellow developers, helping them bring their inventive projects to life with less hassle and more confidence.
+
+## Roadmap
+
+**ProtoBridge Alpha Release Target: September 1, 2025:**
+
+The ProtoBridge Alpha release focuses on delivering a clean, modern C++ foundation for embedded device control. It includes a focused set of I2C, SPI, Serial, and GPIO devices to demonstrate the core architecture and enable real-world prototyping and development.
+
+### Alpha Scope
+
+**Interface Supported Devices:**
+
+- I2C:
+  - [x] LM75;
+  - [x] BMP180;
+  - [ ] TMP102;
+  - [ ] SHT31;
+  - [ ] MCP23017;
+  - [ ] ADS1015;
+  - [ ] MPU6050;
+  - [ ] PCA9685.
+- SPI:
+  - [ ] MCP3008 (ADC);
+  - [ ] TMC2130 (Stepper Motor Controller);
+- Serial:
+  - [ ] HC12 (transparent serial);
+  - [ ] NEO-M8N GPS (raw NMEA).
+- GPIO:
+  - [ ] Raspberry Pi 5 GPIO (basic input/output abstraction).
+
+### Further Plan
+
+#### Beta Release — Target: October 25, 2025
+
+The Beta release will expand device support, introduce initial testing tools, and launch the first ProtoBridge-compatible hardware kits.
+
+**Planned Milestones:**
+
+- Improve wiring documentation and code examples;
+- Start community feedback loop (GitHub Discussions, Issues).
+
+---
+
+#### 🎄 v1.0.0 Stable Release — Target: December 20–24, 2025
+
+The first official production-ready version of ProtoBridge, featuring stable APIs, full documentation, and real-world use cases.
+
+**Planned Milestones:**
+
+- Finalize and freeze core API;
+- Reach 15+ supported devices with examples;
+- Publish full documentation and usage guides;
+- Launch “Built with ProtoBridge” showcase.
 
 ## Contributing
 
@@ -290,7 +343,8 @@ When creating a new branch, please use the following naming conventions:
 
 - For new features: feature/your-new-feature (e.g., feature/i2c-error-handling)
 - For bug fixes: bugfix/your-bug-fix (e.g., bugfix/temperature-reading-error)
-- For hotfixes: hotfix/your-hotfix (e.g., hotfix/memory-leak-fix)
+- For hot fixes: hotfix/your-hotfix (e.g., hotfix/memory-leak-fix)
+- For documents: docs/your-document (.e.g., docs/document-local-gcc-build)
 
 Please ensure that the branch names are plural, reflecting that they may include multiple changes or updates related to the same feature or fix.
 
