@@ -98,7 +98,43 @@ auto v1::MPU6050Controller::configure() -> Result< void >
 
 	// m_busController.sleep( std::chrono::milliseconds( 20 ) );
 
-	return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+	using namespace MPU6050;
+
+	// bool success = true;
+	// success &= write( kPowerManagement1Register, static_cast< uint8_t >( PowerMode::CLKSEL_PLL_X ) );
+	// success &= write( kSampleRateDividerRegister, static_cast< uint8_t >( SampleRateDivider::DIV_1 ) );
+	// success &= write( kConfigRegister, 0x03 ); // DLPF config
+	// success &= write( kGyroConfigRegister, static_cast< uint8_t >( GyroSensitivity::DPS_500 ) );
+	// success &= write( kAccelConfigRegister, static_cast< uint8_t >( AccelSensitivity::G_8 ) );
+	// success &= write( kIntEnableRegister, static_cast< uint8_t >( InterruptEnable::DATA_RDY_INT ) );
+	// success &= write( kIntPinConfigRegister, static_cast< uint8_t >( InterruptPinConfig::INT_ANYRD_CLEAR ) );
+
+	// return success ? utils::MakeSuccess() : utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+
+	std::uint8_t config{};
+	if( !read( kPowerManagement1Register, config ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	config &= ~0x47; // Clear sleep and clock select bits
+	config |= static_cast< uint8_t >( MPU6050::PowerMode::CLKSEL_PLL_X );
+
+	bool success = true;
+	success &= write( kPowerManagement1Register, config );
+	success &= write( kSampleRateDividerRegister, static_cast< uint8_t >( SampleRateDivider::DIV_1 ) );
+	success &= write( kConfigRegister, 0x03 ); // DLPF config
+	success &= write( kGyroConfigRegister, static_cast< uint8_t >( GyroSensitivity::DPS_500 ) );
+	success &= write( kAccelConfigRegister, static_cast< uint8_t >( AccelSensitivity::G_8 ) );
+	success &= write( kIntEnableRegister, static_cast< uint8_t >( InterruptEnable::DATA_RDY_INT ) );
+	success &= write( kIntPinConfigRegister, static_cast< uint8_t >( InterruptPinConfig::INT_ANYRD_CLEAR ) );
+
+	if( !success )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
 }
 
 auto v1::MPU6050Controller::calculateImuError() -> Result< void >
