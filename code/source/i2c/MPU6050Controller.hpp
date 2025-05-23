@@ -48,6 +48,18 @@ class MPU6050Controller final : public ICBase, public utils::Counter< MPU6050Con
 	static constexpr std::size_t kAccelCalibReadIterations{ 1'000 };
 	static constexpr std::size_t kGyroCalibReadIterations{ 1'000 };
 
+	struct CalibrationConstants
+	{
+		// Acceleration
+		double AccErrorX{};
+		double AccErrorY{};
+
+		// Gyroscope
+		double GyroErrorX{};
+		double GyroErrorY{};
+		double GyroErrorZ{};
+	};
+
 public:
 	template < typename T >
 	using Result = utils::Result< T >;
@@ -94,7 +106,7 @@ public:
      * @param mode The desired power mode.
      * @return True if the power mode was set successfully, otherwise false.
      */
-	// Result<void> setPowerMode( PowerMode mode );
+	Result< void > setPowerMode( PowerMode mode );
 
 	/**
      * @brief Configures the accelerometer and gyroscope scales.
@@ -102,7 +114,7 @@ public:
      * @param gyroScale The gyroscope scale.
      * @return True if the scale configuration was successful, otherwise false.
      */
-	// Result<void> configureScales( Scale accelScale, Scale gyroScale );
+	Result< void > configureScales( Scale accelScale, Scale gyroScale );
 
 	/**
      * @brief Retrieves the current angular orientation of the MPU6050, using a complementary filter for
@@ -114,18 +126,21 @@ public:
 
 private:
 	/// TBW
-	bool reset();
+	Result< void > reset();
 
 	/// TBW
-	bool configure();
+	Result< void > configure();
 
 	// Note that this function must be called when the IMY sensor is in flat and still position
 	// really this should be done only once for each sensor module, and stored individually for
 	// the sensor (sort of calibration) as offsets.
-	void calculateImuError();
+	Result< void > calculateImuError();
 
 	MPU6050Controller( const MPU6050Controller& ) = delete;
 	MPU6050Controller& operator=( const MPU6050Controller& ) = delete;
+
+private:
+	CalibrationConstants m_calibration{};
 };
 
 } // namespace v1

@@ -2,6 +2,9 @@
 #include "MPU6050Definitions.hpp"
 #include "BusController.hpp"
 
+// C++
+#include <bitset>
+
 // https://howtomechatronics.com/tutorials/arduino/arduino-and-mpu6050-accelerometer-and-gyroscope-tutorial/
 
 namespace pbl::i2c
@@ -11,18 +14,70 @@ v1::MPU6050Controller::MPU6050Controller( BusController& busController, Address 
 	: ICBase{ busController, address }
 { }
 
-bool v1::MPU6050Controller::reset()
+auto v1::MPU6050Controller::setPowerMode( PowerMode mode ) -> Result< void >
 {
-	bool rslt{ true };
-	rslt = write( MPU6050::kPowerManagement1Register, 0x00 );
-	// m_busController.write( m_icAddress, MPU6050::kPowerManagement2Register, 0x00 );
+	std::uint8_t config{};
+	if( !read( MPU6050::kPowerManagement1Register, config ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
 
-	return rslt;
+	std::bitset< 8 > bits{ config };
+	bits.set( 6, mode == PowerMode::SLEEP ); // Bit 6 controls SLEEP
+
+	if( !write( MPU6050::kPowerManagement1Register, static_cast< std::uint8_t >( bits.to_ulong() ) ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
 }
 
-bool v1::MPU6050Controller::configure()
+auto v1::MPU6050Controller::configureScales( Scale accelScale, Scale gyroScale ) -> Result< void >
 {
-	bool rslt{ true };
+	using namespace MPU6050;
+
+	std::uint8_t accelConfig{};
+	switch( accelScale )
+	{
+		case Scale::ACCEL_2G: accelConfig = static_cast< uint8_t >( AccelSensitivity::G_2 ); break;
+		case Scale::ACCEL_4G: accelConfig = static_cast< uint8_t >( AccelSensitivity::G_4 ); break;
+		case Scale::ACCEL_8G: accelConfig = static_cast< uint8_t >( AccelSensitivity::G_8 ); break;
+		case Scale::ACCEL_16G: accelConfig = static_cast< uint8_t >( AccelSensitivity::G_16 ); break;
+		default: return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
+	}
+
+	uint8_t gyroConfig{};
+	switch( gyroScale )
+	{
+		case Scale::GYRO_250DPS: gyroConfig = static_cast< uint8_t >( GyroSensitivity::DPS_250 ); break;
+		case Scale::GYRO_500DPS: gyroConfig = static_cast< uint8_t >( GyroSensitivity::DPS_500 ); break;
+		case Scale::GYRO_1000DPS: gyroConfig = static_cast< uint8_t >( GyroSensitivity::DPS_1000 ); break;
+		case Scale::GYRO_2000DPS: gyroConfig = static_cast< uint8_t >( GyroSensitivity::DPS_2000 ); break;
+		default: return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
+	}
+
+	const bool success = write( kAccelConfigRegister, accelConfig ) && write( kGyroConfigRegister, gyroConfig );
+	if( !success )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
+}
+
+auto v1::MPU6050Controller::reset() -> Result< void >
+{
+	// bool rslt{ true };
+	// rslt = write( MPU6050::kPowerManagement1Register, 0x00 );
+	// m_busController.write( m_icAddress, MPU6050::kPowerManagement2Register, 0x00 );
+
+	return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
+}
+
+auto v1::MPU6050Controller::configure() -> Result< void >
+{
+	// bool rslt{ true };
 
 	// reset();
 
@@ -43,22 +98,10 @@ bool v1::MPU6050Controller::configure()
 
 	// m_busController.sleep( std::chrono::milliseconds( 20 ) );
 
-	return rslt;
+	return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 }
 
-struct CalibrationConstants
-{
-	// Acceleration
-	double AccErrorX{};
-	double AccErrorY{};
-
-	// Gyroscope
-	double GyroErrorX{};
-	double GyroErrorY{};
-	double GyroErrorZ{};
-};
-
-void v1::MPU6050Controller::calculateImuError()
+auto v1::MPU6050Controller::calculateImuError() -> Result< void >
 {
 	// We can call this function in the setup section to calculate
 	// the accelerometer and gyro data error. From here we will get
@@ -71,83 +114,104 @@ void v1::MPU6050Controller::calculateImuError()
 	// TODO: Think about flashing/embedding the calibration constants
 	// maybe we could provide them as arguments?
 
+	using namespace MPU6050;
+
 	std::size_t count{};
 
-	double AccErrorX{};
-	double AccErrorY{};
+	double accErrorX{ 0.0 };
+	double accErrorY{ 0.0 };
 
-	[[maybe_unused]] double AccX{};
-	[[maybe_unused]] double AccY{};
-	[[maybe_unused]] double AccZ{};
-
-	// Read accelerometer values for kAccelCalibReadIterations times
-	while( count < kAccelCalibReadIterations )
+	// Read accelerometer data
+	for( count = 0; count < kAccelCalibReadIterations; ++count )
 	{
-		// Use MPU6050::kAccelXOutHRegister
-		// Wire.beginTransmission( MPU );
-		// Wire.write( 0x3B );
-		// Wire.endTransmission( false );
-		// Wire.requestFrom( MPU, 6, true );
+		std::array< uint8_t, 6 > raw{};
+		if( read( kAccelXOutHRegister, raw.data(), raw.size() ) < 6 )
+		{
+			return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+		}
 
-		// AccX = ( Wire.read() << 8 | Wire.read() ) / 16384.0;
-		// AccY = ( Wire.read() << 8 | Wire.read() ) / 16384.0;
-		// AccZ = ( Wire.read() << 8 | Wire.read() ) / 16384.0;
+		const int16_t rawX = static_cast< int16_t >( raw[ 0 ] << 8 | raw[ 1 ] );
+		const int16_t rawY = static_cast< int16_t >( raw[ 2 ] << 8 | raw[ 3 ] );
+		const int16_t rawZ = static_cast< int16_t >( raw[ 4 ] << 8 | raw[ 5 ] );
 
-		// // Sum all readings
-		// AccErrorX =
-		// 	AccErrorX +
-		// 	( ( std::atan( ( AccY ) / std::sqrt( std::pow( ( AccX ), 2 ) + std::pow( ( AccZ ), 2 ) ) ) * 180 / PI ) );
-		// AccErrorY = AccErrorY +
-		// 			( ( std::atan( -1 * ( AccX ) / std::sqrt( std::pow( ( AccY ), 2 ) + std::pow( ( AccZ ), 2 ) ) ) *
-		// 				180 / PI ) );
+		const double accX = static_cast< double >( rawX ) / 16384.0;
+		const double accY = static_cast< double >( rawY ) / 16384.0;
+		const double accZ = static_cast< double >( rawZ ) / 16384.0;
 
-		++count;
+		// Calculate angle errors
+		accErrorX += std::atan2( accY, std::sqrt( accX * accX + accZ * accZ ) ) * 180.0 / M_PI;
+		accErrorY += std::atan2( -accX, std::sqrt( accY * accY + accZ * accZ ) ) * 180.0 / M_PI;
 	}
 
-	AccErrorX = AccErrorX / static_cast< double >( kAccelCalibReadIterations );
-	AccErrorY = AccErrorY / static_cast< double >( kAccelCalibReadIterations );
+	accErrorX /= static_cast< double >( kAccelCalibReadIterations );
+	accErrorY /= static_cast< double >( kAccelCalibReadIterations );
 
-	count = {};
+	// --- Gyroscope Calibration ---
+	count = 0;
 
-	double GyroErrorX{};
-	double GyroErrorY{};
-	double GyroErrorZ{};
+	double gyroErrorX{ 0.0 };
+	double gyroErrorY{ 0.0 };
+	double gyroErrorZ{ 0.0 };
 
-	[[maybe_unused]] double GyroX{};
-	[[maybe_unused]] double GyroY{};
-	[[maybe_unused]] double GyroZ{};
-
-	// Read gyro values kGyroCalibReadIterations times
-	while( count < kGyroCalibReadIterations )
+	for( count = 0; count < kGyroCalibReadIterations; ++count )
 	{
-		// Use MPU6050::kGyroXOutHRegister
-		// Wire.beginTransmission( MPU );
-		// Wire.write( 0x43 );
-		// Wire.endTransmission( false );
-		// Wire.requestFrom( MPU, 6, true );
+		std::array< uint8_t, 6 > raw{};
+		if( read( kGyroXOutHRegister, raw.data(), raw.size() ) < 6 )
+			return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 
-		// GyroX = Wire.read() << 8 | Wire.read();
-		// GyroY = Wire.read() << 8 | Wire.read();
-		// GyroZ = Wire.read() << 8 | Wire.read();
+		const int16_t rawX = static_cast< int16_t >( raw[ 0 ] << 8 | raw[ 1 ] );
+		const int16_t rawY = static_cast< int16_t >( raw[ 2 ] << 8 | raw[ 3 ] );
+		const int16_t rawZ = static_cast< int16_t >( raw[ 4 ] << 8 | raw[ 5 ] );
 
-		// Sum all readings
-		// GyroErrorX = GyroErrorX + ( GyroX / 131.0 );
-		// GyroErrorY = GyroErrorY + ( GyroY / 131.0 );
-		// GyroErrorZ = GyroErrorZ + ( GyroZ / 131.0 );
-
-		++count;
+		gyroErrorX += static_cast< double >( rawX ) / 131.0;
+		gyroErrorY += static_cast< double >( rawY ) / 131.0;
+		gyroErrorZ += static_cast< double >( rawZ ) / 131.0;
 	}
 
-	// Divide the sum by 200 to get the error value
-	GyroErrorX = GyroErrorX / static_cast< double >( kGyroCalibReadIterations );
-	GyroErrorY = GyroErrorY / static_cast< double >( kGyroCalibReadIterations );
-	GyroErrorZ = GyroErrorZ / static_cast< double >( kGyroCalibReadIterations );
+	gyroErrorX /= static_cast< double >( kGyroCalibReadIterations );
+	gyroErrorY /= static_cast< double >( kGyroCalibReadIterations );
+	gyroErrorZ /= static_cast< double >( kGyroCalibReadIterations );
+
+	// You could store these for compensation later, e.g.:
+	// this->m_calibration = { accErrorX, accErrorY, gyroErrorX, gyroErrorY, gyroErrorZ };
+
+	return utils::MakeSuccess();
 }
 
 auto v1::MPU6050Controller::angles() -> Result< math::Vector3f >
 {
-	// TODO (AK)
-	return utils::MakeError( utils::ErrorCode::UNEXPECTED_ERROR );
+	// 1. Read raw accelerometer values
+	std::array< uint8_t, 6 > accData{};
+	if( read( MPU6050::kAccelXOutHRegister, accData.data(), accData.size() ) != 6 )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	auto readWord = []( uint8_t high, uint8_t low ) { return static_cast< int16_t >( ( high << 8 ) | low ); };
+
+	const float accX = static_cast< float >( readWord( accData[ 0 ], accData[ 1 ] ) ) / 16384.0f;
+	const float accY = static_cast< float >( readWord( accData[ 2 ], accData[ 3 ] ) ) / 16384.0f;
+	const float accZ = static_cast< float >( readWord( accData[ 4 ], accData[ 5 ] ) ) / 16384.0f;
+
+	const float roll =
+		std::atan2( accY, std::sqrt( accX * accX + accZ * accZ ) ) * 180.0f / static_cast< float >( M_PI );
+	const float pitch =
+		std::atan2( -accX, std::sqrt( accY * accY + accZ * accZ ) ) * 180.0f / static_cast< float >( M_PI );
+
+	// 2. Read raw gyroscope values
+	std::array< uint8_t, 6 > gyroData{};
+	if( read( MPU6050::kGyroXOutHRegister, gyroData.data(), gyroData.size() ) != 6 )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	const float gyroZ = static_cast< float >( readWord( gyroData[ 4 ], gyroData[ 5 ] ) ) / 131.0f;
+
+	// TODO: Add elapsed time delta for true yaw integration
+	// For now, just return raw gyro Z
+	const float yaw = gyroZ;
+
+	return utils::MakeSuccess( math::Vector3f{ roll, pitch, yaw } );
 }
 
 // A way to extract the angles
