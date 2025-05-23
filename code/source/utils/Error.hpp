@@ -6,7 +6,10 @@
 namespace pbl::utils
 {
 
-/// Represents an error with an associated error code and optional message.
+/**
+ * @brief Represents an error with an associated error code and optional message.
+ * @todo Consider Renaming to Status.
+ */
 class Error final
 {
 public:
