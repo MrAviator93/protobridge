@@ -166,13 +166,13 @@ auto v1::MPU6050Controller::calculateImuError() -> Result< void >
 			return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 		}
 
-		const int16_t rawX = static_cast< int16_t >( raw[ 0 ] << 8 | raw[ 1 ] );
-		const int16_t rawY = static_cast< int16_t >( raw[ 2 ] << 8 | raw[ 3 ] );
-		const int16_t rawZ = static_cast< int16_t >( raw[ 4 ] << 8 | raw[ 5 ] );
+		const auto rawX = static_cast< std::int16_t >( raw[ 0 ] << 8 | raw[ 1 ] );
+		const auto rawY = static_cast< std::int16_t >( raw[ 2 ] << 8 | raw[ 3 ] );
+		const auto rawZ = static_cast< std::int16_t >( raw[ 4 ] << 8 | raw[ 5 ] );
 
-		const double accX = static_cast< double >( rawX ) / 16384.0;
-		const double accY = static_cast< double >( rawY ) / 16384.0;
-		const double accZ = static_cast< double >( rawZ ) / 16384.0;
+		const auto accX = static_cast< double >( rawX ) / 16384.0;
+		const auto accY = static_cast< double >( rawY ) / 16384.0;
+		const auto accZ = static_cast< double >( rawZ ) / 16384.0;
 
 		// Calculate angle errors
 		accErrorX += std::atan2( accY, std::sqrt( accX * accX + accZ * accZ ) ) * 180.0 / M_PI;
@@ -183,11 +183,12 @@ auto v1::MPU6050Controller::calculateImuError() -> Result< void >
 	accErrorY /= static_cast< double >( kAccelCalibReadIterations );
 
 	// --- Gyroscope Calibration ---
+
 	count = 0;
 
-	double gyroErrorX{ 0.0 };
-	double gyroErrorY{ 0.0 };
-	double gyroErrorZ{ 0.0 };
+	double gyroErrorX{};
+	double gyroErrorY{};
+	double gyroErrorZ{};
 
 	for( count = 0; count < kGyroCalibReadIterations; ++count )
 	{
@@ -225,9 +226,9 @@ auto v1::MPU6050Controller::angles() -> Result< math::Vector3f >
 
 	auto readWord = []( uint8_t high, uint8_t low ) { return static_cast< int16_t >( ( high << 8 ) | low ); };
 
-	const float accX = static_cast< float >( readWord( accData[ 0 ], accData[ 1 ] ) ) / 16384.0f;
-	const float accY = static_cast< float >( readWord( accData[ 2 ], accData[ 3 ] ) ) / 16384.0f;
-	const float accZ = static_cast< float >( readWord( accData[ 4 ], accData[ 5 ] ) ) / 16384.0f;
+	const auto accX = static_cast< float >( readWord( accData[ 0 ], accData[ 1 ] ) ) / 16384.0f;
+	const auto accY = static_cast< float >( readWord( accData[ 2 ], accData[ 3 ] ) ) / 16384.0f;
+	const auto accZ = static_cast< float >( readWord( accData[ 4 ], accData[ 5 ] ) ) / 16384.0f;
 
 	const float roll =
 		std::atan2( accY, std::sqrt( accX * accX + accZ * accZ ) ) * 180.0f / static_cast< float >( M_PI );

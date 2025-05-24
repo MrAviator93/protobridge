@@ -106,7 +106,7 @@ public:
      * @param mode The desired power mode.
      * @return True if the power mode was set successfully, otherwise false.
      */
-	Result< void > setPowerMode( PowerMode mode );
+	[[nodiscard]] Result< void > setPowerMode( PowerMode mode );
 
 	/**
      * @brief Configures the accelerometer and gyroscope scales.
@@ -114,7 +114,7 @@ public:
      * @param gyroScale The gyroscope scale.
      * @return True if the scale configuration was successful, otherwise false.
      */
-	Result< void > configureScales( Scale accelScale, Scale gyroScale );
+	[[nodiscard]] Result< void > configureScales( Scale accelScale, Scale gyroScale );
 
 	/**
      * @brief Retrieves the current angular orientation of the MPU6050, using a complementary filter for
@@ -126,10 +126,10 @@ public:
 
 private:
 	/// TBW
-	Result< void > reset();
+	[[nodiscard]] Result< void > reset();
 
 	/// TBW
-	Result< void > configure();
+	[[nodiscard]] Result< void > configure();
 
 	// Note that this function must be called when the IMY sensor is in flat and still position
 	// really this should be done only once for each sensor module, and stored individually for
