@@ -97,10 +97,10 @@ public:
      */
 	explicit LM75Controller( BusController& busController, Address address = H48 ) noexcept;
 
-	/// Sets the LM75's shutdown mode to reduce power consumption, returns true on success.
+	/// Sets the LM75's shutdown mode to reduce power consumption.
 	[[nodiscard]] Result< void > setPowerMode( PowerMode mode );
 
-	/// Sets the thermostat mode of the LM75 (comparator or interrupt), returns true on success.
+	/// Sets the thermostat mode of the LM75 (comparator or interrupt).
 	[[nodiscard]] Result< void > setThermostatMode( ThermostatMode mode );
 
 	/// Retrieves the current state of the LM75's shutdown mode.
@@ -112,10 +112,10 @@ public:
 	/// Checks the status of the LM75's alert flag.
 	[[nodiscard]] Result< bool > getAlertStatus();
 
-	/// Retrieves the temperature in degrees Celsius
+	/// Retrieves the temperature in degrees Celsius.
 	[[nodiscard]] Result< float > getTemperatureC();
 
-	/// Retrieves the temperature in Fahrenheit
+	/// Retrieves the temperature in Fahrenheit.
 	[[nodiscard]] Result< float > getTemperatureF();
 
 private:
