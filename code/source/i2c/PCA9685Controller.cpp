@@ -30,58 +30,99 @@ auto v1::PCA9685Controller::setPWMFrequency( std::uint16_t frequency ) -> Result
 
 	if( frequency < kMinFrequency || frequency > kMaxFrequency )
 	{
-		std::string msg = "PWM frequency must be between 24 Hz and 1526 Hz.";
+		std::string msg = "Frequency out of range, it must be between 24 Hz and 1526 Hz.";
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, std::move( msg ) );
 	}
 
 	// Calculate prescale value
-	const std::uint8_t prescale = static_cast< std::uint8_t >( 25000000.0 / ( 4096 * frequency ) - 1 );
+	const auto prescale = static_cast< std::uint8_t >( ( 25'000'000.0 / ( 4'096.0 * frequency ) ) - 1.0 );
+
+	std::uint8_t oldmode{};
+	if( !read( kMode1, oldmode ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
 
 	// Put the device in sleep mode before setting prescale
-	std::ignore = write( kMode1, kMode1Sleep );
+	std::uint8_t sleepmode = ( oldmode & 0x7F ) | kMode1Sleep;
+	if( !write( kMode1, sleepmode ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
 
 	// Write the prescale value to the prescale register
-	std::ignore = write( kPrescale, prescale );
+	if( !write( kPrescale, prescale ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
 
-	// Restart the device and enable auto-increment
-	std::ignore = write( kMode1, kMode1Restart | kMode1Ai );
+	if( !write( kMode1, oldmode ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
 
-	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+	sleep( std::chrono::milliseconds( 1 ) );
+
+	if( !write( kMode1, oldmode | kMode1Restart | kMode1Ai ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
 }
 
-// // Set the PWM duty cycle for a specific channel
-// auto v1::PCA9685Controller::setPWM( Channel channel, PWMState on, PWMState off ) -> Result< void >
-// {
-// 	std::uint8_t regBase = kLed0OnL + 4 * static_cast< std::uint8_t >( channel );
+auto v1::PCA9685Controller::setPWM( Channel channel, PWMState on, PWMState off ) -> Result< void >
+{
+	const auto reg = static_cast< std::uint8_t >( kLed0OnL + 4 * static_cast< int >( channel ) );
+	const auto onValue = static_cast< std::uint16_t >( on );
+	const auto offValue = static_cast< std::uint16_t >( off );
 
-// 	std::ignore = write( regBase, static_cast< std::uint8_t >( static_cast< std::uint16_t >( on ) & 0xFF ) ); // ON_L
-// 	std::ignore = write( regBase + 1, static_cast< std::uint8_t >( static_cast< std::uint16_t >( on ) >> 8 ) ); // ON_H
-// 	std::ignore = write( regBase + 2, static_cast< std::uint8_t >( static_cast< std::uint16_t >( off ) & 0xFF ) ); // OFF_L
-// 	std::ignore = write( regBase + 3, static_cast< std::uint8_t >( static_cast< std::uint16_t >( off ) >> 8 ) ); // OFF_H
-//  return utils::MakeSuccess();
-// }
+	if( !write( reg, static_cast< std::uint8_t >( onValue & 0xFF ) ) ||
+		!write( reg + 1, static_cast< std::uint8_t >( onValue >> 8 ) ) ||
+		!write( reg + 2, static_cast< std::uint8_t >( offValue & 0xFF ) ) ||
+		!write( reg + 3, static_cast< std::uint8_t >( offValue >> 8 ) ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
 
-// // Enable or disable sleep mode
-// auto v1::PCA9685Controller::sleep( bool enable ) -> Result< void >
-// {
-// 	std::uint8_t mode1;
-// 	if( !read( kMode1, mode1 ) )
-// 	{
-// 		throw std::runtime_error( "Failed to read kMode1 register." );
-// 	}
-//
-// 	if( enable )
-// 	{
-// 		mode1 |= MODE1_SLEEP; // Set sleep bit
-// 	}
-// 	else
-// 	{
-// 		mode1 &= ~MODE1_SLEEP; // Clear sleep bit
-// 	}
-//
-// 	std::ignore = write( kMode1, mode1 );
-//
-//  return utils::MakeSuccess();
-// }
+	return utils::MakeSuccess();
+}
+
+auto v1::PCA9685Controller::setPWMPercentage( Channel channel, float dutyPercent ) -> Result< void >
+{
+	if( dutyPercent < 0.0f || dutyPercent > 100.0f )
+	{
+		std::string msg = "Duty cycle must be between 0 and 100.";
+		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, std::move( msg ) );
+	}
+
+	const auto steps = static_cast< std::uint16_t >( 4095.0f * ( dutyPercent / 100.0f ) );
+	return setPWM( channel, PWMState::min(), static_cast< PWMState >( steps ) );
+}
+
+auto v1::PCA9685Controller::setSleepMode( bool enable ) -> Result< void >
+{
+	std::uint8_t mode1{};
+	if( !read( kMode1, mode1 ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	if( enable )
+	{
+		mode1 |= kMode1Sleep;
+	}
+	else
+	{
+		mode1 &= ~kMode1Sleep;
+	}
+
+	if( !write( kMode1, mode1 ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
+}
 
 } // namespace pbl::i2c

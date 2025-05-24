@@ -56,11 +56,58 @@ public:
 		CH15 = 15
 	};
 
-	/// Enum for on/off time ranges (0-4095, represented by ON or OFF state)
-	enum class PWMState : std::uint16_t
+	/// @brief Represents a PWM step value within the 12-bit range of the PCA9685 (0–4095).
+	class PWMState final
 	{
-		MIN = 0,
-		MAX = 4095
+		static constexpr std::uint16_t kMin = 0;
+		static constexpr std::uint16_t kMax = 4095;
+
+	public:
+		/// @brief Constructs a PWMState with a default value of 0 steps.
+		constexpr PWMState() noexcept = default;
+
+		/// @brief Constructs a PWMState from an explicit step count (0–4095).
+		/// Values above 4095 are clamped to 4095.
+		explicit constexpr PWMState( std::uint16_t steps ) noexcept
+			: m_steps{ steps > kMax ? kMax : steps }
+		{ }
+
+		/// @brief Creates a PWMState from a duty cycle percentage (0.0% to 100.0%).
+		/// Values outside the valid range are clamped to 0% or 100%.
+		/// @param percent Duty cycle as a float between 0.0f and 100.0f
+		[[nodiscard]] static constexpr PWMState fromPercent( float percent ) noexcept
+		{
+			if( percent <= 0.0f ) return PWMState{ kMin };
+			if( percent >= 100.0f ) return PWMState{ kMax };
+			return PWMState{ static_cast< std::uint16_t >( kMax * ( percent / 100.0f ) ) };
+		}
+
+		/// @brief Creates a PWMState from a pulse width in microseconds.
+		/// The period defaults to 20000µs (50 Hz), appropriate for servo motors.
+		/// Returns 0 steps if the period is invalid (<= 0).
+		/// @param us Pulse width in microseconds
+		/// @param periodUs Full PWM cycle period in microseconds
+		[[nodiscard]] static constexpr PWMState fromMicroseconds( float us, float periodUs = 20000.0f ) noexcept
+		{
+			if( periodUs <= 0.0f ) return PWMState{ kMin };
+			return PWMState{ static_cast< std::uint16_t >( ( us / periodUs ) * kMax ) };
+		}
+
+		/// @brief Returns the raw step count value (0–4095).
+		[[nodiscard]] constexpr std::uint16_t steps() const noexcept { return m_steps; }
+
+		/// @brief Implicit conversion to raw step count.
+		/// Allows seamless use in contexts requiring uint16_t (e.g. register writing).
+		[[nodiscard]] constexpr operator std::uint16_t() const noexcept { return m_steps; }
+
+		/// @brief Returns the minimum possible PWM state (0 steps).
+		[[nodiscard]] static constexpr PWMState min() noexcept { return PWMState{ kMin }; }
+
+		/// @brief Returns the maximum possible PWM state (4095 steps).
+		[[nodiscard]] static constexpr PWMState max() noexcept { return PWMState{ kMax }; }
+
+	private:
+		std::uint16_t m_steps{ kMin };
 	};
 
 	using enum Address;
@@ -68,10 +115,19 @@ public:
 
 	explicit PCA9685Controller( class BusController& busController, Address address = H40 );
 
-	// Set PWM frequency (applies globally to all channels)
-	Result< void > setPWMFrequency( std::uint16_t frequency );
+	/// Set PWM frequency (applies globally to all channels)
+	[[nodiscard]] Result< void > setPWMFrequency( std::uint16_t frequency );
 
-	std::uint16_t pulseWidthToSteps( float pulseWidth )
+	/// TBW
+	[[nodiscard]] Result< void > setPWM( Channel channel, PWMState on, PWMState off );
+
+	/// TBW
+	[[nodiscard]] Result< void > setPWMPercentage( Channel channel, float dutyPercent );
+
+	/// Enable or disable sleep mode
+	[[nodiscard]] Result< void > setSleepMode( bool enable );
+
+	[[nodiscard]] std::uint16_t pulseWidthToSteps( float pulseWidth )
 	{
 		// Specific resolution of the PCA9685, which allows 12-bit (4096-step) resolution for PWM.
 		constexpr float pcaResolution = 4096.0f;
