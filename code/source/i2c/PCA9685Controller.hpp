@@ -24,6 +24,7 @@ public:
 	template < typename T >
 	using Result = utils::Result< T >;
 
+	// I2C addresses determined by hardware address pins A0–A2.
 	enum class Address : std::uint8_t
 	{
 		H40 = 0x40, // A0=0, A1=0, A2=0
@@ -36,6 +37,7 @@ public:
 		H47 = 0x47 // A0=1, A1=1, A2=1
 	};
 
+	/// 16 PWM output channels.
 	enum class Channel : std::uint8_t
 	{
 		CH0 = 0,
@@ -56,7 +58,7 @@ public:
 		CH15 = 15
 	};
 
-	/// @brief Represents a PWM step value within the 12-bit range of the PCA9685 (0–4095).
+	/// Represents a PWM step value within the 12-bit range of the PCA9685 (0–4095).
 	class PWMState final
 	{
 		static constexpr std::uint16_t kMin = 0;
@@ -113,31 +115,48 @@ public:
 	using enum Address;
 	using enum Channel;
 
+	/// Construct controller with I2C bus and device address.
 	explicit PCA9685Controller( class BusController& busController, Address address = H40 );
 
-	/// Set PWM frequency (applies globally to all channels)
+	/// Set global PWM frequency [Hz] (applies globally to all channels).
 	[[nodiscard]] Result< void > setPWMFrequency( std::uint16_t frequency );
 
-	/// TBW
+	/// Set channel ON/OFF step timings.
 	[[nodiscard]] Result< void > setPWM( Channel channel, PWMState on, PWMState off );
 
-	/// TBW
+	/// Set channel duty cycle as percent (0–100%).
 	[[nodiscard]] Result< void > setPWMPercentage( Channel channel, float dutyPercent );
 
-	/// Enable or disable sleep mode
+	/// Enable or disable chip low-power sleep mode.
 	[[nodiscard]] Result< void > setSleepMode( bool enable );
 
-	[[nodiscard]] std::uint16_t pulseWidthToSteps( float pulseWidth )
-	{
-		// Specific resolution of the PCA9685, which allows 12-bit (4096-step) resolution for PWM.
-		constexpr float pcaResolution = 4096.0f;
+	/// Set channel full-on mode (bit 4 in LEDn_ON_H).
+	[[nodiscard]] Result< void > setFullOn( Channel channel, bool enable );
 
-		// Calculate the period of one cycle in microseconds
-		// const float periodUs = 1'000'000.0f / pwmFrequency; // currently set to 20'000
+	/// Set channel full-off mode (bit 4 in LEDn_OFF_H).
+	[[nodiscard]] Result< void > setFullOff( Channel channel, bool enable );
 
-		// 1 step = 4.88 microseconds (20000us / 4096 steps for 50Hz)
-		return static_cast< std::uint16_t >( ( pulseWidth / 20'000.0f ) * pcaResolution );
-	}
+	/// Set output mode: true = totem-pole, false = open-drain.
+	[[nodiscard]] Result< void > setOutputMode( bool totemPole );
+
+	/// Enable or disable ALL_CALL I2C address.
+	[[nodiscard]] Result< void > enableAllCallAddress( bool enable );
+
+	/// Send general call software reset.
+	[[nodiscard]] Result< void > softwareReset();
+
+	// /// Convert µs pulse width to PWM steps (based on 20ms period).
+	// [[nodiscard]] std::uint16_t pulseWidthToSteps( float pulseWidth )
+	// {
+	// 	// Specific resolution of the PCA9685, which allows 12-bit (4096-step) resolution for PWM.
+	// 	constexpr float pcaResolution = 4096.0f;
+
+	// 	// Calculate the period of one cycle in microseconds
+	// 	// const float periodUs = 1'000'000.0f / pwmFrequency; // currently set to 20'000
+
+	// 	// 1 step = 4.88 microseconds (20000us / 4096 steps for 50Hz)
+	// 	return static_cast< std::uint16_t >( ( pulseWidth / 20'000.0f ) * pcaResolution );
+	// }
 
 private:
 	PCA9685Controller( const PCA9685Controller& ) = delete;

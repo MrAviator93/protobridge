@@ -125,4 +125,91 @@ auto v1::PCA9685Controller::setSleepMode( bool enable ) -> Result< void >
 	return utils::MakeSuccess();
 }
 
+auto v1::PCA9685Controller::setFullOn( Channel channel, bool enable ) -> Result< void >
+{
+	const auto base = 0x06 + 4 * static_cast< int >( channel );
+	const auto reg = static_cast< std::uint8_t >( base + 1 ); // LEDn_ON_H
+
+	std::uint8_t val{};
+	if( !read( reg, val ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	val = enable ? ( val | 0x10 ) : ( val & ~0x10 );
+	if( !write( reg, val ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
+}
+
+auto v1::PCA9685Controller::setFullOff( Channel channel, bool enable ) -> Result< void >
+{
+	const auto base = 0x06 + 4 * static_cast< int >( channel );
+	const auto reg = static_cast< std::uint8_t >( base + 3 ); // LEDn_OFF_H
+
+	std::uint8_t val{};
+	if( !read( reg, val ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	val = enable ? ( val | 0x10 ) : ( val & ~0x10 );
+	if( !write( reg, val ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
+}
+
+auto v1::PCA9685Controller::setOutputMode( bool totemPole ) -> Result< void >
+{
+	std::uint8_t mode2{};
+	if( !read( 0x01, mode2 ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	mode2 = totemPole ? ( mode2 | 0x04 ) : ( mode2 & ~0x04 );
+	if( !write( 0x01, mode2 ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
+}
+
+auto v1::PCA9685Controller::enableAllCallAddress( bool enable ) -> Result< void >
+{
+	std::uint8_t mode1{};
+	if( !read( 0x00, mode1 ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
+	}
+
+	mode1 = enable ? ( mode1 | 0x01 ) : ( mode1 & ~0x01 );
+	if( !write( 0x00, mode1 ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
+}
+
+auto v1::PCA9685Controller::softwareReset() -> Result< void >
+{
+	constexpr std::array< std::uint8_t, 2 > kResetCmd{ 0x06, 0x00 };
+	if( !write( 0x00, kResetCmd.data(), kResetCmd.size() ) )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	sleep( std::chrono::milliseconds( 10 ) );
+
+	return utils::MakeSuccess();
+}
+
 } // namespace pbl::i2c
