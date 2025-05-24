@@ -40,30 +40,40 @@ v1::LM75Controller::LM75Controller( BusController& busController, Address addres
 	: ICBase{ busController, address }
 { }
 
-bool v1::LM75Controller::setPowerMode( PowerMode mode )
+auto v1::LM75Controller::setPowerMode( PowerMode mode ) -> Result< void >
 {
 	std::uint8_t config{};
 	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		return false;
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	std::bitset< 8 > configBits{ config };
 	configBits.set( kShutdownModeBit, static_cast< std::uint8_t >( mode ) );
-	return write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) );
+	if( !write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) ) ) [[unlikely]]
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
 }
 
-bool v1::LM75Controller::setThermostatMode( ThermostatMode mode )
+auto v1::LM75Controller::setThermostatMode( ThermostatMode mode ) -> Result< void >
 {
 	std::uint8_t config{};
 	if( !read( kConfigurationRegister, config ) ) [[unlikely]]
 	{
-		return false;
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
 
 	std::bitset< 8 > configBits{ config };
 	configBits.set( kThermostatModeBit, static_cast< std::uint8_t >( mode ) );
-	return write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) );
+	if( !write( kConfigurationRegister, static_cast< std::uint8_t >( configBits.to_ulong() ) ) ) [[unlikely]]
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
+	}
+
+	return utils::MakeSuccess();
 }
 
 auto v1::LM75Controller::getPowerMode() -> Result< PowerMode >

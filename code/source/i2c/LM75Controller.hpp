@@ -98,10 +98,10 @@ public:
 	explicit LM75Controller( BusController& busController, Address address = H48 ) noexcept;
 
 	/// Sets the LM75's shutdown mode to reduce power consumption, returns true on success.
-	bool setPowerMode( PowerMode mode );
+	[[nodiscard]] Result< void > setPowerMode( PowerMode mode );
 
 	/// Sets the thermostat mode of the LM75 (comparator or interrupt), returns true on success.
-	bool setThermostatMode( ThermostatMode mode );
+	[[nodiscard]] Result< void > setThermostatMode( ThermostatMode mode );
 
 	/// Retrieves the current state of the LM75's shutdown mode.
 	[[nodiscard]] Result< PowerMode > getPowerMode();
