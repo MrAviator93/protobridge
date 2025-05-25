@@ -13,9 +13,15 @@ constexpr T toggle( const T& current, const T& a, const T& b )
 template < typename T >
 struct Toggle
 {
+	constexpr Toggle( T ta, T tb ) noexcept
+		: a{ ta }
+		, b{ tb }
+	{ }
+
 	T a;
 	T b;
-	const T operator()( const T& current ) { return toggle< T >( current, a, b ); }
+
+	[[nodiscard]] constexpr T operator()( const T& current ) const noexcept { return toggle< T >( current, a, b ); }
 };
 
 } // namespace pbl::utils
