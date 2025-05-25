@@ -57,10 +57,10 @@ public:
 	}
 
 	/// Gets the pointer to the internal object.
-	T* get() { return reinterpret_cast< T* >( &m_storage ); }
+	[[nodiscard]] T* get() { return reinterpret_cast< T* >( &m_storage ); }
 
 	/// Gets the pointer to the internal object (const version)
-	const T* get() const { return reinterpret_cast< const T* >( &m_storage ); }
+	[[nodiscard]] const T* get() const { return reinterpret_cast< const T* >( &m_storage ); }
 
 	/// Overloads the arrow operator to allow direct access to the internal object's methods.
 	T* operator->() { return reinterpret_cast< T* >( &m_storage ); }
