@@ -46,6 +46,7 @@ template < typename T,
 			std::is_nothrow_invocable_r_v< T, FromBool, bool >
 struct PinConfig final
 {
+	inline static constexpr std::size_t kMaxPins{ 8 };
 
 	template < std::size_t Index, typename PinType >
 	struct Pin
@@ -96,23 +97,54 @@ struct PinConfig final
 	template < size_t Index >
 	[[nodiscard]] constexpr T pin() const noexcept
 	{
-		static_assert( Index < 8, "Index out of bounds" );
+		static_assert( Index < kMaxPins, "Index out of bounds" );
 		return FromBool{}( bitset[ Index ] );
+	}
+
+	[[nodiscard]] constexpr std::optional< T > pin( std::size_t index ) const noexcept
+	{
+		if( index >= kMaxPins )
+		{
+			return std::nullopt;
+		}
+
+		return FromBool{}( bitset[ index ] );
+	}
+
+	[[nodiscard]] constexpr std::optional< T > operator[]( std::size_t index ) const noexcept
+	{
+		if( index >= kMaxPins )
+		{
+			return std::nullopt;
+		}
+		return FromBool{}( bitset[ index ] );
 	}
 
 	/// Mutates pin state
 	template < size_t Index >
 	constexpr void setPin( T value ) noexcept
 	{
-		static_assert( Index < 8 );
+		static_assert( Index < kMaxPins );
 		bitset[ Index ] = ToBool{}( value );
+	}
+
+	constexpr bool setPin( std::size_t index, T value ) noexcept
+	{
+		if( index >= kMaxPins )
+		{
+			return false;
+		}
+
+		bitset[ index ] = ToBool{}( value );
+
+		return true;
 	}
 
 	/// For each pin
 	template < typename Func >
 	constexpr void forEachPin( Func&& fn ) const
 	{
-		for( std::size_t i{}; i < 8; ++i )
+		for( std::size_t i{}; i < kMaxPins; ++i )
 		{
 			fn( i, FromBool{}( bitset[ i ] ) );
 		}
@@ -125,7 +157,7 @@ struct PinConfig final
 	constexpr auto operator<=>( const PinConfig& ) const = default;
 
 	/// Bitset representing the state of the 8 pins.
-	std::bitset< 8 > bitset{};
+	std::bitset< kMaxPins > bitset{};
 };
 
 } // namespace pbl::utils
