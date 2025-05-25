@@ -2,6 +2,8 @@
 #define PBL_I2C_MCP23017_CONTROLLER_HPP__
 
 #include "ICBase.hpp"
+
+#include <utils/Utils.hpp>
 #include <utils/Counter.hpp>
 #include <utils/PinConfig.hpp>
 #include <utils/Overloaded.hpp>
@@ -352,15 +354,7 @@ public:
 	[[nodiscard]] Result< void > switchPinState()
 	{
 		return pinState()
-			.transform( []( PinState state ) -> PinState {
-				if( state == PinState::HIGH )
-				{
-					// Is this correct????
-					return PinState::LOW;
-				}
-
-				return PinState::HIGH;
-			} )
+			.transform( utils::Toggle< PinState >{ PinState::HIGH, PinState::LOW } )
 			.and_then( [ this ]( PinState newState ) -> Result< void > { return setPinState( newState ); } );
 	}
 
