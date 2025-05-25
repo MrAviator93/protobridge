@@ -103,7 +103,7 @@ int main(int, char**)
 
 This simple program initializes the I2C bus, sets up the LM75 sensor, reads the temperature, and outputs it to the console. By following this structure, you can easily read from other sensors and devices using their respective controller classes provided by the library.
 
-### BLinking LED with MCP23017
+### Blinking LED with MCP23017
 
 This example shows how to use the MCP23017 I/O expander to blink an LED by toggling a GPIO pin every 2 seconds using a software timer.
 
