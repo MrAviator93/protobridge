@@ -198,6 +198,16 @@ public:
 		using PinMode = detail::mcp23017::port::PinMode;
 		using PinState = detail::mcp23017::port::PinState;
 
+		using PinModes = detail::mcp23017::port::PinModes;
+		using PinStates = detail::mcp23017::port::PinStates;
+		using PinInterruptControl = detail::mcp23017::port::PinInterruptControl;
+		using PinDefaultComparison = detail::mcp23017::port::PinDefaultComparison;
+		using PinInterruptEnable = detail::mcp23017::port::PinInterruptEnable;
+		using PinInterrupts = detail::mcp23017::port::PinInterrupts;
+		using PinPullUps = detail::mcp23017::port::PinPullUps;
+		using PinInterruptCapture = detail::mcp23017::port::PinInterruptCapture;
+		using PinInterruptFlags = detail::mcp23017::port::PinInterruptFlags;
+
 		/// MCP23017 chip port addresses
 		enum class Address : std::uint8_t
 		{

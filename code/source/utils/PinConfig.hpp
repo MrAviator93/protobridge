@@ -48,10 +48,10 @@ struct PinConfig final
 {
 	inline static constexpr std::size_t kMaxPins{ 8 };
 
-	template < std::size_t Index, typename PinType >
+	template < std::size_t Idx, typename PinType >
 	struct Pin
 	{
-		static constexpr std::size_t index = Index;
+		static constexpr std::size_t Index = Idx;
 		PinType value;
 	};
 
