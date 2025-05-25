@@ -42,6 +42,7 @@
 
 // Output
 #include <print>
+#include <thread>
 
 int main( const int argc, const char* const* const argv )
 {
@@ -86,12 +87,13 @@ int main( const int argc, const char* const* const argv )
 	{
 		if( timer.hasElapsed() )
 		{
-            // TODO
-
+			// TODO
 
 			// Reset the timer
 			timer.set();
 		}
+
+		std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
 	}
 
 	return 0;

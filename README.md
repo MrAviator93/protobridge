@@ -114,6 +114,7 @@ This example shows how to use the MCP23017 I/O expander to blink an LED by toggl
 
 // Output
 #include <print>
+#include <thread>
 
 int main( int, char** )
 {
@@ -151,6 +152,8 @@ int main( int, char** )
     std::println( "Failed to set pin state to ON..." );
    }
   } );
+
+  std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
  }
 
  return 0;
