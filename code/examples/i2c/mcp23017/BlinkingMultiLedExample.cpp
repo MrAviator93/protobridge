@@ -67,7 +67,7 @@ int main( const int argc, const char* const* const argv )
 
 	using MCP23017 = pbl::i2c::MCP23017Controller;
 
-	// Create an LM75 controller, attached to the bus controller
+	// Create an MCP23017 controller, attached to the bus controller
 	MCP23017 mcp{ busController };
 
 	MCP23017::Port::PinModes pinModes{ .pin1 = MCP23017::Port::PinMode::OUTPUT,

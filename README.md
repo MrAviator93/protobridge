@@ -130,7 +130,7 @@ int main( int, char** )
   return 1;
  }
 
- // Create an LM75 controller, attached to the bus controller
+ // Create an MCP23017 controller, attached to the bus controller
  pbl::i2c::MCP23017Controller mcp{ busController };
  auto pin = mcp.portA().pin( pbl::i2c::MCP23017Controller::Port::Pins::PIN_1 );
 
