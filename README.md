@@ -71,7 +71,7 @@ This example shows you how to initialize communication with the LM75 sensor and 
 // Include I2C library files
 #include <i2c/Controllers.hpp>
 
-// Output
+// C++
 #include <print>
 
 int main(int, char**)
@@ -222,7 +222,7 @@ private:
 #include "Thermostat.hpp"
 #include <utils/Timer.hpp>
 
-// Output
+// C++
 #include <print>
 
 int main( const int argc, const char* const* const argv )

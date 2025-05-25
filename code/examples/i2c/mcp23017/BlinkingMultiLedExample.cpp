@@ -40,7 +40,7 @@
 #include <utils/Timer.hpp>
 #include <i2c/Controllers.hpp>
 
-// Output
+// C++
 #include <print>
 #include <thread>
 
