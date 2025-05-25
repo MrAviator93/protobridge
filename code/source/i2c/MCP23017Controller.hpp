@@ -336,7 +336,7 @@ public:
 		return mode().transform( []( PinMode mode ) { return mode == PinMode::OUTPUT; } );
 	}
 
-	Result< void > setMode( const PinMode mode )
+	[[nodiscard]] Result< void > setMode( const PinMode mode )
 	{
 		return std::invoke( m_dispatcher, detail::mcp23017::port::PinModes{}, m_pin, mode );
 	}
