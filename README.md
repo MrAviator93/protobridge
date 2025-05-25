@@ -20,6 +20,7 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
   - [Features](#features)
     - [Examples](#examples)
     - [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
+    - [Blinking Led with MCP23017](#blinking-led-with-mcp23017)
     - [Advanced - Pseudo Thermostat Implementation Example](#advanced---pseudo-thermostat-implementation-example)
   - [Requirements](#requirements)
     - [I2C Tools](#i2c-tools)
