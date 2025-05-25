@@ -128,7 +128,7 @@ struct PinConfig final
 		bitset[ Index ] = ToBool{}( value );
 	}
 
-	constexpr bool setPin( std::size_t index, T value ) noexcept
+	[[nodiscard]] constexpr bool setPin( std::size_t index, T value ) noexcept
 	{
 		if( index >= kMaxPins )
 		{
