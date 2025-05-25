@@ -417,10 +417,8 @@ private:
 {
 	auto dispatcher = utils::Overloaded{
 		//  IODIR (PinModes)
-
 		[ this ]( detail::mcp23017::port::PinModes, [[maybe_unused]] Pins inPin ) -> Result< PinMode > {
-			// TODO: Handle GetMode
-			return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
+			return this->pinModes().transform( [ inPin ]( const auto& modes ) { return modes[ inPin ]; } );
 		},
 		[ this ]( detail::mcp23017::port::PinModes,
 				  [[maybe_unused]] Pins inPin,
