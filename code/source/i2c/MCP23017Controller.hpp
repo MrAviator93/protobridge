@@ -463,8 +463,9 @@ private:
 			return interruptControl()
 				.and_then( [ this, inPin, compareWithDefault ]( auto intcon ) {
 					intcon.setPin( static_cast< std::size_t >( inPin ),
-								   compareWithDefault ? detail::mcp23017::port::InterruptControl::COMPARE
-													  : detail::mcp23017::port::InterruptControl::PREVIOUS );
+								   utils::select( compareWithDefault,
+												  detail::mcp23017::port::InterruptControl::COMPARE,
+												  detail::mcp23017::port::InterruptControl::PREVIOUS ) );
 					return setInterruptControl( intcon );
 				} )
 				.and_then( [ this, inPin, defaultValue ] {
