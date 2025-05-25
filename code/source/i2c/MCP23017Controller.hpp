@@ -175,7 +175,7 @@ using PinInterruptFlags = utils::PinConfig< bool, false >;
  * 
  * @author AK aka MrAviator93
  */
-class MCP23017ControllerV2 final : public ICBase, public utils::Counter< MCP23017ControllerV2 >
+class MCP23017Controller final : public ICBase, public utils::Counter< MCP23017Controller >
 {
 
 	struct PortTag
@@ -215,7 +215,7 @@ public:
 			PORT_B = 0x15
 		};
 
-		Port( MCP23017ControllerV2& controller, Address address, PortTag )
+		Port( MCP23017Controller& controller, Address address, PortTag )
 			: m_controller{ controller }
 			, m_address{ address }
 		{ }
@@ -274,7 +274,7 @@ public:
 		setInterruptDefaults( const detail::mcp23017::port::PinDefaultComparison& defaults );
 
 	private:
-		MCP23017ControllerV2& m_controller;
+		MCP23017Controller& m_controller;
 		Address m_address;
 
 		// These are configurations saved in the registers!
@@ -303,14 +303,14 @@ public:
 	using enum Address;
 
 	/// Default ctor, all pins are configured as output by default
-	explicit MCP23017ControllerV2( BusController& busController, Address address = H20 ) noexcept;
+	explicit MCP23017Controller( BusController& busController, Address address = H20 ) noexcept;
 
 	[[nodiscard]] auto& portA( this auto& self ) noexcept { return self.m_portA; }
 	[[nodiscard]] auto& portB( this auto& self ) noexcept { return self.m_portB; }
 
 private:
-	MCP23017ControllerV2( const MCP23017ControllerV2& ) = delete;
-	MCP23017ControllerV2& operator=( const MCP23017ControllerV2& ) = delete;
+	MCP23017Controller( const MCP23017Controller& ) = delete;
+	MCP23017Controller& operator=( const MCP23017Controller& ) = delete;
 
 private:
 	Port m_portA;
@@ -318,7 +318,7 @@ private:
 };
 
 template < typename Dispatcher >
-class MCP23017ControllerV2::Port::Pin
+class MCP23017Controller::Port::Pin
 {
 public:
 	Pin( Port& port, Pins pin, Dispatcher dispatcher, PinTag )
@@ -409,7 +409,7 @@ private:
 	Dispatcher m_dispatcher;
 };
 
-[[nodiscard]] inline auto MCP23017ControllerV2::Port::pin( Pins pin )
+[[nodiscard]] inline auto MCP23017Controller::Port::pin( Pins pin )
 {
 	namespace dmp = detail::mcp23017::port;
 

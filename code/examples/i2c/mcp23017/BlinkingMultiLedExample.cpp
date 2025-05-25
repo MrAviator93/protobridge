@@ -65,7 +65,7 @@ int main( const int argc, const char* const* const argv )
 		return 1;
 	}
 
-	using MCP23017 = pbl::i2c::MCP23017ControllerV2;
+	using MCP23017 = pbl::i2c::MCP23017Controller;
 
 	// Create an LM75 controller, attached to the bus controller
 	MCP23017 mcp{ busController };

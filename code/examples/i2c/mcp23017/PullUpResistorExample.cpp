@@ -70,7 +70,7 @@ int main( const int argc, const char* const* const argv )
 		return 1;
 	}
 
-	using MCP23017 = pbl::i2c::MCP23017ControllerV2;
+	using MCP23017 = pbl::i2c::MCP23017Controller;
 	MCP23017 mcp23017{ busController };
 
     // TODO: Implement the interface

@@ -35,7 +35,7 @@ constexpr std::uint8_t kOlatBRegister{ 0x15 }; //!< PORT B: Output latch registe
 
 } // namespace
 
-MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Address address ) noexcept
+MCP23017Controller::MCP23017Controller( BusController& busController, Address address ) noexcept
 	: ICBase{ busController, address }
 	, m_portA{ *this, Port::Address::PORT_A, PortTag{} }
 	, m_portB{ *this, Port::Address::PORT_B, PortTag{} }
@@ -43,93 +43,93 @@ MCP23017ControllerV2::MCP23017ControllerV2( BusController& busController, Addres
 	// TODO
 }
 
-auto MCP23017ControllerV2::Port::pinModes() -> Result< detail::mcp23017::port::PinModes >
+auto MCP23017Controller::Port::pinModes() -> Result< detail::mcp23017::port::PinModes >
 {
 	return utils::MakeError< detail::mcp23017::port::PinModes >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::setPinModes( [[maybe_unused]] const detail::mcp23017::port::PinModes& modes )
+auto MCP23017Controller::Port::setPinModes( [[maybe_unused]] const detail::mcp23017::port::PinModes& modes )
 	-> Result< void >
 {
 	return utils::MakeError< void >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::pinStates() -> Result< detail::mcp23017::port::PinStates >
+auto MCP23017Controller::Port::pinStates() -> Result< detail::mcp23017::port::PinStates >
 {
 	return utils::MakeError< detail::mcp23017::port::PinStates >( utils::Error{ utils::ErrorCode::NOT_IMPLEMENTED } );
 }
 
-auto MCP23017ControllerV2::Port::setPinStates( [[maybe_unused]] const detail::mcp23017::port::PinStates& states )
+auto MCP23017Controller::Port::setPinStates( [[maybe_unused]] const detail::mcp23017::port::PinStates& states )
 	-> Result< void >
 {
 	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::pullUps() -> Result< detail::mcp23017::port::PinPullUps >
+auto MCP23017Controller::Port::pullUps() -> Result< detail::mcp23017::port::PinPullUps >
 {
 	return utils::MakeError< detail::mcp23017::port::PinPullUps >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::setPullUps( [[maybe_unused]] const detail::mcp23017::port::PinPullUps& pullUps )
+auto MCP23017Controller::Port::setPullUps( [[maybe_unused]] const detail::mcp23017::port::PinPullUps& pullUps )
 	-> Result< void >
 {
 	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::pinInterruptCapture() -> Result< detail::mcp23017::port::PinInterruptCapture >
+auto MCP23017Controller::Port::pinInterruptCapture() -> Result< detail::mcp23017::port::PinInterruptCapture >
 {
 	return utils::MakeError< detail::mcp23017::port::PinInterruptCapture >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::pinInterruptFlags() -> Result< detail::mcp23017::port::PinInterruptFlags >
+auto MCP23017Controller::Port::pinInterruptFlags() -> Result< detail::mcp23017::port::PinInterruptFlags >
 {
 	return utils::MakeError< detail::mcp23017::port::PinInterruptFlags >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::clearInterruptFlags() -> Result< void >
+auto MCP23017Controller::Port::clearInterruptFlags() -> Result< void >
 {
 	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::interruptEnable() -> Result< detail::mcp23017::port::PinInterruptEnable >
+auto MCP23017Controller::Port::interruptEnable() -> Result< detail::mcp23017::port::PinInterruptEnable >
 {
 	return utils::MakeError< detail::mcp23017::port::PinInterruptEnable >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::setInterruptEnable(
+auto MCP23017Controller::Port::setInterruptEnable(
 	[[maybe_unused]] const detail::mcp23017::port::PinInterruptEnable& mask ) -> Result< void >
 {
 	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::interruptControl() -> Result< detail::mcp23017::port::PinInterruptControl >
+auto MCP23017Controller::Port::interruptControl() -> Result< detail::mcp23017::port::PinInterruptControl >
 {
 	return utils::MakeError< detail::mcp23017::port::PinInterruptControl >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::setInterruptControl(
+auto MCP23017Controller::Port::setInterruptControl(
 	[[maybe_unused]] const detail::mcp23017::port::PinInterruptControl& control ) -> Result< void >
 {
 	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::interruptDefaults() -> Result< detail::mcp23017::port::PinDefaultComparison >
+auto MCP23017Controller::Port::interruptDefaults() -> Result< detail::mcp23017::port::PinDefaultComparison >
 {
 	return utils::MakeError< detail::mcp23017::port::PinDefaultComparison >( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-auto MCP23017ControllerV2::Port::setInterruptDefaults(
+auto MCP23017Controller::Port::setInterruptDefaults(
 	[[maybe_unused]] const detail::mcp23017::port::PinDefaultComparison& defaults ) -> Result< void >
 {
 	return utils::MakeError( utils::ErrorCode::NOT_IMPLEMENTED );
 }
 
-// auto MCP23017ControllerV2::Port::Pin::mode() const -> PinMode
+// auto MCP23017Controller::Port::Pin::mode() const -> PinMode
 // {
 // 	return PinMode::OUTPUT;
 // }
 
-// auto MCP23017ControllerV2::Port::Pin::setMode( const PinMode mode ) -> auto -> Result< void >
+// auto MCP23017Controller::Port::Pin::setMode( const PinMode mode ) -> auto -> Result< void >
 // {
 // 	// // Convert the enum-based pin to its bitmask value
 // 	// auto pinMask = static_cast< std::uint8_t >( m_pin );
@@ -153,12 +153,12 @@ auto MCP23017ControllerV2::Port::setInterruptDefaults(
 // 	return std::unexpected( "Not implemented ..." );
 // }
 
-// auto MCP23017ControllerV2::Port::Pin::pinState() -> Result< PinState >
+// auto MCP23017Controller::Port::Pin::pinState() -> Result< PinState >
 // {
 // 	return std::unexpected( "Not implemented ..." );
 // }
 
-// auto MCP23017ControllerV2::Port::Pin::setPinState( const PinState state ) -> auto -> Result< void >
+// auto MCP23017Controller::Port::Pin::setPinState( const PinState state ) -> auto -> Result< void >
 // {
 // 	if( !isOutput() )
 // 	{
