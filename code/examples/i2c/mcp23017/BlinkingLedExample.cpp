@@ -38,22 +38,16 @@
 
 // Include I2C library files
 #include <utils/Timer.hpp>
-#include <i2c/Controllers.hpp>
+#include <i2c/BusController.hpp>
+#include <i2c/MCP23017Controller.hpp>
 
 // Output
 #include <print>
 
-int main( const int argc, const char* const* const argv )
+int main( int, char** )
 {
-	const std::vector< std::string_view > args{ argv, std::next( argv, static_cast< std::ptrdiff_t >( argc ) ) };
-
 	// Default name of i2c bus on RPI 4
 	std::string deviceName{ "/dev/i2c-1" };
-
-	if( args.size() >= 2 )
-	{
-		deviceName = args[ 1 ];
-	}
 
 	// Create a bus controller for the I2C bus
 	pbl::i2c::BusController busController{ deviceName };
@@ -65,14 +59,12 @@ int main( const int argc, const char* const* const argv )
 		return 1;
 	}
 
-	using MCP23017 = pbl::i2c::MCP23017Controller;
-
 	// Create an LM75 controller, attached to the bus controller
-	MCP23017 mcp{ busController };
-	auto pin = mcp.portA().pin( MCP23017::Port::Pins::PIN_1 );
+	pbl::i2c::MCP23017Controller mcp{ busController };
+	auto pin = mcp.portA().pin( pbl::i2c::MCP23017Controller::Port::Pins::PIN_1 );
 
 	// This API allows us to configure individual pins
-	if( !pin.setMode( MCP23017::Port::PinMode::OUTPUT ) )
+	if( !pin.setMode( pbl::i2c::MCP23017Controller::Port::PinMode::OUTPUT ) )
 	{
 		std::println( stderr, "Error occurred when setting pin mode..." );
 		return 1;
@@ -82,16 +74,12 @@ int main( const int argc, const char* const* const argv )
 
 	while( true )
 	{
-		if( timer.hasElapsed() )
-		{
+		timer.onTick( [ &pin ]( [[maybe_unused]] auto dt ) -> void {
 			if( !pin.switchPinState() )
 			{
 				std::println( "Failed to set pin state to ON..." );
 			}
-
-			// Reset the timer
-			timer.set();
-		}
+		} );
 	}
 
 	return 0;

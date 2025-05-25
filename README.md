@@ -102,6 +102,60 @@ int main(int, char**)
 
 This simple program initializes the I2C bus, sets up the LM75 sensor, reads the temperature, and outputs it to the console. By following this structure, you can easily read from other sensors and devices using their respective controller classes provided by the library.
 
+### BLinking LED with MCP23017
+
+This example shows how to use the MCP23017 I/O expander to blink an LED by toggling a GPIO pin every 2 seconds using a software timer.
+
+```cpp
+#include <utils/Timer.hpp>
+#include <i2c/BusController.hpp>
+#include <i2c/MCP23017Controller.hpp>
+
+// Output
+#include <print>
+
+int main( int, char** )
+{
+ // Default name of i2c bus on RPI 4
+ std::string deviceName{ "/dev/i2c-1" };
+
+ // Create a bus controller for the I2C bus
+ pbl::i2c::BusController busController{ deviceName };
+
+ // Check if the I2C bus is open and accessible
+ if( !busController.isOpen() )
+ {
+  std::println( stderr, "Failed to open I2C device" );
+  return 1;
+ }
+
+ // Create an LM75 controller, attached to the bus controller
+ pbl::i2c::MCP23017Controller mcp{ busController };
+ auto pin = mcp.portA().pin( pbl::i2c::MCP23017Controller::Port::Pins::PIN_1 );
+
+ // This API allows us to configure individual pins
+ if( !pin.setMode( pbl::i2c::MCP23017Controller::Port::PinMode::OUTPUT ) )
+ {
+  std::println( stderr, "Error occurred when setting pin mode..." );
+  return 1;
+ }
+
+ pbl::utils::Timer timer{ std::chrono::seconds( 2 ) };
+
+ while( true )
+ {
+  timer.onTick( [ &pin ]( [[maybe_unused]] auto dt ) -> void {
+   if( !pin.switchPinState() )
+   {
+    std::println( "Failed to set pin state to ON..." );
+   }
+  } );
+ }
+
+ return 0;
+}
+```
+
 ### Advanced - Pseudo Thermostat Implementation Example
 
 ```cpp
