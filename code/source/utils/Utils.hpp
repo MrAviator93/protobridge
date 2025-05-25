@@ -18,10 +18,10 @@ struct Toggle
 		, b{ tb }
 	{ }
 
+	[[nodiscard]] constexpr T operator()( const T& current ) const noexcept { return toggle< T >( current, a, b ); }
+
 	T a;
 	T b;
-
-	[[nodiscard]] constexpr T operator()( const T& current ) const noexcept { return toggle< T >( current, a, b ); }
 };
 
 template < typename T >
@@ -38,13 +38,13 @@ struct Select
 		, b{ tb }
 	{ }
 
-	T a;
-	T b;
-
 	[[nodiscard]] constexpr T operator()( const bool condition ) const noexcept
 	{
 		return select< T >( condition, a, b );
 	}
+
+	T a;
+	T b;
 };
 
 } // namespace pbl::utils
