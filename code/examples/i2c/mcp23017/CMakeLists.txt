@@ -18,20 +18,8 @@ create_application(
 )
 
 create_application(
-    TARGET mcp23017_interrupt_pull_down_example
-    PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
-    SRC_FILES InterruptPullDownExample.cpp
-)
-
-create_application(
     TARGET mcp23017_pull_up_resistor_example
     PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
     SRC_FILES PullUpResistorExample.cpp
 )
-
-create_application(
-    TARGET mcp23017_pull_down_resistor_example
-    PRIVATE_DEPENDENCIES ${PRIVATE_DEPS}
-    SRC_FILES PullDownResistorExample.cpp
-)
-
+ 
