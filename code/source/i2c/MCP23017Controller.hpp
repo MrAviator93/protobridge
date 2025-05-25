@@ -460,26 +460,35 @@ private:
 			-> Result< void > {
 			return interruptControl()
 				.and_then( [ this, inPin, compareWithDefault ]( auto intcon ) -> Result< void > {
-					// TODO: setPin may return false!
-					intcon.setPin( static_cast< std::size_t >( inPin ),
-								   utils::select( compareWithDefault,
-												  dmp::InterruptControl::COMPARE,
-												  dmp::InterruptControl::PREVIOUS ) );
+					if( !intcon.setPin( static_cast< std::size_t >( inPin ),
+										utils::select( compareWithDefault,
+													   dmp::InterruptControl::COMPARE,
+													   dmp::InterruptControl::PREVIOUS ) ) )
+					{
+						return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
+					}
+
 					return setInterruptControl( intcon );
 				} )
 				.and_then( [ this, inPin, defaultValue ] {
-					// TODO: setPin may return false!
-					return interruptDefaults().and_then(
-						[ this, inPin, defaultValue ]( auto defval ) -> Result< void > {
-							defval.setPin( static_cast< std::size_t >( inPin ), defaultValue == dmp::PinState::HIGH );
-							return setInterruptDefaults( defval );
-						} );
+					return interruptDefaults().and_then( [ this, inPin, defaultValue ](
+															 auto defval ) -> Result< void > {
+						if( !defval.setPin( static_cast< std::size_t >( inPin ), defaultValue == dmp::PinState::HIGH ) )
+						{
+							return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
+						}
+
+						return setInterruptDefaults( defval );
+					} );
 				} )
 				.and_then( [ this, inPin, enable, defaultValue ] {
 					return interruptEnable().and_then(
 						[ this, inPin, enable, defaultValue ]( auto enables ) -> Result< void > {
-							// TODO: setPin may return false!
-							enables.setPin( static_cast< std::size_t >( inPin ), enable );
+							if( !enables.setPin( static_cast< std::size_t >( inPin ), enable ) )
+							{
+								return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
+							}
+
 							return setInterruptEnable( enables );
 						} );
 				} );
