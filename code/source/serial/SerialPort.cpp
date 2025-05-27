@@ -107,9 +107,8 @@ const std::unordered_map< std::uint32_t, std::uint32_t > kBrToLinuxBrTable = {
 
 auto v1::SerialPort::open( [[maybe_unused]] const std::string& device, Settings settings ) -> Result< SerialPort >
 {
-
 	int fd = ::open( device.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK );
-	if( fd < 0 )
+	if( fd < 0 ) [[unlikely]]
 	{
 		// return utils::MakeError( utils::ErrorCode::FAILED_TO_OPEN );
 		return utils::MakeError( utils::ErrorCode::UNEXPECTED_ERROR );
@@ -121,7 +120,7 @@ auto v1::SerialPort::open( [[maybe_unused]] const std::string& device, Settings 
 
 	// Configure the serial (configure the termios struct)
 	::termios tty{};
-	if( ::tcgetattr( fd, &tty ) != 0 )
+	if( ::tcgetattr( fd, &tty ) != 0 ) [[unlikely]]
 	{
 		::close( fd );
 		// return utils::MakeError( utils::Error::FAILED_TO_CONFIGURE );
@@ -167,7 +166,7 @@ auto v1::SerialPort::open( [[maybe_unused]] const std::string& device, Settings 
 
 	// Try to set the baud rates
 	const auto it = kBrToLinuxBrTable.find( settings.baudRate.value() );
-	if( it == kBrToLinuxBrTable.cend() )
+	if( it == kBrToLinuxBrTable.cend() ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
 	}
@@ -175,7 +174,7 @@ auto v1::SerialPort::open( [[maybe_unused]] const std::string& device, Settings 
 	::cfsetispeed( &tty, it->second );
 	::cfsetospeed( &tty, it->second );
 
-	if( ::tcsetattr( fd, TCSANOW, &tty ) )
+	if( ::tcsetattr( fd, TCSANOW, &tty ) ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
 	}
