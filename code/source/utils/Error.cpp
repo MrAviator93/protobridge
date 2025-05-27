@@ -4,6 +4,7 @@
 namespace pbl::utils
 {
 
+inline const Error Error::END_OF_FILE{ ErrorCode::END_OF_FILE };
 inline const Error Error::FAILED_TO_READ{ ErrorCode::FAILED_TO_READ };
 inline const Error Error::FAILED_TO_WRITE{ ErrorCode::FAILED_TO_WRITE };
 inline const Error Error::DEVICE_NOT_FOUND{ ErrorCode::DEVICE_NOT_FOUND };

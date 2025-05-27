@@ -4,6 +4,7 @@
 #include "Error.hpp"
 
 // C++
+#include <tuple>
 #include <expected>
 
 namespace pbl::utils
@@ -87,6 +88,12 @@ template < typename T >
 [[nodiscard]] inline auto MakeSuccess( T&& value )
 {
 	return detail::MakeSuccessFromValueHelper< std::decay_t< T > >{ std::forward< T >( value ) };
+}
+
+template < typename T, typename... Args >
+[[nodiscard]] inline Result< T > MakeSuccess( std::in_place_t, Args&&... args )
+{
+	return Result< T >( std::in_place, std::forward< Args >( args )... );
 }
 
 } // namespace pbl::utils

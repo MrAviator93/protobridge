@@ -21,6 +21,7 @@ enum class ErrorCode : std::uint8_t
 	/// @name Read/Write Errors
 	/// Errors related to reading and writing operations.
 	//@{
+	END_OF_FILE, ///!< General failure during read operation (EOF).
 	FAILED_TO_READ, ///< General failure during read operation.
 	FAILED_TO_WRITE, ///< General failure during write operation.
 	//@}
@@ -79,6 +80,7 @@ enum class ErrorCode : std::uint8_t
 	switch( error )
 	{
 		using enum ErrorCode;
+		case END_OF_FILE: return "END_OF_FILE";
 		case FAILED_TO_READ: return "FAILED_TO_READ";
 		case FAILED_TO_WRITE: return "FAILED_TO_WRITE";
 		case DEVICE_NOT_FOUND: return "DEVICE_NOT_FOUND";
