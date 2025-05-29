@@ -5,6 +5,7 @@
 #include <deque>
 #include <vector>
 #include <optional>
+#include <algorithm>
 #include <type_traits>
 #include <shared_mutex>
 
