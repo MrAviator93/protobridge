@@ -1,5 +1,6 @@
 add_subdirectory(math)
 add_subdirectory(utils)
+add_subdirectory(threading)
 
 if(PBL_BUILD_I2C_LIB)
     add_subdirectory(i2c)

@@ -3,7 +3,7 @@
 // C++
 #include <thread>
 
-namespace pbl::utils
+namespace pbl::threading
 {
 
 namespace
@@ -81,4 +81,4 @@ void SpinLock::deepLock() noexcept
 	}
 }
 
-} // namespace pbl::utils
+} // namespace pbl::threading

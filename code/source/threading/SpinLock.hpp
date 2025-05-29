@@ -1,10 +1,10 @@
-#ifndef PBL_UTILS_SPIN_LOCK_HPP__
-#define PBL_UTILS_SPIN_LOCK_HPP__
+#ifndef PBL_THREADING_SPIN_LOCK_HPP__
+#define PBL_THREADING_SPIN_LOCK_HPP__
 
 // C++
 #include <atomic>
 
-namespace pbl::utils
+namespace pbl::threading
 {
 
 /**
@@ -53,5 +53,5 @@ private:
 	mutable std::atomic_flag m_locked{ ATOMIC_FLAG_INIT };
 };
 
-} // namespace pbl::utils
-#endif // PBL_UTILS_SPIN_LOCK_HPP__
+} // namespace pbl::threading
+#endif // PBL_THREADING_SPIN_LOCK_HPP__

@@ -7,7 +7,6 @@ set(PBL_LIB_HEADERS
     Result.hpp
     Counter.hpp
     TimeStep.hpp
-    SpinLock.hpp
     ErrorCode.hpp
     TimeTypes.hpp
     FastPimpl.hpp
@@ -23,7 +22,6 @@ set(PBL_LIB_HEADERS
 set(PBL_LIB_SOURCE
     Error.cpp
     Timer.cpp
-    SpinLock.cpp
     TimeStamp.cpp
 )
 
