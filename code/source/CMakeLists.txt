@@ -19,5 +19,5 @@ if(PBL_BUILD_SERIAL_LIB)
 endif()
 
 if(PBL_BUILD_DEVICES)
-    # TODO
+    # TODO: add_subdirectory(devices)
 endif()
