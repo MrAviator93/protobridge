@@ -203,7 +203,7 @@ auto v1::SerialPort::dataAvailable() -> Result< bool >
 	return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 }
 
-auto v1::SerialPort::read( ByteSpan data, std::uint32_t timeoutUs ) -> Result< std::uint32_t >
+auto v1::SerialPort::read( ByteSpan data, std::chrono::microseconds timeoutUs ) -> Result< std::uint32_t >
 {
 	if( !isOpen() ) [[unlikely]]
 	{
@@ -216,8 +216,8 @@ auto v1::SerialPort::read( ByteSpan data, std::uint32_t timeoutUs ) -> Result< s
 	FD_SET( m_fd, &set ); // Add the file descriptor to the set
 
 	::timeval timeout;
-	timeout.tv_sec = 0;
-	timeout.tv_usec = timeoutUs;
+	timeout.tv_sec = static_cast< time_t >( timeoutUs.count() / 1'000'000 );
+	timeout.tv_usec = static_cast< suseconds_t >( timeoutUs.count() % 1'000'000 );
 
 	const int rv = ::select( m_fd + 1, &set, nullptr, nullptr, &timeout );
 	if( rv == -1 ) [[unlikely]]

@@ -27,6 +27,12 @@ constexpr std::uint8_t kConfigurationRegister{ 0x01 };
 constexpr std::uint8_t kTLowRegister{ 0x02 };
 constexpr std::uint8_t kTHighRegister{ 0x03 };
 
+// TMP102 Temperature Conversion Constants
+constexpr std::uint16_t kExtendedModeNegativeMask = 0x1000;
+constexpr std::uint16_t kExtendedModeSignExtendMask = 0xE000;
+constexpr std::uint16_t kStandardModeNegativeMask = 0x0800;
+constexpr std::uint16_t kStandardModeSignExtendMask = 0xF000;
+
 // TMP102 Configuration Bits
 constexpr std::size_t kShutdownBit = 0; // Bit 0: Shutdown Mode
 constexpr std::size_t kExtendedModeBit = 4; // Bit 4: Extended Mode (12-bit vs 13-bit)
@@ -56,28 +62,27 @@ auto v1::TMP102Controller::getTemperatureC() -> Result< float >
 	// TODO: Do we need to convert config's endieness here?
 	const bool extendedMode = std::bitset< 8 >( config[ 1 ] ).test( kExtendedModeBit );
 
-	std::int16_t raw = ( data[ 0 ] << 4 ) | ( data[ 1 ] >> 4 );
+	std::uint16_t raw = ( static_cast< std::uint16_t >( data[ 0 ] ) << 4 ) | ( data[ 1 ] >> 4 );
 
 	if( extendedMode )
 	{
-		raw = ( data[ 0 ] << 5 ) | ( data[ 1 ] >> 3 );
+		raw = ( static_cast< std::uint16_t >( data[ 0 ] ) << 5 ) | ( data[ 1 ] >> 3 );
 
-		// Check for negative temperature
-		if( raw & 0x1000 )
+		if( raw & kExtendedModeNegativeMask )
 		{
-			raw |= 0xE000;
+			raw |= kExtendedModeSignExtendMask;
 		}
 
-		return static_cast< float >( raw ) * 0.0625f;
+		return static_cast< float >( static_cast< std::int16_t >( raw ) ) * 0.0625f;
 	}
 	else
 	{
-		if( raw & 0x800 )
+		if( raw & kStandardModeNegativeMask )
 		{
-			raw |= 0xF000;
+			raw |= kStandardModeSignExtendMask;
 		}
 
-		return static_cast< float >( raw ) * 0.0625f;
+		return static_cast< float >( static_cast< std::int16_t >( raw ) ) * 0.0625f;
 	}
 }
 

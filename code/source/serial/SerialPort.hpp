@@ -7,6 +7,7 @@
 // C++
 #include <span>
 #include <mutex>
+#include <chrono>
 #include <atomic>
 #include <cstdint>
 
@@ -136,7 +137,7 @@ public:
 	 * @param timeoutUs Timeout in microseconds to wait for data before aborting.
 	 * @return Result<std::uint32_t> Number of bytes successfully read or an error.
 	 */
-	[[nodiscard]] Result< std::uint32_t > read( ByteSpan data, std::uint32_t timeoutUs );
+	[[nodiscard]] Result< std::uint32_t > read( ByteSpan data, std::chrono::microseconds timeoutUs );
 
 	/**
 	 * @brief Writes data to the serial port.
