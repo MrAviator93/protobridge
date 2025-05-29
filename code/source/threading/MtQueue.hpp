@@ -17,10 +17,7 @@ class MtQueue
 public:
 	MtQueue() = default;
 
-	explicit MtQueue( std::size_t n )
-	{
-		m_queue.resize( n );
-	}
+	explicit MtQueue( std::size_t n ) { m_queue.resize( n ); }
 
 	MtQueue( std::initializer_list< T > initList )
 	{
@@ -62,6 +59,13 @@ public:
 	{
 		std::lock_guard _{ m_mutex };
 		m_queue.clear();
+	}
+
+	/// Resizes the internal queue
+	void resize( std::size_t n )
+	{
+		std::lock_guard _{ m_mutex };
+		m_queue.resize( n );
 	}
 
 	/// Pushes an element into the queue by copy
