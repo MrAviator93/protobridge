@@ -60,7 +60,7 @@ auto v1::TMP102Controller::getTemperatureC() -> Result< float >
 	}
 
 	// TODO: Do we need to convert config's endieness here?
-	const bool extendedMode = std::bitset< 8 >( config[ 1 ] ).test( kExtendedModeBit );
+	const bool extendedMode = ( config[ 1 ] & ( 1 << kExtendedModeBit ) ) != 0;
 
 	std::uint16_t raw = ( static_cast< std::uint16_t >( data[ 0 ] ) << 4 ) | ( data[ 1 ] >> 4 );
 
