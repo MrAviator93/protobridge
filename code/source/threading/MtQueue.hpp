@@ -19,13 +19,11 @@ public:
 
 	explicit MtQueue( std::size_t n )
 	{
-		std::lock_guard _{ m_mutex };
 		m_queue.resize( n );
 	}
 
 	MtQueue( std::initializer_list< T > initList )
 	{
-		std::lock_guard _{ m_mutex };
 		auto first = std::make_move_iterator( initList.begin() );
 		auto last = std::make_move_iterator( initList.end() );
 		m_queue.insert( m_queue.end(), first, last );
