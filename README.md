@@ -307,7 +307,9 @@ Clone the repository into your local machine using the following command:
 git clone git@github.com:MrAviator93/protobridge.git
 ```
 
-Standard build procedure, navigate to the project directory and build the library using CMake and make:
+#### Option 1
+
+Standard build procedure, navigate to the project root directory and build the library using CMake and make:
 
 ```bash
 mkdir build && cd build
@@ -317,6 +319,17 @@ sudo cmake --install .
 ```
 
 This will compile the source code and create the necessary output directories and files.
+
+#### Option 2
+
+You may use also CMakePresets, navigate to the project root directory and build the library the following way:
+
+```bash
+cmake --preset=release -S code
+cd build/release
+cmake --build . --parallel $(nproc)
+sudo cmake --install .
+```
 
 ## Generating documentation
 
