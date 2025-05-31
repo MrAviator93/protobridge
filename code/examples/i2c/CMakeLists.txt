@@ -1,4 +1,5 @@
 add_subdirectory(lm75)
+add_subdirectory(tmp102)
 add_subdirectory(bmp180)
 add_subdirectory(mpu6050)
 add_subdirectory(mpu9250)
