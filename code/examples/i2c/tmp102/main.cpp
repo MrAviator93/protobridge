@@ -36,6 +36,18 @@ int main( const int argc, const char* const* const argv )
 	{
 		if( timer.hasElapsed() )
 		{
+			auto temp = tmp102.getTemperatureC();
+
+			// Check wether the reading is present (indication of successful read)
+			if( !temp.has_value() )
+			{
+				// With C++ 23 we can retrieve exact error what caused the value not present
+				std::println( stderr, "{}", pbl::utils::toStringView( temp.error() ) );
+				return 1;
+			}
+
+			// Output the temperature to the console
+			std::println( "Temperature: {}°C", temp.value() );
 
 			// Reset the timer
 			timer.set();
