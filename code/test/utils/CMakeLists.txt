@@ -5,6 +5,7 @@ set(PRIVATE_DEPS
 
 set(SRC
     BitTests.cpp
+    UtilsTests.cpp
     CounterTests.cpp
     FastPimplTests.cpp
     FixedStringTests.cpp
