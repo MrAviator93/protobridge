@@ -2,7 +2,7 @@
 
 Unlock the full potential of your single-board computer with the ProtoBridge Library, a robust and intuitive toolkit designed for seamless control and communication with a wide array of integrated circuits (ICs). This library transcends mere communication; it empowers users to effortlessly command and interact with diverse ICs, including temperature sensors, environmental monitors, and more, across multiple protocols.
 
-Ideal for both hobbyists and professionals, the ProtoBridge Library simplifies the process of setting up and initiating communication with a wide range of devices inlcuding sensors, motors, accelometers, gyroscopes and others. This enables efficient reading and management of data, ensuring a smooth and streamlined workflow for your projects.
+Ideal for both hobbyists and professionals, the ProtoBridge Library simplifies the process of setting up and initiating communication with a wide range of devices including sensors, motors, accelerometers, gyroscopes and others. This enables efficient reading and management of data, ensuring a smooth and streamlined workflow for your projects.
 
 Built on the modern features of C++ 23, the ProtoBridge Library is an essential asset for reliable and effective device control. It offers broad compatibility and versatility, perfectly aligning with various single-board computer models and brands.
 
