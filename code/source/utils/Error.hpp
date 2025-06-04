@@ -8,7 +8,6 @@ namespace pbl::utils
 
 /**
  * @brief Represents an error with an associated error code and optional message.
- * @todo Consider Renaming to Status.
  */
 class Error final
 {
