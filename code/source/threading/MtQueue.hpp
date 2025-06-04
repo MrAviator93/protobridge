@@ -12,14 +12,18 @@
 namespace pbl::threading
 {
 
+/// A thread-safe queue class that uses std::shared_mutex for synchronization.
 template < typename T >
 class MtQueue
 {
 public:
+	/// Default constructor.
 	MtQueue() = default;
 
-	explicit MtQueue( std::size_t n ) { m_queue.resize( n ); }
+	/// Constructs the queue and reserves a specific size.
+	explicit MtQueue( std::size_t size ) { m_queue.resize( size ); }
 
+	/// Constructs the queue using an initializer list.
 	MtQueue( std::initializer_list< T > initList )
 	{
 		auto first = std::make_move_iterator( initList.begin() );
@@ -27,56 +31,59 @@ public:
 		m_queue.insert( m_queue.end(), first, last );
 	}
 
+	/// Copy constructor.
 	MtQueue( const MtQueue& q ) noexcept( std::is_nothrow_copy_constructible_v< T > )
 	{
 		std::shared_lock _{ q.m_mutex };
 		m_queue = q.m_queue;
 	}
 
+	/// Move constructor.
 	MtQueue( MtQueue&& q ) noexcept( std::is_nothrow_move_constructible_v< T > )
 	{
 		std::lock_guard _{ q.m_mutex };
 		m_queue = std::move( q.m_queue );
 	}
 
-	~MtQueue() = default;
+	/// Destructor, clears the queue.
+	~MtQueue() { clear(); }
 
-	/// Returns true if empty
+	/// Returns true if empty.
 	[[nodiscard]] bool empty() const noexcept
 	{
 		std::shared_lock _{ m_mutex };
 		return m_queue.empty();
 	}
 
-	/// Returns the current size of the queue
+	/// Returns the current size of the queue.
 	[[nodiscard]] std::size_t size() const noexcept
 	{
 		std::shared_lock _{ m_mutex };
 		return m_queue.size();
 	}
 
-	/// Clears the queue
+	/// Clears the queue.
 	void clear()
 	{
 		std::lock_guard _{ m_mutex };
 		m_queue.clear();
 	}
 
-	/// Resizes the internal queue
+	/// Resizes the internal queue.
 	void resize( std::size_t n )
 	{
 		std::lock_guard _{ m_mutex };
 		m_queue.resize( n );
 	}
 
-	/// Pushes an element into the queue by copy
+	/// Pushes an element into the queue by copy.
 	void push( const T& element )
 	{
 		std::lock_guard _{ m_mutex };
 		m_queue.push_back( element );
 	}
 
-	/// Pushes an element into the queue by moving it
+	/// Pushes an element into the queue by moving it.
 	void push( T&& element )
 	{
 		std::lock_guard _{ m_mutex };
@@ -98,6 +105,7 @@ public:
 		m_queue.emplace_back( std::move( container ) );
 	}
 
+	/// Retrieves and removes the front element from the queue.
 	[[nodiscard]] std::optional< T > get()
 	{
 		std::lock_guard _{ m_mutex };
@@ -113,6 +121,7 @@ public:
 		return out;
 	}
 
+	/// Retrieves and removes up to n front elements from the queue.
 	[[nodiscard]] std::vector< T > get( std::size_t n )
 	{
 		std::lock_guard _{ m_mutex };
