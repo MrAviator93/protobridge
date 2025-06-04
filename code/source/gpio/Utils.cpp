@@ -1,8 +1,6 @@
 
 #include "Utils.hpp"
-
-// Thid Party
-#include <gpiod.hpp>
+#include "Gpio.hpp"
 
 namespace pbl::gpio
 {

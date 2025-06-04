@@ -1,5 +1,6 @@
 
 set(PBL_LIB_HEADERS
+    Gpio.hpp
     Utils.hpp
     GpioFwd.hpp
     GpioLine.hpp
@@ -8,6 +9,7 @@ set(PBL_LIB_HEADERS
 
 set(PBL_LIB_SOURCE
     Utils.cpp
+    GpioLine.cpp
     Rpi5Chip0.cpp
 )
 

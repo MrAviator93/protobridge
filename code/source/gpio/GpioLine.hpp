@@ -26,6 +26,8 @@ public:
 		Output
 	};
 
+	~GpioLine();
+
 private:
 	GpioLine( const GpioLine& ) = delete;
 	GpioLine& operator=( const GpioLine& ) = delete;

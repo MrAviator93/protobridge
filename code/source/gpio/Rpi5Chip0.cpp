@@ -1,7 +1,5 @@
 #include "Rpi5Chip0.hpp"
-
-// Third Party
-#include <gpiod.hpp>
+#include "Gpio.hpp"
 
 // C++
 #include <array>
@@ -10,26 +8,7 @@
 namespace pbl::gpio
 {
 
-namespace
-{
-
-struct GpiodChipDeleter
-{
-	void operator()( gpiod_chip* pChip ) const noexcept
-	{
-		if( pChip )
-		{
-			::gpiod_chip_close( pChip );
-		}
-	}
-};
-
-[[nodiscard]] std::unique_ptr< gpiod_chip, GpiodChipDeleter > MakeGpioChip( std::string_view chipName )
-{
-	return std::unique_ptr< gpiod_chip, GpiodChipDeleter >( ::gpiod_chip_open_by_name( chipName.data() ) );
-}
-
-} // namespace
+ 
 
 struct v1::Rpi5Chip0::Impl
 {
