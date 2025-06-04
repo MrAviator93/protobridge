@@ -6,11 +6,8 @@ set(PBL_LIB_HEADERS
     LM75Controller.hpp
     SHT31Controller.hpp
     BMP180Controller.hpp
-<<<<<<< HEAD
     TMP102Controller.hpp
-=======
     BMP388Controller.hpp
->>>>>>> 99536cf (BMP388 I2C Implementation)
     MPU6050Controller.hpp
     MPU9250Controller.hpp
     ADS1015Controller.hpp
