@@ -272,7 +272,7 @@ int main( const int argc, const char* const* const argv )
 
 ```
 
-For more detailed examples, including how to interact with other types of sensors and devices, please check out the Code/Examples directory in the project repository. These examples provide a broader range of use cases and more complex scenarios, helping you to get the most out of this library.
+For more detailed examples, including how to interact with other types of sensors and devices, please check out the [examples](code/examples/) directory in the project repository. These examples provide a broader range of use cases and more complex scenarios, helping you to get the most out of this library.
 
 - [MCP23017 - I/O Expander - Blinking Led](./code/examples/i2c/mcp23017/BlinkingLedExample.cpp)
 - [LM75 - Temperature Sensor](./code/examples/i2c/lm75/main.cpp)
