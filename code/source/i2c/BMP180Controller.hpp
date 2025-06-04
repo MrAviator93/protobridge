@@ -66,7 +66,7 @@ class BMP180Controller final : public ICBase, public utils::Counter< BMP180Contr
 	struct CalibrationConstants;
 	static constexpr std::size_t kCalibConstSize = 22;
 	static constexpr std::size_t kCalibConstAlign = 2;
-	static constexpr float kPressureAtSeaLevelPa = 101325.0f; // Pa
+	static constexpr float kPressureAtSeaLevelPa = 10'1325.0f; // Pa
 
 public:
 	template < typename T >

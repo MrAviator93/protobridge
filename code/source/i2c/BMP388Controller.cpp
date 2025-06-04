@@ -1,6 +1,9 @@
 #include "BMP388Controller.hpp"
 #include "BusController.hpp"
 
+#include <math/Math.hpp>
+#include <math/Dynamics.hpp>
+
 namespace pbl::i2c
 {
 
