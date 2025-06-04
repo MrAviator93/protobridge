@@ -1,3 +1,6 @@
 # Contributors
 
-- MrAviator93
+## Maintainers
+
+- [MrAviator93](https://github.com/MrAviator93)
+
