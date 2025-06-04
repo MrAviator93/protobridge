@@ -39,10 +39,13 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
 
 The library is organized into several key sub-libraries, each offering specific functionality:
 
-- i2c: provides controllers and utilities for I2C communication, including support for various I2C devices.
-- spi: facilitates SPI communication, offering tools to interact with SPI devices.
+- i2c: Provides controllers and utilities for I2C communication, including support for various I2C devices.
+- spi: Facilitates SPI communication, offering tools to interact with SPI devices.
+- gpio: Provides general-use GPIO interface for controlling and monitoring digital input/output pins.
 - math: Includes mathematical utilities and controllers, such as PID controllers for implementing control systems.
 - utils: Provides various utility functions and tools to assist with general tasks and improve code efficiency.
+- serial: Supports serial communication (UART), enabling data transmission between devices via serial interfaces.
+- threading: Offers basic building blocks for concurrent execution using threads, helping manage multitasking within the application.
 
 ## Features
 
