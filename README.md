@@ -30,9 +30,6 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
   - [Motivation](#motivation)
   - [Roadmap](#roadmap)
   - [Contributing](#contributing)
-    - [Branch Naming Conventions](#branch-naming-conventions)
-    - [Commit Message Guidelines](#commit-message-guidelines)
-    - [Example of a Commit Message](#example-of-a-commit-message)
   - [License](#license)
 
 ## Structure
