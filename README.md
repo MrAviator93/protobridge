@@ -96,11 +96,11 @@ int main(int, char**)
 }
 ```
 
-This simple program initializes the I2C bus, sets up the LM75 sensor, reads the temperature, and outputs it to the console. By following this structure, you can easily read from other sensors and devices using their respective controller classes provided by the library.
+[This](code/examples/i2c/lm75/main.cpp) simple program initializes the I2C bus, sets up the LM75 sensor, reads the temperature, and outputs it to the console. By following this structure, you can easily read from other sensors and devices using their respective controller classes provided by the library.
 
 ### Blinking LED with MCP23017
 
-This example shows how to use the MCP23017 I/O expander to blink an LED by toggling a GPIO pin every 2 seconds using a software timer.
+[This](code/examples/i2c/mcp23017/BlinkingLedExample.cpp) example shows how to use the MCP23017 I/O expander to blink an LED by toggling a GPIO pin every 2 seconds using a software timer.
 
 ```cpp
 #include <utils/Timer.hpp>
@@ -156,6 +156,8 @@ int main( int, char** )
 ```
 
 ### Advanced - Pseudo Thermostat Implementation Example
+
+[This](code/examples/general/thermostat/main.cpp) example showcases the full power and flexibility of the ProtoBridge Library by demonstrating how easy it is to build a complex, real-world application using its modular components. It simulates a basic thermostat using sensor input, PID control, and actuator output—all composed using clear, modern C++ 23 idioms.
 
 ```cpp
 class Thermostat
