@@ -2,7 +2,7 @@
 #define PBL_GPIO_GPIO_LINE_HPP__
 
 #include "GpioFwd.hpp"
-#include <utils/ErrorCode.hpp>
+#include <utils/Result.hpp>
 
 // C++
 #include <cstdint>
@@ -16,9 +16,12 @@ inline namespace v1
 
 class GpioLine
 {
+	struct PrivateTag
+	{ };
+
 public:
 	template < typename T >
-	using Result = std::expected< T, utils::ErrorCode >;
+	using Result = utils::Result< T >;
 
 	enum class Direction
 	{
@@ -26,7 +29,20 @@ public:
 		Output
 	};
 
+	GpioLine( gpiod_line* pLine, std::int32_t lineNumber, PrivateTag )
+		: m_pLine{ pLine }
+		, m_lineNumber{ lineNumber }
+	{ }
+
+	// Move constructor
+	GpioLine( GpioLine&& other ) noexcept;
+
+	// Move assignment operator
+	GpioLine& operator=( GpioLine&& other ) noexcept;
+
 	~GpioLine();
+
+	static Result< GpioLine > open( gpiod_chip* pChip, std::int32_t lineNumber, Direction direction );
 
 private:
 	GpioLine( const GpioLine& ) = delete;

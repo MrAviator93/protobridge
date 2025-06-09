@@ -17,14 +17,16 @@ struct GpiodChipDeleter
 		if( pChip )
 		{
 			::gpiod_chip_close( pChip );
-            pChip = nullptr;
+			pChip = nullptr;
 		}
 	}
 };
 
-[[nodiscard]] std::unique_ptr< gpiod_chip, GpiodChipDeleter > MakeGpioChip( std::string_view chipName )
+using GpioChipPtr = std::unique_ptr< gpiod_chip, GpiodChipDeleter >;
+
+[[nodiscard]] inline GpioChipPtr MakeGpioChip( std::string_view chipName )
 {
-	return std::unique_ptr< gpiod_chip, GpiodChipDeleter >( ::gpiod_chip_open_by_name( chipName.data() ) );
+	return GpioChipPtr( ::gpiod_chip_open_by_name( chipName.data() ) );
 }
 
 } // namespace pbl::gpio

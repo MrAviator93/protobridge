@@ -8,15 +8,13 @@
 namespace pbl::gpio
 {
 
- 
-
 struct v1::Rpi5Chip0::Impl
 {
 	Impl( std::string_view chipName )
 		: pChip{ MakeGpioChip( chipName ) }
 	{ }
 
-	std::unique_ptr< gpiod_chip, GpiodChipDeleter > pChip;
+	GpioChipPtr pChip;
 
 	// Using optional here, allows us to lazy initialize the lines,
 	// we don't need to use all the gpio lines always
@@ -54,16 +52,13 @@ auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction directio
 	if( !lines[ storageIndex ].has_value() )
 	{
 		// TODO (MrAviator93): Implement
+		auto line = GpioLine::open( m_pImpl->pChip.get(), static_cast< std::int32_t >( lineNumber ), direction );
+		if( !line ) [[unlikely]]
+		{
+			return utils::MakeError( utils::ErrorCode::HARDWARE_FAILURE );
+		}
 
-		// GpioLine gpioLine{ static_cast< std::int32_t >( lineNumber ), m_pChip };
-		// if( !gpioLine.isValid() ) [[unlikely]]
-		// {
-		// 	return std::unexpected( utils::ErrorCode::HARDWARE_FAILURE );
-		// }
-
-		// lines[ storageIndex ].emplace( std::move( gpioLine ) );
-
-		return utils::MakeError< std::reference_wrapper< GpioLine > >( utils::ErrorCode::HARDWARE_NOT_AVAILABLE );
+		lines[ storageIndex ].emplace( std::move( *line ) );
 	}
 
 	return std::ref( lines[ storageIndex ].value() );
