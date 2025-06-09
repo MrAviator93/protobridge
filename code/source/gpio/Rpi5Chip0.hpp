@@ -27,7 +27,7 @@ public:
 	using Result = utils::Result< T >;
 
 	template < typename T >
-	using RefResult = utils::Result< std::reference_wrapper< T > >;
+	using RefResult = Result< std::reference_wrapper< T > >;
 
 	/// Usable GPIOs from the 40-pin header (BCM numbers)
 	enum class Pin : std::uint8_t
