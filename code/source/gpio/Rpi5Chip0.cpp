@@ -51,7 +51,6 @@ auto v1::Rpi5Chip0::line( Pin pin, [[maybe_unused]] GpioLine::Direction directio
 
 	if( !lines[ storageIndex ].has_value() )
 	{
-		// TODO (MrAviator93): Implement
 		auto line = GpioLine::open( m_pImpl->pChip.get(), static_cast< std::int32_t >( lineNumber ), direction );
 		if( !line ) [[unlikely]]
 		{
