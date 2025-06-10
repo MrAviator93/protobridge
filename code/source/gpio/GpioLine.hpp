@@ -42,6 +42,8 @@ public:
 
 	~GpioLine();
 
+	void release();
+
 	static Result< GpioLine > open( gpiod_chip* pChip, std::int32_t lineNumber, Direction direction );
 
 private:

@@ -33,6 +33,15 @@ GpioLine& v1::GpioLine::operator=( GpioLine&& other ) noexcept
 
 v1::GpioLine::~GpioLine() = default;
 
+void v1::GpioLine::release()
+{
+	if( m_pLine )
+	{
+		::gpiod_line_release( m_pLine );
+		m_pLine = nullptr;
+	}
+}
+
 auto v1::GpioLine::open( gpiod_chip* pChip, std::int32_t lineNumber, Direction direction ) -> Result< GpioLine >
 {
 	auto pLine = ::gpiod_chip_get_line( pChip, lineNumber );
