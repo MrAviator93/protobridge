@@ -31,7 +31,10 @@ GpioLine& v1::GpioLine::operator=( GpioLine&& other ) noexcept
 	return *this;
 }
 
-v1::GpioLine::~GpioLine() = default;
+v1::GpioLine::~GpioLine()
+{
+	release();
+}
 
 void v1::GpioLine::release()
 {
