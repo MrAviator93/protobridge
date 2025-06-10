@@ -10,7 +10,26 @@
 namespace pbl::gpio
 {
 
-struct GpiodChipDeleter
+struct GpioLineDeleter final
+{
+	void operator()( gpiod_line* pLine ) const noexcept
+	{
+		if( pLine )
+		{
+			::gpiod_line_release( pLine );
+			pLine = nullptr;
+		}
+	}
+};
+
+using GpioLineUPtr = std::unique_ptr< gpiod_line, GpioLineDeleter >;
+
+// [[nodiscard]] inline GpioLineUPtr MakeGpioLine( gpiod_chip* pChip, std::size_t lineNumber )
+// {
+// 	// TODO:
+// }
+
+struct GpiodChipDeleter final
 {
 	void operator()( gpiod_chip* pChip ) const noexcept
 	{

@@ -29,9 +29,10 @@ public:
 		Output
 	};
 
-	GpioLine( gpiod_line* pLine, std::int32_t lineNumber, PrivateTag )
+	GpioLine( gpiod_line* pLine, std::int32_t lineNumber, Direction direction, PrivateTag )
 		: m_pLine{ pLine }
 		, m_lineNumber{ lineNumber }
+		, m_direction{ direction }
 	{ }
 
 	// Move constructor
@@ -53,6 +54,7 @@ private:
 private:
 	gpiod_line* m_pLine{ nullptr };
 	std::int32_t m_lineNumber{};
+	Direction m_direction;
 };
 
 } // namespace v1

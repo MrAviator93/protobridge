@@ -71,7 +71,7 @@ auto v1::GpioLine::open( gpiod_chip* pChip, std::int32_t lineNumber, Direction d
 		return utils::MakeError( utils::ErrorCode::HARDWARE_NOT_AVAILABLE );
 	}
 
-	return utils::MakeSuccess< GpioLine >( std::in_place, pLine, lineNumber, PrivateTag{} );
+	return utils::MakeSuccess< GpioLine >( std::in_place, pLine, lineNumber, direction, PrivateTag{} );
 }
 
 } // namespace pbl::gpio
