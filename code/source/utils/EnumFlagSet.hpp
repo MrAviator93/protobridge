@@ -8,8 +8,16 @@
 namespace pbl::utils
 {
 
+namespace detail
+{
+
 template < typename I, typename E >
-	requires( std::is_integral_v< I > && std::is_enum_v< E > && sizeof( I ) >= sizeof( E ) )
+concept EnumFlagCompatible = std::is_integral_v< I > && std::is_enum_v< E > && ( sizeof( I ) >= sizeof( E ) );
+
+} // namespace detail
+
+template < typename I, typename E >
+	requires detail::EnumFlagCompatible< I, E >
 class EnumFlagSet final
 {
 public:
@@ -100,7 +108,7 @@ public:
 	[[nodiscard]] constexpr bool all() const noexcept
 	{
 		if( m_value <= 0 ) return false;
-		
+
 		return m_value & ( m_value - 1 ) == 0;
 	}
 
