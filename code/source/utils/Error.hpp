@@ -7,16 +7,35 @@ namespace pbl::utils
 {
 
 /**
- * @brief Represents an error with an associated error code and optional message.
+ * @brief Represents an error with a structured error code and optional message.
+ *
+ * This class is intended for use with `std::expected<T, Error>` (aliased as `Result<T>`) to provide
+ * expressive error handling across the ProtoBridge library. It provides both standardized
+ * error codes and human-readable messages to support diagnostics and user-facing reporting.
+ *
+ * Example:
+ * @code
+ * Result<int> readResult = readFile("config.txt");
+ * if (!readResult) {
+ *     std::cerr << "Read failed: " << readResult.error().description() << '\n';
+ * }
+ * @endcode
  */
 class Error final
 {
 public:
+	/**
+	 * @brief Constructs an error with the given code and optional message.
+	 *
+	 * @param code    The error code representing the type of failure.
+	 * @param message Optional additional context or description.
+	 */
 	explicit Error( ErrorCode code, std::optional< std::string > message = std::nullopt )
 		: m_code{ code }
 		, m_message{ std::move( message ) }
 	{ }
 
+	/// Common predefined error instances for reuse throughout the library.
 	static const Error END_OF_FILE;
 	static const Error FAILED_TO_READ;
 	static const Error FAILED_TO_WRITE;
@@ -39,10 +58,10 @@ public:
 	/// Implicit conversion to ErrorCode.
 	[[nodiscard]] operator ErrorCode() const noexcept { return m_code; }
 
-	/// Returns the optional error message.
+	/// Returns the optional user-defined error message.
 	[[nodiscard]] auto& message() const noexcept { return m_message; }
 
-	/// Returns a formatted string containing the error code and optional message.
+	/// Returns a formatted string containing the error code and optional user-defined message.
 	[[nodiscard]] std::string description() const;
 
 private:
