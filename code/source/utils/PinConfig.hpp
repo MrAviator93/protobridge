@@ -11,6 +11,15 @@ namespace pbl::utils
 namespace detail
 {
 
+template < typename T, typename ToBool, typename FromBool >
+concept PinCompatible =
+	// T Must be either a boolean or an enumerator
+	( std::same_as< T, bool > || std::is_enum_v< T > ) &&
+	// ToBool must be nothrow invocable
+	std::is_nothrow_invocable_r_v< bool, ToBool, T > &&
+	// FromBool must be nothrow invocable
+	std::is_nothrow_invocable_r_v< T, FromBool, bool >;
+
 template < typename T >
 struct DefaultToBool
 {
@@ -33,6 +42,8 @@ struct DefaultFromBool
  * @todo Consider adding size_t to define bitset size or PinCount, or leave
  * as 8, as it's the default one.
  * 
+ * @todo Add more unit tests for this class, for improved test coverage.
+ * 
  * @tparam T Must be either `bool` or an `enum` with exactly two states (true/false, ON, OFF, etc.).
  * @tparam Default Default value to initialize the pin configuration.
  * @tparam ToBool Callable to convert `T` to `bool`.
@@ -42,8 +53,7 @@ template < typename T,
 		   T Default,
 		   typename ToBool = detail::DefaultToBool< T >,
 		   typename FromBool = detail::DefaultFromBool< T > >
-	requires( std::same_as< T, bool > || std::is_enum_v< T > ) && std::is_nothrow_invocable_r_v< bool, ToBool, T > &&
-			std::is_nothrow_invocable_r_v< T, FromBool, bool >
+	requires detail::PinCompatible< T, ToBool, FromBool >
 struct PinConfig final
 {
 	inline static constexpr std::size_t kMaxPins{ 8 };
@@ -70,22 +80,9 @@ struct PinConfig final
 	 * @param pins Pin values to set.
 	 */
 	template < typename... Pins >
-	constexpr PinConfig( Pins... pins ) noexcept
-	{
-		static_assert( sizeof...( Pins ) <= 8, "Too many pins provided, maximum is 8" );
+	constexpr PinConfig( Pins... pins ) noexcept;
 
-		constexpr auto pinTuple = std::tuple{ pins... }; // Store pins in a tuple
-
-		constexpr auto setPins = [ this, &pinTuple ]( auto... indices ) {
-			( ( bitset[ indices ] = ToBool{}( std::get< indices >( pinTuple ) ) ), ... );
-		};
-
-		setPins( std::make_index_sequence< sizeof...( Pins ) >{} );
-	}
-
-	/**
-	 * @brief TBW
-	 */
+	/// TBW
 	template < typename... Pins >
 		requires( ( sizeof...( Pins ) > 0 ) && ... && requires( Pins p ) { p.value; } )
 	constexpr explicit PinConfig( Pins... pins ) noexcept
@@ -95,60 +92,24 @@ struct PinConfig final
 
 	/// Access individual pin value using pin<0>() interface.
 	template < size_t Index >
-	[[nodiscard]] constexpr T pin() const noexcept
-	{
-		static_assert( Index < kMaxPins, "Index out of bounds" );
-		return FromBool{}( bitset[ Index ] );
-	}
+	[[nodiscard]] constexpr T pin() const noexcept;
 
-	[[nodiscard]] constexpr std::optional< T > pin( std::size_t index ) const noexcept
-	{
-		if( index >= kMaxPins )
-		{
-			return std::nullopt;
-		}
+	/// TBW
+	[[nodiscard]] constexpr std::optional< T > pin( std::size_t index ) const noexcept;
 
-		return FromBool{}( bitset[ index ] );
-	}
-
-	[[nodiscard]] constexpr std::optional< T > operator[]( std::size_t index ) const noexcept
-	{
-		if( index >= kMaxPins )
-		{
-			return std::nullopt;
-		}
-		return FromBool{}( bitset[ index ] );
-	}
+	/// TBW
+	[[nodiscard]] constexpr std::optional< T > operator[]( std::size_t index ) const noexcept;
 
 	/// Mutates pin state
 	template < size_t Index >
-	constexpr void setPin( T value ) noexcept
-	{
-		static_assert( Index < kMaxPins );
-		bitset[ Index ] = ToBool{}( value );
-	}
+	constexpr void setPin( T value ) noexcept;
 
-	[[nodiscard]] constexpr bool setPin( std::size_t index, T value ) noexcept
-	{
-		if( index >= kMaxPins )
-		{
-			return false;
-		}
-
-		bitset[ index ] = ToBool{}( value );
-
-		return true;
-	}
+	/// TBW
+	[[nodiscard]] constexpr bool setPin( std::size_t index, T value ) noexcept;
 
 	/// For each pin
 	template < typename Func >
-	constexpr void forEachPin( Func&& fn ) const
-	{
-		for( std::size_t i{}; i < kMaxPins; ++i )
-		{
-			fn( i, FromBool{}( bitset[ i ] ) );
-		}
-	}
+	constexpr void forEachPin( Func&& fn ) const;
 
 	/// Converts the PinConfig object to its underlying bitset representation.
 	[[nodiscard]] constexpr operator auto() const noexcept { return bitset; }
@@ -161,4 +122,7 @@ struct PinConfig final
 };
 
 } // namespace pbl::utils
+
+#include "PinConfig.ipp"
+
 #endif // PBL_UTILS_PIN_CONFIG_HPP__

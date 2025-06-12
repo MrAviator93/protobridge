@@ -12,10 +12,12 @@ set(PBL_LIB_HEADERS
     FastPimpl.hpp
     TimeStamp.hpp
     PinConfig.hpp
+    PinConfig.ipp
     Overloaded.hpp
     FixedString.hpp
     EnumFlagSet.hpp
     CompactBitset.hpp
+    CompactBitset.ipp
     RandomGenerator.hpp
 )
 
