@@ -14,6 +14,10 @@ namespace detail
 template < typename I, typename E >
 concept EnumFlagCompatible = std::is_integral_v< I > && std::is_enum_v< E > && ( sizeof( I ) >= sizeof( E ) );
 
+template < typename IntT, typename EnumT, typename... Bits >
+concept EnumFlagVariadicArgs =
+	( sizeof...( Bits ) > 1 ) && ( ( std::is_same_v< Bits, IntT > || std::is_same_v< Bits, EnumT > ) && ... );
+
 } // namespace detail
 
 template < typename I, typename E >
@@ -39,10 +43,9 @@ public:
 
 	/// Variadic constructor from multiple bits, accepts IntType and or EnumType.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 1 &&
-				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
 	constexpr EnumFlagSet( Bits... bits ) noexcept
-		: m_value{ ( ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) | ... ) }
+		: m_value{ static_cast< IntType >( ( static_cast< int >( bits ) | ... ) ) }
 	{ }
 
 	EnumFlagSet( const EnumFlagSet& ) = default;
@@ -58,11 +61,10 @@ public:
 
 	/// Variadic set function to set multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 1 &&
-				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
 	constexpr void set( Bits... bits ) noexcept
 	{
-		( ( m_value |= ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
+		( ( m_value |= static_cast< IntType >( bits ) ), ... );
 	}
 
 	/// Clears a specific bit.
@@ -70,11 +72,10 @@ public:
 
 	///  Variadic clear function to clear multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 1 &&
-				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
 	constexpr void clear( Bits... bits ) noexcept
 	{
-		( ( m_value &= ~( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
+		( ( m_value &= ~static_cast< IntType >( bits ) ), ... );
 	}
 
 	/// Flips a specific bit.
@@ -82,11 +83,10 @@ public:
 
 	/// Variadic toggle function to flip multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 1 &&
-				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
 	constexpr void flip( Bits... bits ) noexcept
 	{
-		( ( m_value ^= ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ), ... );
+		( ( m_value ^= static_cast< IntType >( bits ) ), ... );
 	}
 
 	/// Tests if a specific bit is set.
@@ -97,11 +97,10 @@ public:
 
 	/// Variadic test function to test multiple bits.
 	template < typename... Bits >
-		requires( sizeof...( Bits ) > 1 &&
-				  ( ( std::is_same_v< Bits, IntType > || std::is_same_v< Bits, EnumType > ) && ... ) )
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
 	constexpr void test( Bits... bits ) noexcept
 	{
-		return ( ( m_value & ( std::is_same_v< Bits, EnumType > ? static_cast< IntType >( bits ) : bits ) ) && ... );
+		return ( ( m_value & static_cast< IntType >( bits ) ) && ... );
 	}
 
 	/// Checks if all bits are set.
@@ -142,4 +141,7 @@ private:
 };
 
 } // namespace pbl::utils
+
+#include "EnumFlagSet.ipp"
+
 #endif // PBL_UTILS_ENUM_FLAG_SET_HPP__

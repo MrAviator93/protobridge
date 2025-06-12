@@ -16,6 +16,7 @@ set(PBL_LIB_HEADERS
     Overloaded.hpp
     FixedString.hpp
     EnumFlagSet.hpp
+    EnumFlagSet.ipp
     CompactBitset.hpp
     CompactBitset.ipp
     RandomGenerator.hpp

@@ -8,6 +8,7 @@ set(SRC
     UtilsTests.cpp
     CounterTests.cpp
     FastPimplTests.cpp
+    EnumFlagSetTests.cpp
     FixedStringTests.cpp
     CompactBitsetTests.cpp
 )
