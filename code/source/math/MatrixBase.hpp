@@ -2,15 +2,7 @@
 #ifndef I2C_MATH_MATRIX_BASE_HPP__
 #define I2C_MATH_MATRIX_BASE_HPP__
 
-#include "Math.hpp"
 #include "Linear.hpp"
-
-// C++
-#include <array>
-#include <cstdint>
-#include <optional>
-#include <algorithm>
-#include <type_traits>
 
 namespace pbl::math
 {
@@ -20,7 +12,7 @@ template < typename T, std::size_t Rows, std::size_t Columns >
 class MatrixBase
 {
 	static constexpr std::size_t Size = Rows * Columns;
-	static constexpr std::size_t Alignment = AlignmentSelectorV< T >;
+	static constexpr std::size_t Alignment = detail::AlignmentSelectorV< T >;
 
 public:
 	using ValueType = T;

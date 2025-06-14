@@ -5,9 +5,15 @@
 
 // C++
 #include <array>
+#include <cstdint>
+#include <optional>
+#include <algorithm>
 #include <type_traits>
 
 namespace pbl::math
+{
+
+namespace detail
 {
 
 template < typename T >
@@ -49,10 +55,13 @@ constexpr std::size_t AlignmentSelectorV = AlignmentSelector< T >::value;
 template < typename T >
 concept IsIntFloatOrDouble = std::is_same_v< T, int > || std::is_same_v< T, float > || std::is_same_v< T, double >;
 
+} // namespace detail
+
 template < typename T, std::size_t Size >
+	requires std::is_arithmetic_v< T >
 class VectorBase
 {
-	static constexpr std::size_t Alignment = AlignmentSelectorV< T >;
+	static constexpr std::size_t Alignment = detail::AlignmentSelectorV< T >;
 
 public:
 	using ValueType = T;
@@ -64,6 +73,10 @@ public:
 	constexpr VectorBase( Args&&... args ) noexcept
 		: m_data{ std::forward< Args >( args )... }
 	{ }
+
+	constexpr void fill( T value ) noexcept { std::ranges::fill( m_data, value ); }
+
+	constexpr void zero() noexcept { fill( T{ 0 } ); }
 
 	[[nodiscard]] constexpr auto& data( this auto& self ) noexcept { return self.m_data; }
 
