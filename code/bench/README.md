@@ -1,4 +1,4 @@
-# Benhchmark
+# Benchmark
 
 ## CPU Scaling
 
