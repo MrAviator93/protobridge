@@ -2,6 +2,7 @@
 #define PBL_UTILS_ENUM_FLAG_SET_HPP__
 
 // C++
+#include <limits>
 #include <cstdint>
 #include <type_traits>
 
@@ -98,24 +99,54 @@ public:
 	/// Variadic test function to test multiple bits.
 	template < typename... Bits >
 		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
-	constexpr void test( Bits... bits ) noexcept
+	[[nodiscard]] constexpr bool test( Bits... bits ) const noexcept
 	{
 		return ( ( m_value & static_cast< IntType >( bits ) ) && ... );
 	}
 
-	/// Checks if all bits are set.
-	[[nodiscard]] constexpr bool all() const noexcept
-	{
-		if( m_value <= 0 ) return false;
+	/**
+	 * @brief Checks if all bits are set in the internal value representation.
+	 * @note This compares against the maximum value of the underlying type, which may include bits not defined in the enum.
+	 */
+	[[nodiscard]] constexpr bool full() const noexcept { return m_value == std::numeric_limits< I >::max(); }
 
-		return m_value & ( m_value - 1 ) == 0;
+	/**
+	 * @brief Checks if all specified flags are set.
+	 * @tparam Bits One or more enum or integral flag values.
+	 * @param bits The flags to check.
+	 * @return true if all provided flags are set; false otherwise.
+	 */
+	template < typename... Bits >
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
+	[[nodiscard]] constexpr bool all( Bits... bits ) const noexcept
+	{
+		const IntType mask = ( static_cast< IntType >( bits ) | ... );
+		return ( m_value & mask ) == mask;
 	}
 
 	/// Checks if any bit is set.
 	[[nodiscard]] constexpr bool any() const noexcept { return m_value != 0; }
 
+	/// @brief Checks if any of the specified flags are set.
+	template < typename... Bits >
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
+	[[nodiscard]] constexpr bool any( Bits... bits ) const noexcept
+	{
+		const IntType mask = ( static_cast< IntType >( bits ) | ... );
+		return ( m_value & mask ) != 0;
+	}
+
 	/// Checks if no bits are set.
 	[[nodiscard]] constexpr bool none() const noexcept { return m_value == 0; }
+
+	/// @brief Checks if none of the specified flags are set.
+	template < typename... Bits >
+		requires detail::EnumFlagVariadicArgs< IntType, EnumType, Bits... >
+	[[nodiscard]] constexpr bool none( Bits... bits ) const noexcept
+	{
+		const IntType mask = ( static_cast< IntType >( bits ) | ... );
+		return ( m_value & mask ) == 0;
+	}
 
 	/// Counts the number of set bits.
 	[[nodiscard]] constexpr std::size_t count() const noexcept
