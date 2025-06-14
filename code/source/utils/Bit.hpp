@@ -9,6 +9,7 @@ namespace pbl::utils
 {
 
 template < typename T, std::size_t Shift >
+	requires std::is_integral_v< T >
 [[nodiscard]] constexpr T bit() noexcept
 {
 	static_assert( std::is_integral_v< T >, "T must be an integral type." );
