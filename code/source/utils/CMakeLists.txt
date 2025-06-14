@@ -3,6 +3,7 @@ set(PBL_LIB_HEADERS
     Bit.hpp
     Utils.hpp
     Timer.hpp
+    Timer.ipp
     Error.hpp
     Result.hpp
     Counter.hpp

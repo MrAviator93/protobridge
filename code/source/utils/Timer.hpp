@@ -55,36 +55,7 @@ public:
 
 	template < typename Callback >
 		requires std::invocable< Callback, Dt >
-	auto onTick( Callback&& callback ) -> std::invoke_result_t< Callback, Dt >
-	{
-		if( hasElapsed() )
-		{
-			const auto dt = elapsedSinceSetInSeconds();
-
-			if constexpr( std::is_void_v< std::invoke_result_t< Callback, Dt > > )
-			{
-				std::forward< Callback >( callback )( dt );
-				set();
-			}
-			else
-			{
-				auto result = std::forward< Callback >( callback )( dt );
-				set();
-				return result;
-			}
-		}
-		else // The timer is not yet elapsed
-		{
-			if constexpr( !std::is_void_v< std::invoke_result_t< Callback, Dt > > )
-			{
-				return {}; // Only return if the return type is not void
-			}
-			else
-			{
-				return;
-			}
-		}
-	}
+	auto onTick( Callback&& callback ) -> std::invoke_result_t< Callback, Dt >;
 
 private:
 	Clock::time_point m_startTime;
@@ -92,4 +63,7 @@ private:
 };
 
 } // namespace pbl::utils
+
+#include "Timer.ipp"
+
 #endif // PBL_UTILS_TIMER_HPP__
