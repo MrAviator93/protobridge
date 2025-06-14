@@ -6,9 +6,13 @@ set(PBL_LIB_HEADERS
     Matrix.hpp
     Dynamics.hpp
     Matrix2x2.hpp
+    Matrix2x2.ipp
     Matrix3x3.hpp
+    Matrix3x3.ipp
     Matrix4x4.hpp
+    Matrix4x4.ipp
     Matrix6x6.hpp
+    Matrix6x6.ipp
     Modifiers.hpp
     Constants.hpp
     MatrixBase.hpp
