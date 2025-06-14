@@ -21,6 +21,19 @@ concept EnumFlagVariadicArgs =
 
 } // namespace detail
 
+/**
+ * @brief A strongly-typed, constexpr-capable bitmask utility for enum flags.
+ *
+ * Provides a type-safe wrapper around an integral value representing bitwise flags
+ * defined by an enum type. Supports standard operations such as setting, clearing,
+ * flipping, and testing flags, with variadic overloads for convenience. Designed to
+ * work with scoped enums (enum class) and allows combining both enum and raw integer values.
+ *
+ * @tparam I The underlying integral type used to store the flags (e.g., uint8_t, uint32_t).
+ * @tparam E The scoped enum type representing individual flags.
+ *
+ * @note The enum type E should define only unique powers-of-two values to avoid collisions.
+ */
 template < typename I, typename E >
 	requires detail::EnumFlagCompatible< I, E >
 class EnumFlagSet final
