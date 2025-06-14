@@ -11,36 +11,6 @@ namespace pbl::math
 {
 
 /**
- * @brief Converts degrees to radians.
- * 
- * @tparam T Floating point type of the angle.
- * @param deg Angle in degrees.
- * @return Angle in radians.
- * 
- * @note Assumes the input is in degrees and returns the corresponding angle in radians.
- */
-template < std::floating_point T >
-[[nodiscard]] constexpr T degreesToRadians( T degrees ) noexcept
-{
-	return ( degrees * constants::Pi< T > / static_cast< T >( 180.0 ) );
-}
-
-/**
- * @brief Converts radians to degrees.
- * 
- * @tparam T Floating point type of the angle.
- * @param rad Angle in radians.
- * @return Angle in degrees.
- * 
- * @note Assumes the input is in radians and returns the corresponding angle in degrees.
- */
-template < std::floating_point T >
-[[nodiscard]] constexpr T radiansToDegrees( T radians ) noexcept
-{
-	return ( radians * static_cast< T >( 180.0 ) / constants::Pi< T > );
-}
-
-/**
  * @brief Computes the square of the sine of the input value.
  * 
  * This function calculates sin(value)^2.  
@@ -216,6 +186,36 @@ template < std::floating_point T >
 
 	// Compute the interpolated y value
 	return ( h00 * y1 ) + ( h10 * ( x2 - x1 ) * dy1 ) + ( h01 * y2 ) + ( h11 * ( x2 - x1 ) * dy2 );
+}
+
+/**
+ * @brief Converts degrees to radians.
+ * 
+ * @tparam T Floating point type of the angle.
+ * @param deg Angle in degrees.
+ * @return Angle in radians.
+ * 
+ * @note Assumes the input is in degrees and returns the corresponding angle in radians.
+ */
+template < std::floating_point T >
+[[nodiscard]] constexpr T degreesToRadians( T degrees ) noexcept
+{
+	return ( degrees * constants::Pi< T > / static_cast< T >( 180.0 ) );
+}
+
+/**
+ * @brief Converts radians to degrees.
+ * 
+ * @tparam T Floating point type of the angle.
+ * @param rad Angle in radians.
+ * @return Angle in degrees.
+ * 
+ * @note Assumes the input is in radians and returns the corresponding angle in degrees.
+ */
+template < std::floating_point T >
+[[nodiscard]] constexpr T radiansToDegrees( T radians ) noexcept
+{
+	return ( radians * static_cast< T >( 180.0 ) / constants::Pi< T > );
 }
 
 /**
