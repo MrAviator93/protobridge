@@ -33,6 +33,10 @@ public:
 		: m_data{ std::forward< Args >( args )... }
 	{ }
 
+	constexpr void fill( T value ) noexcept { std::ranges::fill( m_data, value ); }
+
+	constexpr void zero() noexcept { fill( T{ 0 } ); }
+
 	[[nodiscard]] constexpr std::optional< T > at( std::size_t idx ) const noexcept
 	{
 		if( idx < Size )
@@ -57,6 +61,11 @@ public:
 
 	// Compile-time constant to check if the data is aligned
 	// static constexpr bool IsDataAligned = ( sizeof( std::array< T, Size > ) % Alignment == 0 );
+
+	constexpr auto begin() noexcept { return m_data.begin(); }
+	constexpr auto end() noexcept { return m_data.end(); }
+	constexpr auto begin() const noexcept { return m_data.begin(); }
+	constexpr auto end() const noexcept { return m_data.end(); }
 
 protected:
 	[[nodiscard]] constexpr bool isAligned() const noexcept
