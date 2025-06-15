@@ -99,53 +99,13 @@ public:
 	 * @param container 
 	 */
 	template < template < typename, typename > class C, class A >
-	void push( C< T, A >& container )
-	{
-		std::lock_guard _{ m_mutex };
-		m_queue.emplace_back( std::move( container ) );
-	}
+	void push( C< T, A >& container );
 
 	/// Retrieves and removes the front element from the queue.
-	[[nodiscard]] std::optional< T > get()
-	{
-		std::lock_guard _{ m_mutex };
-
-		if( m_queue.empty() ) [[unlikely]]
-		{
-			return std::nullopt;
-		}
-
-		T out = std::move( m_queue.front() );
-		m_queue.pop_front();
-
-		return out;
-	}
+	[[nodiscard]] std::optional< T > get();
 
 	/// Retrieves and removes up to n front elements from the queue.
-	[[nodiscard]] std::vector< T > get( std::size_t n )
-	{
-		std::lock_guard _{ m_mutex };
-
-		if( n == 0 || m_queue.empty() ) [[unlikely]]
-		{
-			return {};
-		}
-
-		const std::size_t nToCopy = std::min( n, m_queue.size() );
-
-		std::vector< T > out;
-		out.reserve( nToCopy );
-
-		// Move elements from m_queue into out using iterators
-		auto first = std::make_move_iterator( m_queue.begin() );
-		auto last = std::make_move_iterator( m_queue.begin() + nToCopy );
-		std::copy( first, last, std::back_inserter( out ) );
-
-		// Erase moved-from elements
-		m_queue.erase( m_queue.begin(), m_queue.begin() + nToCopy );
-
-		return out;
-	}
+	[[nodiscard]] std::vector< T > get( std::size_t n );
 
 private:
 	mutable std::shared_mutex m_mutex; //!< Mutex
@@ -153,4 +113,7 @@ private:
 };
 
 } // namespace pbl::threading
+
+#include "MtQueue.ipp"
+
 #endif // PBL_THREADING_MT_QUEUE_HPP__
