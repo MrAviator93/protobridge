@@ -14,7 +14,7 @@ namespace pbl::threading
 
 /// A thread-safe queue class that uses std::shared_mutex for synchronization.
 template < typename T >
-class MtQueue
+class MtQueue final
 {
 public:
 	/// Default constructor.
