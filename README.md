@@ -21,7 +21,7 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
     - [Examples](#examples)
       - [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
       - [Blinking Led with MCP23017](#blinking-led-with-mcp23017)
-      - [Advanced - Pseudo Thermostat Implementation Example](#advanced---pseudo-thermostat-implementation-example)
+      - [Advanced - Pseudo Thermostat Implementation](#advanced---pseudo-thermostat-implementation)
   - [Requirements](#requirements)
     - [I2C Tools](#i2c-tools)
   - [Quick Start](#quick-start)
@@ -155,7 +155,7 @@ int main( int, char** )
 }
 ```
 
-### Advanced - Pseudo Thermostat Implementation Example
+### Advanced - Pseudo Thermostat Implementation
 
 [This](code/examples/general/thermostat/main.cpp) example showcases the full power and flexibility of the ProtoBridge Library by demonstrating how easy it is to build a complex, real-world application using its modular components. It simulates a basic thermostat using sensor input, PID control, and actuator output—all composed using clear, modern C++ 23 idioms.
 
