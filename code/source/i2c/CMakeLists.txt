@@ -12,6 +12,7 @@ set(PBL_LIB_HEADERS
     ADS1015Controller.hpp
     PCA9685Controller.hpp
     MCP23017Controller.hpp
+    MCP23017Controller.ipp
 )
 
 set(PBL_LIB_SOURCE
