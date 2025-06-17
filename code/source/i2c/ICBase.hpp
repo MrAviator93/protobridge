@@ -17,6 +17,9 @@ inline namespace v1
 
 class BusController;
 
+namespace detail
+{
+
 /**
  * @brief A concept that checks for valid I2C address types.
  *
@@ -30,6 +33,8 @@ class BusController;
 template < typename T >
 concept AddressType = std::is_same_v< T, std::uint8_t > ||
 					  ( std::is_enum_v< T > && std::same_as< std::underlying_type_t< T >, std::uint8_t > );
+
+} // namespace detail
 
 /**
  * @class ICBase
@@ -68,7 +73,7 @@ protected:
      * @param busController Reference to the I2C bus controller, facilitating communication with the I2C bus.
      * @param icAddress The unique address of the IC on the I2C bus.
 	 */
-	template < AddressType T >
+	template < detail::AddressType T >
 	ICBase( BusController& busController, const T icAddress ) noexcept
 		: m_busController{ busController }
 		, m_icAddress{ static_cast< std::uint8_t >( icAddress ) }
