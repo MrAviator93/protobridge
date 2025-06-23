@@ -19,8 +19,8 @@
 #### Build & Install CMake
 
 ```bash
-git clone --depth=1 --branch v3.31.0 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-3.31.0
-cd cmake-3.31.0 && mkdir build && cd build
+git clone --depth=1 --branch v4.0.3 --recurse-submodules -j$(nproc) git@github.com:Kitware/CMake.git cmake-4.0.3
+cd cmake-4.0.3 && mkdir build && cd build
 ../bootstrap
 make -j$(nproc)
 sudo make install
@@ -43,7 +43,7 @@ sudo LD_LIBRARY_PATH=/usr/local/gcc-14.1.0/lib64:$LD_LIBRARY_PATH make install
 git clone --depth=1 --branch 2.16.0 --recurse-submodules -j$(nproc) https://github.com/danmar/cppcheck.git cppcheck-2.16.0
 cd cppcheck-2.16.0 && mkdir build && cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Release
-cmake --build . --parallel $(nproc)
+cmake --build . --parallel
 sudo cmake --install .
 ```
 
@@ -58,7 +58,7 @@ sudo cmake --install .
 ```bash
 git clone --depth=1 --branch v1.9.0 --recurse-submodules -j$(nproc) git@github.com:google/benchmark.git bench-1.9.0
 cd bench-1.9.0 && mkdir build && cd build
-make -j$(nproc)
-cmake --build . --parallel $(nproc)
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+cmake --build . --parallel
 sudo cmake --install .
 ```

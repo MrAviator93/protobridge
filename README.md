@@ -283,7 +283,7 @@ For more detailed examples, including how to interact with other types of sensor
 
 ## Requirements
 
-- CMake (version 3.29.0 or newer).
+- CMake (version 4.0.1 or newer).
 - A C++ 23 compliant compiler (GCC-14.2, Clang-18.1).
 - A single-board computer (e.g., Raspberry Pi, BeagleBone) running an OS that supports I2C ioctl system calls.
 
