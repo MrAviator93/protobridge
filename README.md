@@ -72,14 +72,14 @@ This example shows you how to initialize communication with the LM75 sensor and 
 int main(int, char**)
 {
     // Create a bus controller for the I2C bus (Raspberry Pi 4)
-    pbl::i2c::BusController busController{"/dev/i2c-1"};
+    auto busController = pbl::i2c::BusController::open("/dev/i2c-1");
 
     // Check if the I2C bus is open and accessible
-    if (busController.isOpen()) 
+    if (busController) 
     {
       // Create an LM75 controller, attached to the bus controller,
       // using the default device address
-      pbl::i2c::LM75Controller lm75{busController};
+      pbl::i2c::LM75Controller lm75{*busController};
 
       // Read the temperature in Celsius from the LM75 sensor
       auto temp = lm75.getTemperatureC();
@@ -235,16 +235,16 @@ int main( const int argc, const char* const* const argv )
  }
 
  // Create a bus controller for the I2C bus
- pbl::i2c::BusController busController{ deviceName };
+ auto busController = pbl::i2c::BusController::open(deviceName);
 
  // Check if the I2C bus is open and accessible
- if( !busController.isOpen() )
+ if( !busController ) [[unlikely]]
  {
   std::println( "Failed to open I2C device" );
   return 1;
  }
 
- pbl::examples::Thermostat thermostat{ busController };
+ pbl::examples::Thermostat thermostat{ *busController };
  pbl::utils::Timer timer{ std::chrono::milliseconds( 100 ) };
 
  while( true )
@@ -254,7 +254,7 @@ int main( const int argc, const char* const* const argv )
 
    std::println( "{:12f}", dt );
 
-   if( !rslt )
+   if( !rslt ) [[unlikely]]
    {
     std::println( stderr, "{}", pbl::utils::toStringView( rslt.error() ) );
     return false;
