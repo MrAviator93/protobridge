@@ -42,7 +42,7 @@ public:
 	/// Default dtor, closes file m_fd file.
 	virtual ~BusController();
 
-	/// Returns the OS name of the physical bus name
+	/// Returns the OS name of the physical bus name (TODO: Consider renaming to isActive or isReady)
 	[[nodiscard]] auto& bus() const { return m_busName; }
 
 	/// Returns whether the I2C is open on the device.
@@ -197,11 +197,6 @@ private:
 		std::lock_guard _{ m_lastErrMtx };
 		m_lastError = std::move( errorMessage );
 	}
-
-	// The idea is to keep track of what IC's are we driving, haven't
-	// we by accident assigned the same address to 2 or more ICs?
-	// void attach(ICBase& ic);
-	// void detach(ICBase& ic);
 
 private:
 	const std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
