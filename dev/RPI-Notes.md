@@ -1,6 +1,6 @@
 # Raspberry Pi Related Notes
 
-## Building & Installing GCC-13.2 Tool-set
+## Building & Installing GCC-14.2 Tool-set
 
 This section provides a detailed walkthrough for installing the GCC-13.2 compiler on a Raspberry Pi. This process is essential for developers looking to utilize the latest features of GCC on Raspberry Pi hardware.
 
