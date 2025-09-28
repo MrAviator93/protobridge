@@ -18,17 +18,23 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
   - [Table of contents](#table-of-contents)
   - [Structure](#structure)
   - [Features](#features)
-    - [Examples](#examples)
-      - [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
-      - [Blinking Led with MCP23017](#blinking-led-with-mcp23017)
-      - [Advanced - Pseudo Thermostat Implementation](#advanced---pseudo-thermostat-implementation)
+  - [Examples](#examples)
+    - [Reading Temperature from LM75 Sensor](#reading-temperature-from-lm75-sensor)
+    - [Blinking LED with MCP23017](#blinking-led-with-mcp23017)
+    - [Advanced - Pseudo Thermostat Implementation](#advanced---pseudo-thermostat-implementation)
   - [Requirements](#requirements)
     - [I2C Tools](#i2c-tools)
   - [Quick Start](#quick-start)
     - [Building from Source](#building-from-source)
+      - [Option 1](#option-1)
+      - [Option 2](#option-2)
   - [Generating documentation](#generating-documentation)
   - [Motivation](#motivation)
   - [Roadmap](#roadmap)
+    - [Alpha Scope](#alpha-scope)
+    - [Further Plan](#further-plan)
+      - [Beta Release — Target: Q3 2026](#beta-release--target-q3-2026)
+      - [🎄 v1.0.0 Stable Release — Target: September 2026](#-v100-stable-release--target-september-2026)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -356,7 +362,7 @@ This library is the fruit of that ambition: a testament to a belief in a world w
 
 ## Roadmap
 
-**ProtoBridge Alpha Release Target: September 1, 2025:**
+**ProtoBridge Alpha Release Target Q2 2026:**
 
 The ProtoBridge Alpha release focuses on delivering a clean, modern C++ foundation for embedded device control. It includes a focused set of I2C, SPI, Serial, and GPIO devices to demonstrate the core architecture and enable real-world prototyping and development.
 
@@ -384,7 +390,7 @@ The ProtoBridge Alpha release focuses on delivering a clean, modern C++ foundati
 
 ### Further Plan
 
-#### Beta Release — Target: October 25, 2025
+#### Beta Release — Target: Q3 2026
 
 The Beta release will expand device support, introduce initial testing tools, and launch the first ProtoBridge-compatible hardware kits.
 
@@ -395,7 +401,7 @@ The Beta release will expand device support, introduce initial testing tools, an
 
 ---
 
-#### 🎄 v1.0.0 Stable Release — Target: December 20–24, 2025
+#### 🎄 v1.0.0 Stable Release — Target: September 2026
 
 The first official production-ready version of ProtoBridge, featuring stable APIs, full documentation, and real-world use cases.
 
