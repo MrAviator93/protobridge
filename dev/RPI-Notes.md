@@ -1,6 +1,6 @@
 # Raspberry Pi Related Notes
 
-## Building & Installing GCC-14.2 Tool-set
+## Building & Installing GCC-15.2 Tool-set
 
 This section provides a detailed walkthrough for installing the GCC-13.2 compiler on a Raspberry Pi. This process is essential for developers looking to utilize the latest features of GCC on Raspberry Pi hardware.
 
@@ -14,14 +14,14 @@ sudo apt install build-essential
 sudo apt-get install libgmp3-dev libmpfr-dev libmpc-dev
 ```
 
-### Downloading GCC-14.2.0
+### Downloading GCC-15.2.0
 
-Fetch the GCC-14.2.0 source code into a specific directory (not that this directory must be writable by your user, it doesn't require sudo permissions) and extract it.
+Fetch the GCC-15.2.0 source code into a specific directory (not that this directory must be writable by your user, it doesn't require sudo permissions) and extract it.
 
 ```sh
 mkdir -p ~/gcc-builds && cd ~/gcc-builds
-wget https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.gz
-tar -xvf gcc-14.2.0.tar.gz
+wget https://ftp.gnu.org/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.gz
+tar -xvf gcc-15.2.0.tar.gz
 ```
 
 ## Preparing for Compilation
@@ -29,7 +29,7 @@ tar -xvf gcc-14.2.0.tar.gz
 Navigate to the GCC directory and prepare the build environment
 
 ```sh
-cd gcc-14.2.0 && mkdir build && cd build
+cd gcc-15.2.0 && mkdir build && cd build
 ```
 
 ### Configuring the Build
@@ -41,7 +41,7 @@ Configure the GCC build with specific parameters for the Raspberry Pi architectu
                 --host=aarch64-linux-gnu \
                 --target=aarch64-linux-gnu \
                 --disable-multilib \
-                --prefix=/usr/local/gcc-14.2.0 \
+                --prefix=/usr/local/gcc-15.2.0 \
                 --enable-checking=release \
                 --enable-default-ssp  \
                 --disable-fixincludes \
@@ -58,7 +58,7 @@ make -j$(nproc)
 
 ### Installation
 
-Install the newly built GCC (will install into /usr/local/gcc-14.2.0)
+Install the newly built GCC (will install into /usr/local/gcc-15.2.0)
 
 ```sh
 sudo make install 
@@ -77,7 +77,7 @@ sudo vim ~/.bashrc
 1.2.Add the following lines at the end of the file to update `LD_LIBRARY_PATH`:
 
 ```sh
-export LD_LIBRARY_PATH=/usr/local/gcc-14.2.0/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/gcc-15.2.0/lib64:$LD_LIBRARY_PATH
 ```
 
 1.3.Save and close .bashrc
@@ -97,7 +97,7 @@ sudo ldconfig
 2.Set the new GCC version as the default compiler
 
 ```sh
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-14.2.0/bin/gcc 60 --slave /usr/bin/g++ g++ /usr/local/gcc-14.2.0/bin/g++
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-15.2.0/bin/gcc 60 --slave /usr/bin/g++ g++ /usr/local/gcc-15.2.0/bin/g++
 ```
 
 **Note: It's recomended to do a full system restart after these steps.**
