@@ -16,6 +16,9 @@ sudo apt-get install libgmp3-dev libmpfr-dev libmpc-dev
 
 ### Downloading GCC-15.2.0
 
+<https://ftp.gnu.org/gnu/gcc>
+<https://ftp.gnu.org/gnu/gcc/gcc-15.2.0>
+
 Fetch the GCC-15.2.0 source code into a specific directory (not that this directory must be writable by your user, it doesn't require sudo permissions) and extract it.
 
 ```sh
