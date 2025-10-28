@@ -30,11 +30,41 @@ constexpr std::uint16_t kSingleShotLowRepeatability = 0x2416;
 constexpr std::uint16_t kSoftReset = 0x30A2;
 constexpr std::uint16_t kReadStatus = 0xF32D;
 
+/**
+ * @brief Extracts the high (most significant) byte from a 16-bit unsigned value.
+ *
+ * Shifts the given 16-bit integer right by 8 bits to isolate the high byte,
+ * then casts it to an 8-bit value.
+ *
+ * @param value The 16-bit value to extract the high byte from.
+ * @return The high byte of the input value as an unsigned 8-bit integer.
+ *
+ * @note Example:
+ * @code
+ *  uint16_t command = 0x2400;
+ *  uint8_t msb = pbl::utils::highByte(command); // returns 0x24
+ * @endcode
+ */
 [[nodiscard]] inline constexpr std::uint8_t highByte( std::uint16_t value ) noexcept
 {
 	return static_cast< std::uint8_t >( value >> 8 );
 }
 
+/**
+ * @brief Extracts the low (least significant) byte from a 16-bit unsigned value.
+ *
+ * Applies a bitmask to retain only the least significant 8 bits of the given
+ * 16-bit integer.
+ *
+ * @param value The 16-bit value to extract the low byte from.
+ * @return The low byte of the input value as an unsigned 8-bit integer.
+ *
+ * @note Example:
+ * @code
+ *  uint16_t command = 0x2400;
+ *  uint8_t lsb = pbl::utils::lowByte(command); // returns 0x00
+ * @endcode
+ */
 [[nodiscard]] inline constexpr std::uint8_t lowByte( std::uint16_t value ) noexcept
 {
 	return static_cast< std::uint8_t >( value & 0xFF );
