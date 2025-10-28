@@ -4,7 +4,7 @@
 // C++
 #include <cstdint>
 
-namespace pbl::i2c::MPU6050
+namespace pbl::i2c::mpu6050
 {
 
 // MPU-6050 Register Addresses
@@ -105,10 +105,14 @@ enum class PowerMode : std::uint8_t
 
 enum class FIFOBufferMode : std::uint8_t
 {
-	DISABLED = 0x00, // FIFO buffer is disabled.
-	HOLD = 0x01, // When FIFO is full, new data will not be written to FIFO.
-	OVERWRITE =
-		0x02, // When FIFO is full, the oldest data will be discarded, and new data will be written (circular buffer).
+	/// FIFO buffer is disabled.
+	DISABLED = 0x00,
+
+	/// When FIFO is full, new data will not be written to FIFO.
+	HOLD = 0x01,
+
+	/// When FIFO is full, the oldest data will be discarded, and new data will be written (circular buffer).
+	OVERWRITE = 0x02,
 };
 
 enum class InterruptEnable : std::uint8_t
@@ -150,12 +154,12 @@ enum class I2CMasterControl : std::uint8_t
 
 enum class SampleRateDivider : std::uint8_t
 {
-    DIV_0 = 0x00, // This would give you the highest sampling rate (i.e., the internal rate).
-    DIV_1 = 0x01, // This would divide the internal sampling rate by 2.
-    DIV_2 = 0x02, // This would divide the internal sampling rate by 3.
-    // ...
-    DIV_254 = 0xFE, // This would divide the internal sampling rate by 255.
-    DIV_255 = 0xFF  // This would divide the internal sampling rate by 256 (lowest sampling rate).
+	DIV_0 = 0x00, // This would give you the highest sampling rate (i.e., the internal rate).
+	DIV_1 = 0x01, // This would divide the internal sampling rate by 2.
+	DIV_2 = 0x02, // This would divide the internal sampling rate by 3.
+	// ...
+	DIV_254 = 0xFE, // This would divide the internal sampling rate by 255.
+	DIV_255 = 0xFF // This would divide the internal sampling rate by 256 (lowest sampling rate).
 };
 
 enum class UserControl : std::uint8_t
@@ -184,5 +188,5 @@ enum class GyroSensitivity : std::uint8_t
 	DPS_2000 = 0x18 // +/- 2000 degrees/s
 };
 
-} // namespace pbl::i2c::MPU6050
+} // namespace pbl::i2c::mpu6050
 #endif // PBL_I2C_MPU6050_DEFINITIONS_HPP__

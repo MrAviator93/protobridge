@@ -1,4 +1,5 @@
 #include "MPU9250Controller.hpp"
+#include "MPU9250Definitions.hpp"
 #include "BusController.hpp"
 
 namespace pbl::i2c

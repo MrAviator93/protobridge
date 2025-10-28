@@ -62,10 +62,11 @@ v1::BusController::BusController( const std::string& busName )
 
 v1::BusController::~BusController()
 {
-	if( m_open )
+	if( m_open ) [[unlikely]]
 	{
 		::close( m_fd );
 	}
+
 	m_open = false;
 }
 
@@ -81,25 +82,25 @@ void v1::BusController::sleep( const std::chrono::microseconds sleepTimeUs )
 
 auto v1::BusController::configure( Mode mode, Speed speed, BitsPerWord bitsPerWord ) -> Result< void >
 {
-	if( !m_open.load() )
+	if( !m_open.load() ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "SPI Device is not open" );
 	}
 
 	std::uint8_t modeValue = toSpiMode( mode );
-	if( ::ioctl( m_fd, SPI_IOC_WR_MODE, &modeValue ) == -1 )
+	if( ::ioctl( m_fd, SPI_IOC_WR_MODE, &modeValue ) == -1 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "Failed to set SPI mode" );
 	}
 
 	std::uint8_t bitsValue = static_cast< uint8_t >( bitsPerWord );
-	if( ::ioctl( m_fd, SPI_IOC_WR_BITS_PER_WORD, &bitsValue ) == -1 )
+	if( ::ioctl( m_fd, SPI_IOC_WR_BITS_PER_WORD, &bitsValue ) == -1 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "Failed to set bits per word" );
 	}
 
 	std::uint32_t speedValue = static_cast< uint32_t >( speed );
-	if( ::ioctl( m_fd, SPI_IOC_WR_MAX_SPEED_HZ, &speedValue ) == -1 )
+	if( ::ioctl( m_fd, SPI_IOC_WR_MAX_SPEED_HZ, &speedValue ) == -1 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "Failed to set SPI speed" );
 	}
@@ -119,12 +120,12 @@ std::string v1::BusController::getError()
 
 auto v1::BusController::transfer( ConstByteSpan tx, ByteSpan rx ) -> Result< void >
 {
-	if( !m_open )
+	if( !m_open ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "SPI device not open" );
 	}
 
-	if( tx.size() != rx.size() )
+	if( tx.size() != rx.size() ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT, "TX and RX buffer sizes must match" );
 	}
@@ -141,7 +142,7 @@ auto v1::BusController::transfer( ConstByteSpan tx, ByteSpan rx ) -> Result< voi
 	tr.speed_hz = 0; // use default
 	tr.bits_per_word = 0; // use default
 
-	if( ::ioctl( m_fd, SPI_IOC_MESSAGE( 1 ), &tr ) < 0 )
+	if( ::ioctl( m_fd, SPI_IOC_MESSAGE( 1 ), &tr ) < 0 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE, getError() );
 	}
