@@ -1,13 +1,17 @@
 #ifndef PBL_UTILS_UTILS_HPP__
 #define PBL_UTILS_UTILS_HPP__
 
+// C++
+#include <type_traits>
+
 namespace pbl::utils
 {
 
 /// Selects between two values based on a boolean condition.
 /// Returns 'a' if condition is true, otherwise returns 'b'.
 template < typename T >
-[[nodiscard]] constexpr T select( const bool condition, const T& a, const T& b )
+[[nodiscard]] constexpr T
+select( const bool condition, const T& a, const T& b ) noexcept( std::is_nothrow_copy_constructible_v< T > )
 {
 	return condition ? a : b;
 }
@@ -16,12 +20,13 @@ template < typename T >
 template < typename T >
 struct Select
 {
-	constexpr Select( T ta, T tb )
+	constexpr Select( T ta, T tb ) noexcept( std::is_nothrow_copy_constructible_v< T > )
 		: a{ ta }
 		, b{ tb }
 	{ }
 
-	[[nodiscard]] constexpr T operator()( const bool condition ) const noexcept
+	[[nodiscard]] constexpr T operator()( const bool condition ) const
+		noexcept( std::is_nothrow_copy_constructible_v< T > )
 	{
 		return select< T >( condition, a, b );
 	}
@@ -34,7 +39,7 @@ struct Select
 /// If current == a, returns b; otherwise, returns a.
 /// Note: This is an asymmetric toggle — if current matches neither, it still returns a.
 template < typename T >
-constexpr T toggle( const T& current, const T& a, const T& b )
+constexpr T toggle( const T& current, const T& a, const T& b ) noexcept( std::is_nothrow_copy_constructible_v< T > )
 {
 	return ( current == a ) ? b : a;
 }
@@ -43,12 +48,15 @@ constexpr T toggle( const T& current, const T& a, const T& b )
 template < typename T >
 struct Toggle
 {
-	constexpr Toggle( T ta, T tb ) noexcept
+	constexpr Toggle( T ta, T tb ) noexcept( std::is_nothrow_copy_constructible_v< T > )
 		: a{ ta }
 		, b{ tb }
 	{ }
 
-	[[nodiscard]] constexpr T operator()( const T& current ) const noexcept { return toggle< T >( current, a, b ); }
+	[[nodiscard]] constexpr T operator()( const T& current ) const noexcept( std::is_nothrow_copy_constructible_v< T > )
+	{
+		return toggle< T >( current, a, b );
+	}
 
 	T a;
 	T b;
