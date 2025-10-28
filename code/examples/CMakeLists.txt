@@ -1,4 +1,19 @@
-add_subdirectory(i2c)
-add_subdirectory(gpio)
 add_subdirectory(common)
 add_subdirectory(general)
+
+if (PBL_BUILD_I2C_LIB)
+    add_subdirectory(i2c)
+endif()
+
+# if (PBL_BUILD_SPI_LIB)
+#     add_subdirectory(spi)
+# endif()
+
+if (PBL_BUILD_GPIO_LIB)
+    add_subdirectory(gpio)
+endif() 
+
+
+if (PBL_BUILD_SERIAL_LIB)
+    add_subdirectory(serial)
+endif()
