@@ -2,15 +2,18 @@
 
 ## Table of contents
 
-- [Third Party Tools & Libraries](#third-party-tools--libraries)
+- [Third Party Tools \& Libraries](#third-party-tools--libraries)
   - [Table of contents](#table-of-contents)
   - [Tools](#tools)
     - [CMake](#cmake)
+      - [Build \& Install CMake](#build--install-cmake)
     - [CCache](#ccache)
     - [CPPCheck](#cppcheck)
+      - [Build \& Install CPPCheck](#build--install-cppcheck)
   - [Libraries](#libraries)
     - [Benchmark](#benchmark)
-    - [Google Test](#google-test)
+      - [Build \& Install Benchmark](#build--install-benchmark)
+      - [Google Test](#google-test)
 
 ## Tools
 
@@ -29,7 +32,7 @@ sudo cmake --install .
 cmake --version
 ```
 
-If you have upgraded to the latest copiler you may need to do the following:
+If you have upgraded to the latest compiler you may need to do the following:
 
 ```sh
 sudo LD_LIBRARY_PATH=/usr/local/gcc-14.1.0/lib64:$LD_LIBRARY_PATH make install
