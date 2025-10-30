@@ -1,0 +1,103 @@
+# Cross-build environment for Raspberry Pi Zero 2 W (ARMv7/armhf userspace)
+FROM debian:trixie
+
+LABEL vendor="ProtoBridge Library" \
+    type="cross-armhf" \
+    target="raspberry-pi-zero-2w (armhf)" \
+    debian="trixie"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 1) Base build tools + convenience
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    ninja-build \
+    ccache \
+    git \
+    pkg-config \
+    file \
+    python3 \
+    ca-certificates \
+    vim \
+    gdb-multiarch \
+    # 2) Cross toolchain (GCC 14 on trixie) + binutils
+    gcc-14-arm-linux-gnueabihf \
+    g++-14-arm-linux-gnueabihf \
+    binutils-arm-linux-gnueabihf \
+    # 3) Enable multiarch + armhf dev libs for linking
+    dpkg-dev \
+    && dpkg --add-architecture armhf \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    libc6:armhf \
+    libc6-dev:armhf \
+    libstdc++6:armhf \
+    libstdc++-14-dev:armhf \
+    zlib1g:armhf \
+    zlib1g-dev:armhf \
+    libssl3:armhf \
+    libssl-dev:armhf \
+    libudev1:armhf \
+    libudev-dev:armhf \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 4) Environment for the cross tools
+ENV CC=arm-linux-gnueabihf-gcc-14 \
+    CXX=arm-linux-gnueabihf-g++-14 \
+    AR=arm-linux-gnueabihf-ar \
+    AS=arm-linux-gnueabihf-as \
+    LD=arm-linux-gnueabihf-ld \
+    STRIP=arm-linux-gnueabihf-strip
+
+# 5) pkg-config: make sure it finds armhf .pc files first
+#    (Many dev packages install .pc files under the multiarch dir.)
+ENV PKG_CONFIG_LIBDIR=/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig \
+    PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig
+
+# 6) Provide a CMake toolchain file tuned for Zero 2 W (A53, 32-bit hard float)
+#    Flags:
+#      -mcpu=cortex-a53 : target the Zero 2 W cores
+#      -mfpu=neon-fp-armv8 : NEON on ARMv8 (in 32-bit state)
+#      -mfloat-abi=hard : hard-float ABI
+#      -fPIC : shared libs
+RUN mkdir -p /opt/toolchains
+COPY --chown=root:root <<'EOF' /opt/toolchains/armv7hf-zero2w.cmake
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+
+# Compiler + binutils
+set(CMAKE_C_COMPILER   arm-linux-gnueabihf-gcc-14)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++-14)
+set(CMAKE_ASM_COMPILER arm-linux-gnueabihf-gcc-14)
+
+# Where to find ARM libraries/headers installed via multiarch
+# Debian places headers/libs under /usr/arm-linux-gnueabihf and /usr/lib/arm-linux-gnueabihf
+set(CMAKE_FIND_ROOT_PATH
+    /usr/arm-linux-gnueabihf
+    /usr/lib/arm-linux-gnueabihf
+    /usr/include/arm-linux-gnueabihf
+    /usr
+)
+
+# Only search target paths for libs/includes; programs can be native
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+# Tuning for Raspberry Pi Zero 2 W (A53, 32-bit userspace)
+set(ARM_COMMON_FLAGS "-mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -fPIC")
+
+set(CMAKE_C_FLAGS_INIT   "${ARM_COMMON_FLAGS} -O2")
+set(CMAKE_CXX_FLAGS_INIT "${ARM_COMMON_FLAGS} -O2")
+
+# If you need to point at a custom sysroot later, uncomment:
+# set(CMAKE_SYSROOT /opt/sysroot-armhf)
+
+# pkg-config: ensure it uses the armhf paths
+set(ENV{PKG_CONFIG_LIBDIR} "/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig")
+set(ENV{PKG_CONFIG_PATH}   "/usr/lib/arm-linux-gnueabihf/pkgconfig")
+EOF
+
+# 7) Nice defaults for build dirs
+WORKDIR /work

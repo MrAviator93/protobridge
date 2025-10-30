@@ -17,7 +17,7 @@ sudo apt-get update -y
 sudo apt-get install -y qemu-user-static
 ```
 
-User Groups
+### User Groups
 
 You also need to add a docker to groups as well as users which is created inside the container, for our case the user is vad .
 
@@ -57,7 +57,7 @@ docker build -t <docker-image-name> .
 docker run -it <docker-image-name> /bin/bash
 ```
 
-Backup
+### Backup
 
 Create a backup that can then be used with docker load docker <https://docs.docker.com/engine/reference/commandline/save/>
 

@@ -1,4 +1,4 @@
-FROM debian:12 AS gcc-build
+FROM debian:13 AS gcc-build
 
 LABEL vendor="ProtoBridge Library" \
     type="gcc-build" \
@@ -43,7 +43,7 @@ RUN cd gcc-16-trunk && \
     make install
 
 # Second stage: Base image with GCC installed from build stage
-FROM debian:12 AS pbl-base
+FROM debian:13 AS pbl-base
 
 LABEL vendor="ProtoBridge Library" \
     type="base" \
