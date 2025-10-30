@@ -94,7 +94,7 @@ docker save pbl-cross-rpi2w:trixie | gzip > pbl-cross-rpi2w_trixie.tar.gz
 
 ### Restoring Docker Images
 
-To load the image refer to the following documentdocker load for details. <https://docs.docker.com/engine/reference/commandline/load/>
+To load the image refer to the following document docker load for details. <https://docs.docker.com/engine/reference/commandline/load/>
 
 ```sh
 # List current images
