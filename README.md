@@ -33,8 +33,8 @@ Please note that the ProtoBridge Library is currently a work in progress, and a 
   - [Roadmap](#roadmap)
     - [Alpha Scope](#alpha-scope)
     - [Further Plan](#further-plan)
-      - [Beta Release — Target: Q3 2026](#beta-release--target-q3-2026)
-      - [🎄 v1.0.0 Stable Release — Target: September 2026](#-v100-stable-release--target-september-2026)
+      - [Beta Release - Target: Q3 2026](#beta-release---target-q3-2026)
+      - [v1.0.0 Stable Release - Target: Q4 2026](#v100-stable-release---target-q4-2026)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -163,7 +163,7 @@ int main( int, char** )
 
 ### Advanced - Pseudo Thermostat Implementation
 
-[This](code/examples/general/thermostat/main.cpp) example showcases the full power and flexibility of the ProtoBridge Library by demonstrating how easy it is to build a complex, real-world application using its modular components. It simulates a basic thermostat using sensor input, PID control, and actuator output—all composed using clear, modern C++ 23 idioms.
+[This](code/examples/general/thermostat/main.cpp) example showcases the full power and flexibility of the ProtoBridge Library by demonstrating how easy it is to build a complex, real-world application using its modular components. It simulates a basic thermostat using sensor input, PID control, and actuator output-all composed using clear, modern C++ 23 idioms.
 
 ```cpp
 class Thermostat
@@ -354,7 +354,7 @@ The HTML documentation will be generated and available in the DocDoxygen/html/ d
 
 Diving into embedded systems and single-board computers opened a whole new world for me, one filled with endless possibilities and the sheer excitement of building something tangible. Yet, amidst this excitement, I hit a roadblock. The world of I2C communication was a jumbled mess of libraries, each marching to the beat of its own drum. For someone who thrives on C++, it felt like wading through a sea of mismatched puzzles, all with their own complicated rules. The landscape was cluttered with low-level operations, requiring developers to manipulate bits directly and wrestle with hardware specifics, often leading to frustration and lost time.
 
-What I sought was something clean, something elegant—a single library, written in a consistent style, harnessing the full power of modern C++. I dreamt of something cleaner, more intuitive. A tool that didn't force us to get lost in the weeds with every new IC, but rather, one that cleared the path, making device interaction almost second nature.
+What I sought was something clean, something elegant - a single library, written in a consistent style, harnessing the full power of modern C++. I dreamt of something cleaner, more intuitive. A tool that didn't force us to get lost in the weeds with every new IC, but rather, one that cleared the path, making device interaction almost second nature.
 
 That's why I rolled up my sleeves and started crafting this solution myself. I was determined to build a library that wasn't just a showcase of C++ 23's capabilities but also a haven for developers seeking clarity and efficiency. A place where code flows naturally, and modern development feels like a breeze. More than that, I wanted to create a comprehensive package, a one-stop-shop for all kinds of SBC to IC communication, accommodating numerous configurations for various ICs all under one roof.
 
@@ -373,8 +373,8 @@ The ProtoBridge Alpha release focuses on delivering a clean, modern C++ foundati
 - I2C:
   - [x] LM75;
   - [x] BMP180;
-  - [ ] TMP102;
-  - [ ] SHT31;
+  - [x] TMP102;
+  - [x] SHT31;
   - [ ] MCP23017;
   - [ ] ADS1015;
   - [ ] MPU6050;
@@ -390,7 +390,7 @@ The ProtoBridge Alpha release focuses on delivering a clean, modern C++ foundati
 
 ### Further Plan
 
-#### Beta Release — Target: Q3 2026
+#### Beta Release - Target: Q3 2026
 
 The Beta release will expand device support, introduce initial testing tools, and launch the first ProtoBridge-compatible hardware kits.
 
@@ -401,7 +401,7 @@ The Beta release will expand device support, introduce initial testing tools, an
 
 ---
 
-#### 🎄 v1.0.0 Stable Release — Target: September 2026
+#### v1.0.0 Stable Release - Target: Q4 2026
 
 The first official production-ready version of ProtoBridge, featuring stable APIs, full documentation, and real-world use cases.
 
@@ -409,8 +409,7 @@ The first official production-ready version of ProtoBridge, featuring stable API
 
 - Finalize and freeze core API;
 - Reach 15+ supported devices with examples;
-- Publish full documentation and usage guides;
-- Launch “Built with ProtoBridge” showcase.
+- Publish full documentation and usage guides.
 
 ## Contributing
 
