@@ -13,7 +13,7 @@
   - [ ] PCA9685.
 - SPI:
   - [ ] MCP3008 (ADC);
-  - [ ] TMC2130 (Stepper Motor Controller);
+  - [ ] TMC2130 (Stepper Motor Controller).
 - Serial:
   - [ ] HC12 (transparent serial);
   - [ ] NEO-M8N GPS (raw NMEA).
