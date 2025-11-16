@@ -4,8 +4,9 @@
 #include "TimeTypes.hpp"
 
 // C++
-#include <utility>
+#include <concepts>
 #include <type_traits>
+#include <utility>
 
 namespace pbl::utils
 {
@@ -56,6 +57,10 @@ public:
 	template < typename Callback >
 		requires std::invocable< Callback, Dt >
 	auto onTick( Callback&& callback ) -> std::invoke_result_t< Callback, Dt >;
+
+	template < typename Callback >
+		requires std::invocable< Callback >
+	auto onTick( Callback&& callback ) -> std::invoke_result_t< Callback >;
 
 private:
 	Clock::time_point m_startTime;

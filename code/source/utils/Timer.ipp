@@ -8,32 +8,63 @@ template < typename Callback >
 	requires std::invocable< Callback, Timer::Dt >
 auto Timer::onTick( Callback&& callback ) -> std::invoke_result_t< Callback, Dt >
 {
-	if( hasElapsed() )
-	{
-		const auto dt = elapsedSinceSetInSeconds();
+	using Result = std::invoke_result_t< Callback, Dt >;
 
-		if constexpr( std::is_void_v< std::invoke_result_t< Callback, Dt > > )
-		{
-			std::forward< Callback >( callback )( dt );
-			set();
-		}
-		else
-		{
-			auto result = std::forward< Callback >( callback )( dt );
-			set();
-			return result;
-		}
-	}
-	else // The timer is not yet elapsed
+	if( !hasElapsed() )
 	{
-		if constexpr( !std::is_void_v< std::invoke_result_t< Callback, Dt > > )
-		{
-			return {}; // Only return if the return type is not void
-		}
-		else
+		if constexpr( std::is_void_v< Result > )
 		{
 			return;
 		}
+		else
+		{
+			return {};
+		}
+	}
+
+	const auto dt = elapsedSinceSetInSeconds();
+
+	if constexpr( std::is_void_v< Result > )
+	{
+		std::forward< Callback >( callback )( dt );
+		set();
+	}
+	else
+	{
+		auto result = std::forward< Callback >( callback )( dt );
+		set();
+		return result;
+	}
+}
+
+template < typename Callback >
+	requires std::invocable< Callback >
+auto Timer::onTick( Callback&& callback ) -> std::invoke_result_t< Callback >
+{
+	using Result = std::invoke_result_t< Callback >;
+
+	if( !hasElapsed() )
+	{
+		if constexpr( std::is_void_v< Result > )
+		{
+			return;
+		}
+		else
+		{
+			return {};
+		}
+	}
+
+	if constexpr( std::is_void_v< Result > )
+	{
+		std::forward< Callback >( callback )();
+		set();
+	}
+	else
+	{
+		auto result = std::forward< Callback >( callback )();
+		set();
+		return result;
 	}
 }
 
