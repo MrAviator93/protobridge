@@ -3,8 +3,10 @@
 ## Alpha Release
 
 - I2C:
-  - [ ] TMP102;
-  - [ ] SHT31;
+  - [x] LM75;
+  - [x] BMP180;
+  - [x] TMP102;
+  - [x] SHT31;
   - [ ] MCP23017;
   - [ ] ADS1015;
   - [ ] MPU6050;
