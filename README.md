@@ -147,7 +147,7 @@ int main( int, char** )
 
  while( true )
  {
-  timer.onTick( [ &pin ]( [[maybe_unused]] auto dt ) -> void {
+  timer.onTick( [ &pin ] -> void {
    if( !pin.switchPinState() )
    {
     std::println( "Failed to set pin state to ON..." );
@@ -256,13 +256,13 @@ int main( const int argc, const char* const* const argv )
  while( true )
  {
   auto onTick = [ & ] [[nodiscard]] ( auto dt ) -> bool {
-   auto rslt = thermostat.update( dt );
+   const auto result = thermostat.update( dt );
 
    std::println( "{:12f}", dt );
 
-   if( !rslt )
+   if( !result )
    {
-    std::println( stderr, "{}", pbl::utils::toStringView( rslt.error() ) );
+    std::println( stderr, "{}", pbl::utils::toStringView( result.error() ) );
     return false;
    }
 
