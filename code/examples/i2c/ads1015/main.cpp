@@ -28,19 +28,39 @@ int main( const int argc, const char* const* const argv )
 		// return 1;
 	}
 
-	// Create an LM75 controller, attached to the bus controller
+	// Create an ADS1015 controller, attached to the bus controller
 	pbl::i2c::ADS1015Controller ads{ busController };
 	pbl::utils::Timer timer{ std::chrono::milliseconds( 500 ) };
 
-	pbl::i2c::ADS1015Controller::ContinuousReader reader{ std::move( ads ) };
+	auto gainResult = ads.setGain( pbl::i2c::ADS1015Controller::Gain::FS_2_048V );
+	if( !gainResult )
+	{
+		std::println( stderr, "Failed to configure ADS1015 gain: {}", gainResult.error().description() );
+		return 1;
+	}
+
+	auto readerResult = ads.startContinuous( pbl::i2c::ADS1015Controller::Channel::CH0 );
+	if( !readerResult )
+	{
+		std::println( stderr, "Failed to start ADS1015 continuous session: {}",
+					  readerResult.error().description() );
+		return 1;
+	}
+
+	auto reader = std::move( readerResult ).value();
 	while( true )
 	{
 		if( timer.hasElapsed() )
 		{
-			// TODO:
-			std::println( "{}", reader.read() );
-
-			ads.setGain( pbl::i2c::ADS1015Controller::Gain::FS_6_144V );
+			auto value = reader.read();
+			if( !value )
+			{
+				std::println( stderr, "Failed to read ADS1015 value: {}", value.error().description() );
+			}
+			else
+			{
+				std::println( "{}", *value );
+			}
 
 			// Reset the timer
 			timer.set();

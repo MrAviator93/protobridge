@@ -6,6 +6,8 @@
 
 // C++
 #include <expected>
+#include <optional>
+#include <utility>
 
 namespace pbl::i2c
 {
@@ -23,13 +25,11 @@ inline namespace v1
  */
 class ADS1015Controller final : public ICBase, public utils::Counter< ADS1015Controller >
 {
-	struct ReaderPrivateTag
-	{ };
-
 public:
-	class SingleShotReader;
-	class ContinuousReader;
-	class DifferentialReader;
+	class ModeSession;
+	class SingleShotSession;
+	class ContinuousSession;
+	class DifferentialSession;
 
 	template < typename T >
 	using Result = utils::Result< T >;
@@ -83,200 +83,193 @@ public:
 
 	using enum Address;
 
-	/// TBW
+	/// Initializes the controller for the specified ADS1015 address.
 	explicit ADS1015Controller( class BusController& busController, Address address = H48 );
 
-	/// TBW
+	/// Default move constructor.
 	ADS1015Controller( ADS1015Controller&& ) = default;
 
-	/// TBW
+	/// Default move assignment.
 	ADS1015Controller& operator=( ADS1015Controller&& ) = default;
 
-	/// TBW
-	Result< void > setGain( Gain gain );
+	/// Configures the programmable gain amplifier.
+	[[nodiscard]] Result< void > setGain( Gain gain );
 
-	/// TBW
-	Result< void > setSampleRate( SampleRate rate );
+	/// Configures the conversion sample rate.
+	[[nodiscard]] Result< void > setSampleRate( SampleRate rate );
 
-	// We need to think how are we going to pass here a channel, and second channel for differential read ...
-	// [[nodiscard]] Reader makeReader(Reader::Mode mode) { return Reader{ *this, ReaderPrivateTag{} }; }
+	/// Starts a single-shot session, ensuring exclusive access to the controller.
+	[[nodiscard]] Result< SingleShotSession > startSingleShot();
 
-	// Read a single-ended input
-	// std::int16_t readSingleEnded( Channel channel )
-	// {
-	// 	// Configure only if the channel has changed
-	// 	if( channel != currentChannel_ )
-	// 	{
-	// 		configureChannel( channel );
-	// 		currentChannel_ = channel; // Update the cached current channel
-	// 	}
-	// 	initiateConversion();
-	// 	return readConversionResult();
-	// }
+	/// Starts a continuous session on the provided channel.
+	[[nodiscard]] Result< ContinuousSession > startContinuous( Channel channel );
 
-	// // Read differential between channels
-	// std::int16_t readDifferential( Channel positiveChannel, Channel negativeChannel )
-	// {
-	// 	configureDifferential( positiveChannel, negativeChannel );
-	// 	initiateConversion();
-	// 	return readConversionResult();
-	// }
-
-	// // Start continuous read on a specific channel
-	// void startContinuousRead( Channel channel )
-	// {
-	// 	configureChannel( channel, Mode::CONTINUOUS ); // Configure for continuous mode
-	// 	continuousMode_ = true; // Flag to indicate continuous mode is active
-	// }
-
-	// // Retrieve the last conversion result in continuous mode
-	// std::int16_t readContinuous()
-	// {
-	// 	if( !continuousMode_ )
-	// 	{
-	// 		throw std::runtime_error( "Continuous read mode not initialized. Call startContinuousRead() first." );
-	// 	}
-	// 	return readConversionResult();
-	// }
-
-	// // Stop continuous read and reset to single-shot mode
-	// void stopContinuousRead()
-	// {
-	// 	continuousMode_ = false;
-	// 	configureChannel( currentChannel_, Mode::SINGLE_SHOT ); // Reset to single-shot mode
-	// }
+	/// Starts a differential single-shot session for the provided channel pair.
+	[[nodiscard]] Result< DifferentialSession > startDifferential( Channel positive, Channel negative );
 
 private:
 	ADS1015Controller( const ADS1015Controller& ) = delete;
 	ADS1015Controller& operator=( const ADS1015Controller& ) = delete;
 
 private:
-	Result< std::uint16_t > readConfig();
+	friend class ModeSession;
+	friend class SingleShotSession;
+	friend class ContinuousSession;
+	friend class DifferentialSession;
 
-	Result< void > writeConfig( std::uint16_t config );
+	/// Reads the device configuration register.
+	[[nodiscard]] Result< std::uint16_t > readConfig();
+
+	/// Writes the device configuration register.
+	[[nodiscard]] Result< void > writeConfig( std::uint16_t config );
+
+	/// Applies a gain update without changing session ownership.
+	[[nodiscard]] Result< void > applyGainSetting( Gain gain );
+
+	/// Applies a sample-rate update without changing session ownership.
+	[[nodiscard]] Result< void > applySampleRateSetting( SampleRate rate );
+
+	/// Performs a single-ended conversion.
+	[[nodiscard]] Result< std::int16_t > performSingleShot( Channel channel );
+
+	/// Performs a differential conversion.
+	[[nodiscard]] Result< std::int16_t > performDifferentialSingleShot( Channel positive, Channel negative );
+
+	/// Configures the hardware for continuous sampling.
+	[[nodiscard]] Result< void > configureContinuous( Channel channel );
+
+	/// Retrieves the most recent continuous conversion.
+	[[nodiscard]] Result< std::int16_t > readContinuousValue();
+
+	/// Executes a synchronous single-shot conversion using the provided mux bits.
+	[[nodiscard]] Result< std::int16_t > sampleSingleShot( std::uint16_t muxBits );
+
+	/// Waits for the ADS1015 conversion-ready flag.
+	[[nodiscard]] Result< void > waitForConversionComplete();
+
+	/// Reads the conversion register and normalizes the 12-bit value.
+	[[nodiscard]] Result< std::int16_t > readConversionValue();
+
+	/// Computes mux bits for a differential pair.
+	[[nodiscard]] static Result< std::uint16_t > differentialMux( Channel positive, Channel negative );
+
+	/// Computes mux bits for a single-ended channel.
+	[[nodiscard]] static std::uint16_t singleEndedMux( Channel channel );
+
+	/// Guards access to mutually exclusive operating modes.
+	[[nodiscard]] Result< void > acquireMode( Mode mode );
+
+	/// Releases the current active mode if it matches.
+	void releaseMode( Mode mode ) noexcept;
 
 private:
-	// TODO
+	std::optional< Mode > m_activeMode;
 };
 
-class ADS1015Controller::SingleShotReader final
+/// Base RAII guard for ADS1015 mode-exclusive sessions.
+class ADS1015Controller::ModeSession
 {
 public:
-	explicit SingleShotReader( ADS1015Controller&& ctrl )
-		: controller{ std::move( ctrl ) }
-	{
-		// controller.setMode(Mode::SINGLE_SHOT);
-	}
-
-	std::int16_t read( [[maybe_unused]] Channel channel )
-	{
-		// controller.setChannel(channel);
-		// controller.startConversion();
-		// return controller.readConversionResult();
-		return {};
-	}
-
-	ADS1015Controller release() { return std::move( controller ); }
+	/// Move-only guard that ensures exclusive ADS1015 access for a mode.
+	ModeSession( const ModeSession& ) = delete;
+	ModeSession& operator=( const ModeSession& ) = delete;
 
 private:
-	SingleShotReader( const SingleShotReader& ) = delete;
-	SingleShotReader& operator=( const SingleShotReader& ) = delete;
+	friend class ADS1015Controller;
+
+	explicit ModeSession( ADS1015Controller& controller, Mode mode ) noexcept;
+	ModeSession( ModeSession&& other ) noexcept;
+	ModeSession& operator=( ModeSession&& other ) noexcept;
+	~ModeSession();
+
+protected:
+	[[nodiscard]] ADS1015Controller* controller() noexcept { return m_pController; }
+	[[nodiscard]] const ADS1015Controller* controller() const noexcept { return m_pController; }
+	[[nodiscard]] bool isActive() const noexcept { return m_pController != nullptr; }
 
 private:
-	ADS1015Controller controller;
+	void release();
+
+private:
+	ADS1015Controller* m_pController;
+	Mode m_mode;
 };
 
-class ADS1015Controller::ContinuousReader final
+/// RAII session for single-shot conversions.
+class ADS1015Controller::SingleShotSession final : public ModeSession
 {
 public:
-	explicit ContinuousReader( ADS1015Controller&& ctrl )
-		: controller{ std::move( ctrl ) }
-	{
-		// controller.setMode(Mode::CONTINOUS);
-		// controller.startContinuousRead();
-	}
+	SingleShotSession( SingleShotSession&& ) noexcept = default;
+	SingleShotSession& operator=( SingleShotSession&& ) noexcept = default;
 
-	~ContinuousReader()
-	{
-		// controller.stopContinuousRead();
-	}
+	/// Performs a single-ended conversion on the provided channel.
+	[[nodiscard]] Result< std::int16_t > read( Channel channel );
 
-	/// TBW
-	[[nodiscard]] std::int16_t read()
-	{
-		// return controller.readContinuous();
-		return {};
-	}
+	/// Updates the gain while keeping the session ownership.
+	[[nodiscard]] Result< void > setGain( Gain gain );
 
-	/// Returns ownership of the controller after done with continous read
-	ADS1015Controller release()
-	{
-		// Ensure clean stop
-		// controller.stopContinuousRead();
-		return std::move( controller );
-	}
+	/// Updates the sample rate while keeping the session ownership.
+	[[nodiscard]] Result< void > setSampleRate( SampleRate rate );
 
 private:
-	ContinuousReader( const ContinuousReader& ) = delete;
-	ContinuousReader& operator=( const ContinuousReader& ) = delete;
+	friend class ADS1015Controller;
 
-private:
-	ADS1015Controller controller;
+	explicit SingleShotSession( ADS1015Controller& controller ) noexcept;
 };
 
-class ADS1015Controller::DifferentialReader final
+/// RAII session for continuous streaming conversions.
+class ADS1015Controller::ContinuousSession final : public ModeSession
 {
 public:
-	explicit DifferentialReader( ADS1015Controller&& ctrl )
-		: controller{ std::move( ctrl ) }
-	{
-		// controller.setMode(Mode::SINGLE_SHOT);
-	}
+	ContinuousSession( ContinuousSession&& ) noexcept = default;
+	ContinuousSession& operator=( ContinuousSession&& ) noexcept = default;
 
-	std::int16_t read( [[maybe_unused]] Channel positive, [[maybe_unused]] Channel negative )
-	{
-		// controller.configureDifferential(positive, negative);
-		// controller.startConversion();
-		// return controller.readConversionResult();
-		return {};
-	}
+	/// Reads the latest sample produced in continuous mode.
+	[[nodiscard]] Result< std::int16_t > read();
 
-	ADS1015Controller release() { return std::move( controller ); }
+	/// Updates the gain and reapplies the continuous configuration.
+	[[nodiscard]] Result< void > setGain( Gain gain );
+
+	/// Updates the sample rate and reapplies the continuous configuration.
+	[[nodiscard]] Result< void > setSampleRate( SampleRate rate );
 
 private:
-	DifferentialReader( const DifferentialReader& ) = delete;
-	DifferentialReader& operator=( const DifferentialReader& ) = delete;
+	friend class ADS1015Controller;
+
+	ContinuousSession( ADS1015Controller& controller, Channel channel ) noexcept;
 
 private:
-	ADS1015Controller controller;
+	[[maybe_unused]] Channel m_channel;
 };
 
-// // Create and configure ADS1015
-// ADS1015Controller adc(busController, ADS1015Controller::Address::H48);
-// auto rslt = adc.setGain(ADS1015Controller::Gain::FS_2_048V)
-//    			  .setSampleRate(ADS1015Controller::SampleRate::SPS_920)
-//    			  .setMode(ADS1015Controller::Mode::SINGLE_SHOT);
-// if (!rslt)
-// {
-//		std::println("{}", rlst.message());
-//		return -1;
-// }
+/// RAII session for differential single-shot conversions.
+class ADS1015Controller::DifferentialSession final : public ModeSession
+{
+public:
+	DifferentialSession( DifferentialSession&& ) noexcept = default;
+	DifferentialSession& operator=( DifferentialSession&& ) noexcept = default;
 
-// // Perform a single-ended read on channel 0
-// std::int16_t singleResult = adc.readSingleEnded(ADS1015Controller::Channel::CH0);
-// std::cout << "Single-ended reading from CH0: " << singleResult << std::endl;
+	/// Performs a differential conversion with the currently selected pair.
+	[[nodiscard]] Result< std::int16_t > read();
 
-// // Perform a differential read between channel 0 and channel 1
-// std::int16_t differentialResult = adc.readDifferential(ADS1015Controller::Channel::CH0, ADS1015Controller::Channel::CH1);
-// std::cout << "Differential reading between CH0 and CH1: " << differentialResult << std::endl;
+	/// Selects the differential channel pair for future reads.
+	[[nodiscard]] Result< void > setChannels( Channel positive, Channel negative );
 
-// // Start and read from continuous mode
-// adc.beginContinuousRead(ADS1015Controller::Channel::CH2);
-// for (int i = 0; i < 10; ++i) {
-//     std::int16_t continuousResult = adc.readContinuous();
-//     std::cout << "Continuous reading from CH2: " << continuousResult << std::endl;
-// }
-// adc.endContinuousRead();
+	/// Updates the gain while keeping the session ownership.
+	[[nodiscard]] Result< void > setGain( Gain gain );
+
+	/// Updates the sample rate while keeping the session ownership.
+	[[nodiscard]] Result< void > setSampleRate( SampleRate rate );
+
+private:
+	friend class ADS1015Controller;
+
+	DifferentialSession( ADS1015Controller& controller, Channel positive, Channel negative ) noexcept;
+
+private:
+	Channel m_positive;
+	Channel m_negative;
+};
 
 } // namespace v1
 } // namespace pbl::i2c
