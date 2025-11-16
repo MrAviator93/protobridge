@@ -75,7 +75,7 @@ int main( int, char** )
 
 	while( true )
 	{
-		timer.onTick( [ &pin ]( [[maybe_unused]] auto dt ) -> void {
+		timer.onTick( [ &pin ] -> void {
 			if( !pin.switchPinState() )
 			{
 				std::println( "Failed to set pin state to ON..." );

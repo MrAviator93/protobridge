@@ -17,7 +17,7 @@ v1::MPU6050Controller::MPU6050Controller( BusController& busController, Address 
 auto v1::MPU6050Controller::setPowerMode( PowerMode mode ) -> Result< void >
 {
 	std::uint8_t config{};
-	if( !read( MPU6050::kPowerManagement1Register, config ) )
+	if( !read( mpu6050::kPowerManagement1Register, config ) )
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -25,7 +25,7 @@ auto v1::MPU6050Controller::setPowerMode( PowerMode mode ) -> Result< void >
 	std::bitset< 8 > bits{ config };
 	bits.set( 6, mode == PowerMode::SLEEP ); // Bit 6 controls SLEEP
 
-	if( !write( MPU6050::kPowerManagement1Register, static_cast< std::uint8_t >( bits.to_ulong() ) ) )
+	if( !write( mpu6050::kPowerManagement1Register, static_cast< std::uint8_t >( bits.to_ulong() ) ) )
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_WRITE );
 	}
@@ -35,7 +35,7 @@ auto v1::MPU6050Controller::setPowerMode( PowerMode mode ) -> Result< void >
 
 auto v1::MPU6050Controller::configureScales( Scale accelScale, Scale gyroScale ) -> Result< void >
 {
-	using namespace MPU6050;
+	using namespace mpu6050;
 
 	std::uint8_t accelConfig{};
 	switch( accelScale )
@@ -69,8 +69,8 @@ auto v1::MPU6050Controller::configureScales( Scale accelScale, Scale gyroScale )
 auto v1::MPU6050Controller::reset() -> Result< void >
 {
 	// bool rslt{ true };
-	// rslt = write( MPU6050::kPowerManagement1Register, 0x00 );
-	// m_busController.write( m_icAddress, MPU6050::kPowerManagement2Register, 0x00 );
+	// rslt = write( mpu6050::kPowerManagement1Register, 0x00 );
+	// m_busController.write( m_icAddress, mpu6050::kPowerManagement2Register, 0x00 );
 
 	return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
 }
@@ -84,12 +84,12 @@ auto v1::MPU6050Controller::configure() -> Result< void >
 	// // Configure Accelerometer Sensitivity - Full Scale Range (default +/- 2g)
 	// // 0x10 sets the register bits as 00010000 (+/- 8g full scale range)
 	// m_busController.write(
-	// 	m_icAddress, MPU6050::kAccelConfigRegister, static_cast< uint8_t >( MPU6050::AccelSensitivity::G_8 ) );
+	// 	m_icAddress, mpu6050::kAccelConfigRegister, static_cast< uint8_t >( mpu6050::AccelSensitivity::G_8 ) );
 
 	// // Configure Gyro Sensitivity - Full Scale Range (default +/- 250deg/s)
 	// // 0x10 sets the register bits as 00010000 (1000deg/s full scale)
 	// m_busController.write(
-	// 	m_icAddress, MPU6050::kGyroConfigRegister, static_cast< uint8_t >( MPU6050::GyroSensitivity::DPS_1000 ) );
+	// 	m_icAddress, mpu6050::kGyroConfigRegister, static_cast< uint8_t >( mpu6050::GyroSensitivity::DPS_1000 ) );
 
 	// m_busController.sleep( std::chrono::milliseconds( 20 ) );
 
@@ -98,7 +98,7 @@ auto v1::MPU6050Controller::configure() -> Result< void >
 
 	// m_busController.sleep( std::chrono::milliseconds( 20 ) );
 
-	using namespace MPU6050;
+	using namespace mpu6050;
 
 	// bool success = true;
 	// success &= write( kPowerManagement1Register, static_cast< uint8_t >( PowerMode::CLKSEL_PLL_X ) );
@@ -118,7 +118,7 @@ auto v1::MPU6050Controller::configure() -> Result< void >
 	}
 
 	config &= ~0x47; // Clear sleep and clock select bits
-	config |= static_cast< uint8_t >( MPU6050::PowerMode::CLKSEL_PLL_X );
+	config |= static_cast< uint8_t >( mpu6050::PowerMode::CLKSEL_PLL_X );
 
 	bool success = true;
 	success &= write( kPowerManagement1Register, config );
@@ -150,7 +150,7 @@ auto v1::MPU6050Controller::calculateImuError() -> Result< void >
 	// TODO: Think about flashing/embedding the calibration constants
 	// maybe we could provide them as arguments?
 
-	using namespace MPU6050;
+	using namespace mpu6050;
 
 	std::size_t count{};
 
@@ -219,7 +219,7 @@ auto v1::MPU6050Controller::angles() -> Result< math::Vector3f >
 {
 	// 1. Read raw accelerometer values
 	std::array< uint8_t, 6 > accData{};
-	if( read( MPU6050::kAccelXOutHRegister, accData.data(), accData.size() ) != 6 )
+	if( read( mpu6050::kAccelXOutHRegister, accData.data(), accData.size() ) != 6 )
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -237,7 +237,7 @@ auto v1::MPU6050Controller::angles() -> Result< math::Vector3f >
 
 	// 2. Read raw gyroscope values
 	std::array< uint8_t, 6 > gyroData{};
-	if( read( MPU6050::kGyroXOutHRegister, gyroData.data(), gyroData.size() ) != 6 )
+	if( read( mpu6050::kGyroXOutHRegister, gyroData.data(), gyroData.size() ) != 6 )
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
