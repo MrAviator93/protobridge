@@ -339,6 +339,12 @@ cmake --build . --parallel $(nproc)
 sudo cmake --install .
 ```
 
+**Note** that you may need to provide google benchmark and or google test using the CMAKE_INSTALL_PREFIX.
+
+```bash
+-DCMAKE_INSTALL_PREFIX="/usr/local/google-bench-1.9.1/;/usr/local/google-test-1.17.0";
+```
+
 ## Generating documentation
 
 The project is configured to generate documentation through Doxygen. You can create a comprehensive set of documentation by following these steps:
