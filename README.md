@@ -123,17 +123,17 @@ int main( int, char** )
  std::string deviceName{ "/dev/i2c-1" };
 
  // Create a bus controller for the I2C bus
- pbl::i2c::BusController busController{ deviceName };
+ auto busController = pbl::i2c::BusController::open( deviceName );
 
  // Check if the I2C bus is open and accessible
- if( !busController.isOpen() )
+ if( !busController )
  {
   std::println( stderr, "Failed to open I2C device" );
   return 1;
  }
 
  // Create an MCP23017 controller, attached to the bus controller
- pbl::i2c::MCP23017Controller mcp{ busController };
+ pbl::i2c::MCP23017Controller mcp{ *busController };
  auto pin = mcp.portA().pin( pbl::i2c::MCP23017Controller::Port::Pins::PIN_1 );
 
  // This API allows us to configure individual pins
@@ -344,6 +344,12 @@ sudo cmake --install .
 ```bash
 -DCMAKE_INSTALL_PREFIX="/usr/local/google-bench-1.9.1/;/usr/local/google-test-1.17.0";
 ```
+
+An opened bus owns its file descriptor and can be move-constructed, but
+cannot be copied or move-assigned. Complete any moves before constructing
+controllers: controllers borrow the bus object, which must remain at the same
+address and outlive them. Moving or destroying a bus also requires exclusive
+access; transfer locking does not make those operations safe concurrently.
 
 ## Generating documentation
 

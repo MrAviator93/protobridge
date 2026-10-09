@@ -21,7 +21,13 @@ int main( const int argc, const char* const* const argv )
 		deviceName = args[ 1 ];
 	}
 
-	pbl::i2c::BusController busController{ deviceName };
+	auto busResult = pbl::i2c::BusController::open( deviceName );
+	if( !busResult )
+	{
+		std::println( stderr, "{}", busResult.error().description() );
+		return 1;
+	}
+	auto& busController = *busResult;
 	pbl::i2c::LM75Controller lm75{ busController };
 
 	if( const auto temp = lm75.getTemperatureC(); temp.has_value() )

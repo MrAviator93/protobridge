@@ -19,14 +19,16 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	pbl::i2c::BusController busController{ deviceName };
+	auto busResult = pbl::i2c::BusController::open( deviceName );
 
 	// Check if the I2C bus is open and accessible
-	if( !busController.isOpen() )
+	if( !busResult )
 	{
-		std::println( "Failed to open I2C device" );
+		std::println( stderr, "{}", busResult.error().description() );
 		return 1;
 	}
+
+	auto& busController = *busResult;
 
 	pbl::examples::Thermostat thermostat{ busController };
 	pbl::utils::Timer timer{ std::chrono::milliseconds( 100 ) };

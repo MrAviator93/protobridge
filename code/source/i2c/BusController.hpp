@@ -41,57 +41,23 @@ public:
 	template < typename T >
 	using Result = utils::Result< T >;
 
-	/// Default ctor opens a file descriptor.
-	explicit BusController( const std::string& busName );
+	/// Transfer ownership before attaching controllers; moving requires exclusive access.
+	BusController( BusController&& other ) noexcept;
 
-	BusController( BusController&& other ) noexcept
-		: m_busName( std::move( other.m_busName ) )
-		, m_open( other.m_open.load() )
-		, m_fd( other.m_fd )
-		, m_lastError( std::move( other.m_lastError ) )
-	{
-		other.m_fd = -1;
-		other.m_open = false;
-	}
+	/// A bus may already have controllers borrowing it, so ownership cannot be replaced.
+	BusController& operator=( BusController&& ) = delete;
 
-	BusController& operator=( BusController&& other ) noexcept
-	{
-		if( this != &other )
-		{
-			std::scoped_lock lock{ m_fdMtx, m_lastErrMtx }; // lock before touching state
+	/// Closes the owned descriptor, including after a failed initialization.
+	~BusController() override;
 
-			m_fd = other.m_fd;
-			m_open.store( other.m_open.load() );
-			m_lastError = std::move( other.m_lastError );
-			// busName is const — can't be moved, but it's okay to stay the same
-
-			other.m_fd = -1;
-			other.m_open = false;
-		}
-		return *this;
-	}
-
-	/// Default dtor, closes file m_fd file.
-	virtual ~BusController();
-
-	static Result< BusController > open( const std::string& busName )
-	{
-		BusController bus{ busName };
-		if( !bus.isOpen() )
-		{
-			return utils::MakeError( utils::Error::NOT_IMPLEMENTED );
-		}
-		return std::expected< BusController, utils::Error >{ std::move( bus ) };
-	}
+	/// Opens a bus supporting raw I2C transfers, or returns the OS failure with context.
+	[[nodiscard]] static Result< BusController > open( const std::string& busName );
 
 	/// Returns the OS name of the physical bus name
 	[[nodiscard]] auto& bus() const { return m_busName; }
 
 	/// Returns whether the I2C is open on the device.
-	[[deprecated( "Use open rather than ctor and isOpen combination." )]] [[nodiscard]] bool isOpen() const
-	{
-		return m_open.load();
-	}
+	[[nodiscard]] bool isOpen() const noexcept { return m_open.load(); }
 
 	/**
      * @brief Read a single byte from specified register
@@ -229,14 +195,16 @@ public:
 
 private:
 	// This class is non-copyable
+	explicit BusController( std::string busName );
+
 	BusController( const BusController& ) = delete;
-	BusController operator=( const BusController& ) = delete;
+	BusController& operator=( const BusController& ) = delete;
 
 	/// Retrieves error buffer
 	void reportError();
 
 	/// Requesting the bus for capabilities/features/functionality
-	void checkFunc();
+	[[nodiscard]] Result< void > checkFunc();
 
 	void setLastError( std::string&& errorMessage )
 	{
@@ -250,7 +218,7 @@ private:
 	// void detach(ICBase& ic);
 
 private:
-	const std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
+	std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
 	std::atomic_bool m_open{ false }; //!< Indicates whether the I2C bus is open
 
 	mutable std::mutex m_fdMtx; //!< Locks the read write operations

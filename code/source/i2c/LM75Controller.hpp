@@ -43,7 +43,9 @@ inline namespace v1
  *
  * Example usage:
  * @code
- * BusController busController;
+ * auto bus = BusController::open( "/dev/i2c-1" );
+ * if( !bus ) { return; } // Handle bus.error() before returning.
+ * auto& busController = *bus;
  * LM75Controller lm75(busController);
  * 
  * float currentTemp = lm75.getTemperatureC(); // Gets the current temperature in Celsius
