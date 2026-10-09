@@ -36,7 +36,9 @@ inline namespace v1
  *
  * Example usage:
  * @code
- * BusController busController;
+ * auto bus = BusController::open( "/dev/i2c-1" );
+ * if( !bus ) { return; } // Handle bus.error() before returning.
+ * auto& busController = *bus;
  * MPU6050Controller mpu6050(busController);
  * 
  * auto accelData = mpu6050.getAcceleration();

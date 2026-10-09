@@ -41,7 +41,9 @@ inline namespace v1
  *
  * Example usage:
  * @code
- * BusController busController;
+ * auto bus = BusController::open( "/dev/i2c-1" );
+ * if( !bus ) { return; } // Handle bus.error() before returning.
+ * auto& busController = *bus;
  * SHT31Controller sht31(busController);
  *
  * auto temperature = sht31.getTemperatureC();

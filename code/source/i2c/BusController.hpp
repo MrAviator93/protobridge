@@ -2,6 +2,7 @@
 #define PBL_I2C_BUS_CONTROLLER_HPP__
 
 #include "Transport.hpp"
+#include <utils/Result.hpp>
 #include <utils/Counter.hpp>
 
 // C++
@@ -37,17 +38,26 @@ inline namespace v1
 class BusController : public Transport, public utils::Counter< BusController >
 {
 public:
-	/// Default ctor opens a file descriptor.
-	explicit BusController( const std::string& busName );
+	template < typename T >
+	using Result = utils::Result< T >;
 
-	/// Default dtor, closes file m_fd file.
-	virtual ~BusController();
+	/// Transfer ownership before attaching controllers; moving requires exclusive access.
+	BusController( BusController&& other ) noexcept;
+
+	/// A bus may already have controllers borrowing it, so ownership cannot be replaced.
+	BusController& operator=( BusController&& ) = delete;
+
+	/// Closes the owned descriptor, including after a failed initialization.
+	~BusController() override;
+
+	/// Opens a bus supporting raw I2C transfers, or returns the OS failure with context.
+	[[nodiscard]] static Result< BusController > open( const std::string& busName );
 
 	/// Returns the OS name of the physical bus name
 	[[nodiscard]] auto& bus() const { return m_busName; }
 
 	/// Returns whether the I2C is open on the device.
-	[[nodiscard]] bool isOpen() const { return m_open.load(); }
+	[[nodiscard]] bool isOpen() const noexcept { return m_open.load(); }
 
 	/**
      * @brief Read a single byte from specified register
@@ -184,17 +194,17 @@ public:
 	void sleep( const std::chrono::microseconds sleepTimeUs );
 
 private:
-	// This class is non-copyable and non-movable
+	// This class is non-copyable
+	explicit BusController( std::string busName );
+
 	BusController( const BusController& ) = delete;
-	BusController( BusController&& ) = delete;
-	BusController operator=( const BusController& ) = delete;
-	BusController operator=( BusController&& ) = delete;
+	BusController& operator=( const BusController& ) = delete;
 
 	/// Retrieves error buffer
 	void reportError();
 
 	/// Requesting the bus for capabilities/features/functionality
-	void checkFunc();
+	[[nodiscard]] Result< void > checkFunc();
 
 	void setLastError( std::string&& errorMessage )
 	{
@@ -208,7 +218,7 @@ private:
 	// void detach(ICBase& ic);
 
 private:
-	const std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
+	std::string m_busName; //!< I2C Bus name, i.e. "/dev/i2c-1"
 	std::atomic_bool m_open{ false }; //!< Indicates whether the I2C bus is open
 
 	mutable std::mutex m_fdMtx; //!< Locks the read write operations

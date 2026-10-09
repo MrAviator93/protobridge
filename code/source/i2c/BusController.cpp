@@ -6,11 +6,8 @@
 #include <vector>
 #include <string>
 #include <utility>
-#include <sstream>
+#include <system_error>
 #include <algorithm>
-
-// TODO: Debug remove
-#include <iostream>
 
 // C
 extern "C" {
@@ -28,39 +25,23 @@ namespace pbl::i2c
 namespace
 {
 
-[[nodiscard]] bool check( std::uint64_t fs, const std::pair< std::uint64_t, std::string_view >& element )
+[[nodiscard]] utils::ErrorCode mapErrnoToErrorCode( int err ) noexcept
 {
-	if( fs & element.first )
+	using enum pbl::utils::ErrorCode;
+
+	switch( err )
 	{
-		std::ostringstream oss;
-		oss << element.second << " SUPPORTED" << std::endl;
-		return true;
+		case ENOENT: return DEVICE_NOT_FOUND; // /dev/i2c-X not present
+		case EPERM:
+		case EACCES: return ACCESS_DENIED; // No permission to access
+		case EBUSY: return BUS_BUSY; // Already in use
+		case EIO: return HARDWARE_FAILURE;
+		case ENODEV: return HARDWARE_NOT_AVAILABLE; // No device responding
+		case EINVAL: return INVALID_ARGUMENT; // Malformed path, etc.
+		case ENXIO: return DEVICE_NOT_RESPONDING; // Device not on bus
+		default: return UNEXPECTED_ERROR; // Fallback
 	}
-
-	return false;
 }
-
-constexpr std::array< std::pair< std::size_t, std::string_view >, 20 > kFuncsToCheck = {
-	std::pair{ I2C_FUNC_I2C, "I2C_FUNC_I2C" },
-	std::pair{ I2C_FUNC_10BIT_ADDR, "I2C_FUNC_10BIT_ADDR" },
-	std::pair{ I2C_FUNC_PROTOCOL_MANGLING, "I2C_FUNC_PROTOCOL_MANGLING" },
-	std::pair{ I2C_FUNC_SMBUS_PEC, "I2C_FUNC_SMBUS_PEC" },
-	std::pair{ I2C_FUNC_NOSTART, "I2C_FUNC_NOSTART" },
-	std::pair{ I2C_FUNC_SLAVE, "I2C_FUNC_SLAVE" },
-	std::pair{ I2C_FUNC_SMBUS_BLOCK_PROC_CALL, "I2C_FUNC_SMBUS_BLOCK_PROC_CALL" },
-	std::pair{ I2C_FUNC_SMBUS_QUICK, "I2C_FUNC_SMBUS_QUICK" },
-	std::pair{ I2C_FUNC_SMBUS_READ_BYTE, "I2C_FUNC_SMBUS_READ_BYTE" },
-	std::pair{ I2C_FUNC_SMBUS_WRITE_BYTE, "I2C_FUNC_SMBUS_WRITE_BYTE" },
-	std::pair{ I2C_FUNC_SMBUS_READ_BYTE_DATA, "I2C_FUNC_SMBUS_READ_BYTE_DATA" },
-	std::pair{ I2C_FUNC_SMBUS_WRITE_BYTE_DATA, "I2C_FUNC_SMBUS_WRITE_BYTE_DATA" },
-	std::pair{ I2C_FUNC_SMBUS_READ_WORD_DATA, "I2C_FUNC_SMBUS_READ_WORD_DATA" },
-	std::pair{ I2C_FUNC_SMBUS_WRITE_WORD_DATA, "I2C_FUNC_SMBUS_WRITE_WORD_DATA" },
-	std::pair{ I2C_FUNC_SMBUS_PROC_CALL, "I2C_FUNC_SMBUS_PROC_CALL" },
-	std::pair{ I2C_FUNC_SMBUS_READ_BLOCK_DATA, "I2C_FUNC_SMBUS_READ_BLOCK_DATA" },
-	std::pair{ I2C_FUNC_SMBUS_WRITE_BLOCK_DATA, "I2C_FUNC_SMBUS_WRITE_BLOCK_DATA" },
-	std::pair{ I2C_FUNC_SMBUS_READ_I2C_BLOCK, "I2C_FUNC_SMBUS_READ_I2C_BLOCK" },
-	std::pair{ I2C_FUNC_SMBUS_WRITE_I2C_BLOCK, "I2C_FUNC_SMBUS_WRITE_I2C_BLOCK" },
-	std::pair{ I2C_FUNC_SMBUS_HOST_NOTIFY, "I2C_FUNC_SMBUS_HOST_NOTIFY" } };
 
 template < std::size_t N >
 [[nodiscard]] bool
@@ -96,25 +77,43 @@ readN( const int fd, const std::uint8_t slaveAddr, const std::uint8_t reg, std::
 
 } // namespace
 
-v1::BusController::BusController( const std::string& busName )
-	: m_busName{ busName }
+auto v1::BusController::open( const std::string& busName ) -> Result< BusController >
 {
-	m_fd = ::open( m_busName.c_str(), O_RDWR | O_NONBLOCK );
-	if( m_fd < 0 )
+	BusController bus{ busName };
+	bus.m_fd = ::open( busName.c_str(), O_RDWR | O_NONBLOCK | O_CLOEXEC );
+	if( bus.m_fd < 0 ) [[unlikely]]
 	{
-		reportError();
-		return;
+		const auto error = errno;
+		return utils::MakeError( mapErrnoToErrorCode( error ),
+			"Failed to open " + busName + ": " + std::error_code{ error, std::generic_category() }.message() );
 	}
 
-	checkFunc();
+	if( auto result = bus.checkFunc(); !result ) [[unlikely]]
+	{
+		return utils::MakeError( result.error() );
+	}
 
-	m_open = true;
+	bus.m_open = true;
+	return Result< BusController >{ std::move( bus ) };
 }
+
+v1::BusController::BusController( std::string busName )
+	: m_busName{ std::move( busName ) }
+{ }
+
+v1::BusController::BusController( BusController&& other ) noexcept
+	: m_busName{ std::move( other.m_busName ) }
+	, m_open{ other.m_open.exchange( false ) }
+	, m_fd{ std::exchange( other.m_fd, -1 ) }
+	, m_lastError{ std::move( other.m_lastError ) }
+{ }
 
 v1::BusController::~BusController()
 {
-	::close( m_fd );
-	m_open = false;
+	if( m_fd >= 0 )
+	{
+		::close( m_fd );
+	}
 }
 
 bool v1::BusController::read( const std::uint8_t slaveAddr, const std::uint8_t reg, std::uint8_t& result )
@@ -460,24 +459,23 @@ void v1::BusController::reportError()
 	m_lastError = ::strerror_r( e, err.data(), err.size() );
 }
 
-void v1::BusController::checkFunc()
+auto v1::BusController::checkFunc() -> Result< void >
 {
-	std::uint64_t funcs{};
-
-	if( ::ioctl( m_fd, I2C_FUNCS, &funcs ) < 0 ) [[unlikely]]
+	unsigned long functions{};
+	if( ::ioctl( m_fd, I2C_FUNCS, &functions ) < 0 ) [[unlikely]]
 	{
-		return reportError();
+		const auto error = errno;
+		return utils::MakeError( mapErrnoToErrorCode( error ),
+			"Failed to query " + m_busName + ": " + std::error_code{ error, std::generic_category() }.message() );
 	}
 
-	std::cerr << "Supported funcions are: " << std::hex << funcs << std::endl;
-
-	const auto checkLambda = [ &funcs ]( const auto& element ) { return check( funcs, element ); };
-	const bool rslt = std::ranges::all_of( kFuncsToCheck, checkLambda );
-
-	if( !rslt )
+	if( !( functions & I2C_FUNC_I2C ) )
 	{
-		std::cerr << "Some functions are not supported" << std::endl;
+		return utils::MakeError( utils::ErrorCode::UNSUPPORTED_OPERATION,
+			m_busName + " does not support raw I2C transfers" );
 	}
+
+	return utils::MakeSuccess();
 }
 
 static_assert( std::is_same_v< __u8, std::uint8_t >, "__u8 definition differs from std::uint8_t definition." );

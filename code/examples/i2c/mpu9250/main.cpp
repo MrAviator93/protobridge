@@ -24,14 +24,16 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	pbl::i2c::BusController busController{ deviceName };
+	auto busResult = pbl::i2c::BusController::open( deviceName );
 
 	// Check if the I2C bus is open and accessible
-	if( !busController.isOpen() )
+	if( !busResult )
 	{
-		std::cerr << "Failed to open I2C device" << std::endl;
+		std::cerr << busResult.error().description() << std::endl;
 		return 1;
 	}
+
+	auto& busController = *busResult;
 
 	// Create an MPU9250 controller, attached to the bus controller, using the default device address
 	pbl::i2c::MPU9250Controller mpu{ busController };

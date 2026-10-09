@@ -63,12 +63,14 @@ int main( const int argc, const char* const* const argv )
 		deviceName = args[ 1 ];
 	}
 
-	pbl::i2c::BusController busController{ deviceName };
-	if( !busController.isOpen() )
+	auto busResult = pbl::i2c::BusController::open( deviceName );
+	if( !busResult )
 	{
-		std::println( stderr, "Failed to open I2C device" );
+		std::println( stderr, "{}", busResult.error().description() );
 		return 1;
 	}
+
+	auto& busController = *busResult;
 
 	using MCP23017 = pbl::i2c::MCP23017Controller;
 	MCP23017 mcp23017{ busController };

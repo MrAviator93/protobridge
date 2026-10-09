@@ -44,7 +44,9 @@ inline namespace v1
  *
  * Example usage:
  * @code
- * BusController busController;
+ * auto bus = BusController::open( "/dev/i2c-1" );
+ * if( !bus ) { return; } // Handle bus.error() before returning.
+ * auto& busController = *bus;
  * MPU9250Controller mpu9250(busController, MPU9250Controller::DEFAULT);
  * 
  * auto accelData = mpu9250.getAcceleration();

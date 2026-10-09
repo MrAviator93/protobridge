@@ -78,14 +78,14 @@ This example shows you how to initialize communication with the LM75 sensor and 
 int main(int, char**)
 {
     // Create a bus controller for the I2C bus (Raspberry Pi 4)
-    pbl::i2c::BusController busController{"/dev/i2c-1"};
+    auto busController = pbl::i2c::BusController::open("/dev/i2c-1");
 
     // Check if the I2C bus is open and accessible
-    if (busController.isOpen()) 
+    if (busController) 
     {
       // Create an LM75 controller, attached to the bus controller,
       // using the default device address
-      pbl::i2c::LM75Controller lm75{busController};
+      pbl::i2c::LM75Controller lm75{*busController};
 
       // Read the temperature in Celsius from the LM75 sensor
       auto temp = lm75.getTemperatureC();
@@ -123,17 +123,17 @@ int main( int, char** )
  std::string deviceName{ "/dev/i2c-1" };
 
  // Create a bus controller for the I2C bus
- pbl::i2c::BusController busController{ deviceName };
+ auto busController = pbl::i2c::BusController::open( deviceName );
 
  // Check if the I2C bus is open and accessible
- if( !busController.isOpen() )
+ if( !busController )
  {
   std::println( stderr, "Failed to open I2C device" );
   return 1;
  }
 
  // Create an MCP23017 controller, attached to the bus controller
- pbl::i2c::MCP23017Controller mcp{ busController };
+ pbl::i2c::MCP23017Controller mcp{ *busController };
  auto pin = mcp.portA().pin( pbl::i2c::MCP23017Controller::Port::Pins::PIN_1 );
 
  // This API allows us to configure individual pins
@@ -241,16 +241,16 @@ int main( const int argc, const char* const* const argv )
  }
 
  // Create a bus controller for the I2C bus
- pbl::i2c::BusController busController{ deviceName };
+ auto busController = pbl::i2c::BusController::open(deviceName);
 
  // Check if the I2C bus is open and accessible
- if( !busController.isOpen() )
+ if( !busController ) [[unlikely]]
  {
   std::println( "Failed to open I2C device" );
   return 1;
  }
 
- pbl::examples::Thermostat thermostat{ busController };
+ pbl::examples::Thermostat thermostat{ *busController };
  pbl::utils::Timer timer{ std::chrono::milliseconds( 100 ) };
 
  while( true )
@@ -260,7 +260,7 @@ int main( const int argc, const char* const* const argv )
 
    std::println( "{:12f}", dt );
 
-   if( !result )
+   if( !result ) [[unlikely]]
    {
     std::println( stderr, "{}", pbl::utils::toStringView( result.error() ) );
     return false;
@@ -344,6 +344,12 @@ sudo cmake --install .
 ```bash
 -DCMAKE_INSTALL_PREFIX="/usr/local/google-bench-1.9.1/;/usr/local/google-test-1.17.0";
 ```
+
+An opened bus owns its file descriptor and can be move-constructed, but
+cannot be copied or move-assigned. Complete any moves before constructing
+controllers: controllers borrow the bus object, which must remain at the same
+address and outlive them. Moving or destroying a bus also requires exclusive
+access; transfer locking does not make those operations safe concurrently.
 
 ## Generating documentation
 

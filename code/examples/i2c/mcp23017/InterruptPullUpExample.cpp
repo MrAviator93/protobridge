@@ -68,14 +68,16 @@ int main( const int argc, const char* const* const argv )
 	}
 
 	// Create a bus controller for the I2C bus
-	pbl::i2c::BusController busController{ deviceName };
+	auto busResult = pbl::i2c::BusController::open( deviceName );
 
 	// Check if the I2C bus is open and accessible
-	if( !busController.isOpen() )
+	if( !busResult )
 	{
-		std::println( stderr, "Failed to open I2C device" );
+		std::println( stderr, "{}", busResult.error().description() );
 		return 1;
 	}
+
+	auto& busController = *busResult;
 
 	using MCP23017 = pbl::i2c::MCP23017Controller;
 
