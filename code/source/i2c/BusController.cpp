@@ -308,62 +308,52 @@ std::int16_t v1::BusController::read( const std::uint8_t slaveAddr,
 	return dataSize;
 }
 
-std::int16_t v1::BusController::read( const std::uint8_t deviceAddr, std::span< std::uint8_t > data )
+auto v1::BusController::read( Address address, std::span< std::uint8_t > data ) -> utils::Result< void >
 {
-	if( !isOpen() ) [[unlikely]]
-	{
-		setLastError( "I2C bus is closed" );
-		return -1;
-	}
-
-	std::lock_guard _{ m_fdMtx };
-
-	::i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = deviceAddr;
-	msgs[ 0 ].flags = I2C_M_RD;
-	msgs[ 0 ].len = static_cast< unsigned short >( data.size() );
-	msgs[ 0 ].buf = data.data();
-
-	::i2c_rdwr_ioctl_data msgset;
-	msgset.msgs = msgs;
-	msgset.nmsgs = 1;
-
-	::memset( data.data(), 0x00, data.size() );
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
-	{
-		reportError();
-		return -1;
-	}
-
-	return static_cast< std::int16_t >( data.size() );
+	return writeRead( address, {}, data );
 }
 
-bool v1::BusController::write( const std::uint8_t deviceAddr, const std::span< const std::uint8_t > data )
+auto v1::BusController::write( Address address, std::span< const std::uint8_t > data ) -> utils::Result< void >
 {
-	if( !isOpen() ) [[unlikely]]
+	return writeRead( address, data, {} );
+}
+
+auto v1::BusController::writeRead( Address address, std::span< const std::uint8_t > request,
+	std::span< std::uint8_t > response ) -> utils::Result< void >
+{
+	if( address > 0x7f || request.size() > 65535 || response.size() > 65535 ||
+		( request.empty() && response.empty() ) )
 	{
-		setLastError( "I2C bus is closed" );
-		return false;
+		return utils::MakeError( utils::ErrorCode::INVALID_ARGUMENT );
 	}
-
-	::i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = deviceAddr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = static_cast< unsigned short >( data.size() );
-	msgs[ 0 ].buf = const_cast< std::uint8_t* >( data.data() );
-
-	::i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].nmsgs = 1;
-	msgset[ 0 ].msgs = msgs;
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 ) [[unlikely]]
+	std::lock_guard _{ m_fdMtx };
+	if( !isOpen() )
 	{
-		reportError();
-		return false;
+		return utils::MakeError( utils::ErrorCode::DEVICE_NOT_FOUND, "I2C bus is closed" );
 	}
-
-	return true;
+	std::array< ::i2c_msg, 2 > messages{};
+	unsigned int count{};
+	if( !request.empty() )
+	{
+		messages[ count++ ] = { address, 0, static_cast< __u16 >( request.size() ),
+			const_cast< std::uint8_t* >( request.data() ) };
+	}
+	if( !response.empty() )
+	{
+		messages[ count++ ] = { address, I2C_M_RD, static_cast< __u16 >( response.size() ), response.data() };
+	}
+	::i2c_rdwr_ioctl_data transaction{ messages.data(), count };
+	const auto transferred = ::ioctl( m_fd, I2C_RDWR, &transaction );
+	if( transferred != static_cast< int >( count ) )
+	{
+		if( transferred < 0 )
+		{
+			reportError();
+			return utils::MakeError( utils::ErrorCode::HARDWARE_FAILURE, lastError() );
+		}
+		return utils::MakeError( utils::ErrorCode::HARDWARE_FAILURE, "Incomplete I2C transaction" );
+	}
+	return utils::MakeSuccess();
 }
 
 bool v1::BusController::write( const std::uint8_t slaveAddr, const std::uint8_t reg, const std::uint8_t data )

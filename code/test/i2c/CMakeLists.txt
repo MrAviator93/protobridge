@@ -7,6 +7,7 @@ set(PRIVATE_DEPS
 
 set(SRC
     BusControllerTests.cpp
+    BMP180ControllerTests.cpp
 )
 
 create_test_application(

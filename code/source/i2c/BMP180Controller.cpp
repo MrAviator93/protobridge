@@ -77,7 +77,7 @@ constexpr std::uint8_t commandForMode( BMP180Controller::SamplingAccuracy mode )
 
 template < typename T >
 bool readCalibConst( T& value,
-					 BusController& busController,
+					 Transport& busController,
 					 const std::uint8_t bmp180Addr,
 					 const std::uint8_t msb,
 					 const std::uint8_t lsb )
@@ -85,12 +85,12 @@ bool readCalibConst( T& value,
 	std::uint8_t highByte{};
 	std::uint8_t lowByte{};
 
-	if( !busController.read( bmp180Addr, msb, highByte ) ) [[unlikely]]
+	if( !busController.writeRead( bmp180Addr, std::span{ &msb, 1 }, std::span{ &highByte, 1 } ) ) [[unlikely]]
 	{
 		return false;
 	}
 
-	if( !busController.read( bmp180Addr, lsb, lowByte ) ) [[unlikely]]
+	if( !busController.writeRead( bmp180Addr, std::span{ &lsb, 1 }, std::span{ &lowByte, 1 } ) ) [[unlikely]]
 	{
 		return false;
 	}
@@ -105,7 +105,7 @@ bool readCalibConst( T& value,
 struct v1::BMP180Controller::CalibrationConstants
 {
 	/// Read calibration constants from BME180 device
-	bool read( BusController& busController, std::uint8_t address );
+	bool read( Transport& busController, std::uint8_t address );
 
 	std::int16_t ac1{};
 	std::int16_t ac2{};
@@ -120,39 +120,39 @@ struct v1::BMP180Controller::CalibrationConstants
 	std::int16_t md{};
 };
 
-bool v1::BMP180Controller::CalibrationConstants::read( BusController& busController, std::uint8_t address )
+bool v1::BMP180Controller::CalibrationConstants::read( Transport& busController, std::uint8_t address )
 {
 	bool rslt{ true };
-	rslt |= readCalibConst( ac1, busController, address, kBmp180CalibAc1, kBmp180CalibAc1Lsb );
-	rslt |= readCalibConst( ac2, busController, address, kBmp180CalibAc2, kBmp180CalibAc2Lsb );
-	rslt |= readCalibConst( ac3, busController, address, kBmp180CalibAc3, kBmp180CalibAc3Lsb );
-	rslt |= readCalibConst( ac4, busController, address, kBmp180CalibAc4, kBmp180CalibAc4Lsb );
-	rslt |= readCalibConst( ac5, busController, address, kBmp180CalibAc5, kBmp180CalibAc5Lsb );
-	rslt |= readCalibConst( ac6, busController, address, kBmp180CalibAc6, kBmp180CalibAc6Lsb );
-	rslt |= readCalibConst( b1, busController, address, kBmp180CalibB1, kBmp180CalibB1Lsb );
-	rslt |= readCalibConst( b2, busController, address, kBmp180CalibB2, kBmp180CalibB2Lsb );
-	rslt |= readCalibConst( mb, busController, address, kBmp180CalibMb, kBmp180CalibMbLsb );
-	rslt |= readCalibConst( mc, busController, address, kBmp180CalibMc, kBmp180CalibMcLsb );
-	rslt |= readCalibConst( md, busController, address, kBmp180CalibMd, kBmp180CalibMdLsb );
+	rslt &= readCalibConst( ac1, busController, address, kBmp180CalibAc1, kBmp180CalibAc1Lsb );
+	rslt &= readCalibConst( ac2, busController, address, kBmp180CalibAc2, kBmp180CalibAc2Lsb );
+	rslt &= readCalibConst( ac3, busController, address, kBmp180CalibAc3, kBmp180CalibAc3Lsb );
+	rslt &= readCalibConst( ac4, busController, address, kBmp180CalibAc4, kBmp180CalibAc4Lsb );
+	rslt &= readCalibConst( ac5, busController, address, kBmp180CalibAc5, kBmp180CalibAc5Lsb );
+	rslt &= readCalibConst( ac6, busController, address, kBmp180CalibAc6, kBmp180CalibAc6Lsb );
+	rslt &= readCalibConst( b1, busController, address, kBmp180CalibB1, kBmp180CalibB1Lsb );
+	rslt &= readCalibConst( b2, busController, address, kBmp180CalibB2, kBmp180CalibB2Lsb );
+	rslt &= readCalibConst( mb, busController, address, kBmp180CalibMb, kBmp180CalibMbLsb );
+	rslt &= readCalibConst( mc, busController, address, kBmp180CalibMc, kBmp180CalibMcLsb );
+	rslt &= readCalibConst( md, busController, address, kBmp180CalibMd, kBmp180CalibMdLsb );
 	return rslt;
 }
 
-v1::BMP180Controller::BMP180Controller( BusController& busController, Address address, SamplingAccuracy sAccuracy )
+v1::BMP180Controller::BMP180Controller( Transport& busController, Address address, SamplingAccuracy sAccuracy )
 	: ICBase{ busController, address }
 	, m_samplingAccuracy{ sAccuracy }
 	, m_constants{}
 {
-	if( !m_constants->read( busController, static_cast< std::uint8_t >( address ) ) ) [[unlikely]]
-	{
-		// TODO: We need to do something about this ...
-		// return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
-	}
+	m_calibrationValid = m_constants->read( busController, static_cast< std::uint8_t >( address ) );
 }
 
 v1::BMP180Controller::~BMP180Controller() = default;
 
 auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 {
+	if( !m_calibrationValid )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ, "Calibration unavailable" );
+	}
 	using namespace std::chrono_literals;
 
 	// Read uncompensated temperature (UT) value
@@ -165,7 +165,7 @@ auto v1::BMP180Controller::getTrueTemperatureC() -> Result< float >
 
 	// Read raw temperature measurement
 	std::array< std::uint8_t, 2 > rawUT{};
-	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) ) [[unlikely]]
+	if( read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) != 2 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -190,6 +190,10 @@ auto v1::BMP180Controller::getTemperatureF() -> Result< float >
 
 auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 {
+	if( !m_calibrationValid )
+	{
+		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ, "Calibration unavailable" );
+	}
 	using namespace std::chrono_literals;
 
 	// Pressure resolution (is this correct!?)
@@ -205,7 +209,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 
 	// Read uncompensated temperature value
 	std::array< std::uint8_t, 2 > rawUT{};
-	if( !read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) ) [[unlikely]]
+	if( read( kBmp180OutMsb, rawUT.data(), rawUT.size() ) != 2 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}
@@ -224,7 +228,7 @@ auto v1::BMP180Controller::getTruePressurePa() -> Result< float >
 	// Read uncompensated pressure value
 	// UP = ( MSB << 16 + LSB << 8 + XLSB ) >> ( 8 - oss );
 	std::array< std::uint8_t, 3 > upRawData{};
-	if( !read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) ) [[unlikely]]
+	if( read( kBmp180OutMsb, upRawData.data(), upRawData.size() ) != 3 ) [[unlikely]]
 	{
 		return utils::MakeError( utils::ErrorCode::FAILED_TO_READ );
 	}

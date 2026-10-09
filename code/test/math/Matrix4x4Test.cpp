@@ -9,9 +9,14 @@ namespace pbl::math
 
 TEST( Matrix4x4Test, ElementAccessReturnsCorrectValues )
 {
+	// Arrange
+	// No additional setup required.
+
+	// Act
 	Matrix4x4< float > matrix{
 		1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f };
 
+	// Assert
 	EXPECT_FLOAT_EQ( matrix.at( 0 ).value(), 1.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 1 ).value(), 2.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 2 ).value(), 3.0f );
@@ -32,14 +37,17 @@ TEST( Matrix4x4Test, ElementAccessReturnsCorrectValues )
 
 TEST( Matrix4x4Test, MatrixAdditionReturnsCorrectResult )
 {
+	// Arrange
 	Matrix4x4< float > a{
 		1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f };
 
 	Matrix4x4< float > b{
 		16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
 
+	// Act
 	auto result = a + b;
 
+	// Assert
 	for( int i = 0; i < 16; ++i )
 	{
 		EXPECT_FLOAT_EQ( result.at( i ).value(), 17.0f );
@@ -48,14 +56,17 @@ TEST( Matrix4x4Test, MatrixAdditionReturnsCorrectResult )
 
 TEST( Matrix4x4Test, MatrixSubtractionReturnsCorrectResult )
 {
+	// Arrange
 	Matrix4x4< float > a{
 		16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
 
 	Matrix4x4< float > b{
 		1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 
+	// Act
 	auto result = a - b;
 
+	// Assert
 	for( int i = 0; i < 16; ++i )
 	{
 		EXPECT_FLOAT_EQ( result.at( i ).value(), static_cast< float >( a.at( i ).value() - 1.0f ) );
@@ -64,6 +75,10 @@ TEST( Matrix4x4Test, MatrixSubtractionReturnsCorrectResult )
 
 TEST( Matrix4x4Test, MatrixMultiplicationReturnsCorrectResult )
 {
+	// Arrange
+	// No additional setup required.
+
+	// Act
 	Matrix4x4< float > a{
 		1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f };
 
@@ -72,6 +87,7 @@ TEST( Matrix4x4Test, MatrixMultiplicationReturnsCorrectResult )
 
 	Matrix4x4< float > result = a * b;
 
+	// Assert
 	EXPECT_FLOAT_EQ( result.at( 0 ).value(), 80.0f );
 	EXPECT_FLOAT_EQ( result.at( 1 ).value(), 70.0f );
 	EXPECT_FLOAT_EQ( result.at( 2 ).value(), 60.0f );
@@ -92,11 +108,14 @@ TEST( Matrix4x4Test, MatrixMultiplicationReturnsCorrectResult )
 
 TEST( Matrix4x4Test, ScalarAdditionReturnsCorrectMatrix )
 {
+	// Arrange
 	Matrix4x4< float > matrix{
 		1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f };
 
+	// Act
 	auto result = matrix + 1.0f;
 
+	// Assert
 	for( int i = 0; i < 16; ++i )
 	{
 		EXPECT_FLOAT_EQ( result.at( i ).value(), static_cast< float >( i + 2 ) );
@@ -105,11 +124,14 @@ TEST( Matrix4x4Test, ScalarAdditionReturnsCorrectMatrix )
 
 TEST( Matrix4x4Test, ScalarAdditionInPlaceModifiesMatrix )
 {
+	// Arrange
 	Matrix4x4< float > matrix{
 		1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f };
 
+	// Act
 	matrix += 1.0f;
 
+	// Assert
 	for( int i = 0; i < 16; ++i )
 	{
 		EXPECT_FLOAT_EQ( matrix.at( i ).value(), static_cast< float >( i + 2 ) );
@@ -118,11 +140,14 @@ TEST( Matrix4x4Test, ScalarAdditionInPlaceModifiesMatrix )
 
 TEST( Matrix4x4Test, ScalarMultiplicationReturnsCorrectMatrix )
 {
+	// Arrange
 	Matrix4x4< float > matrix{
 		1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f };
 
+	// Act
 	matrix = matrix * 2.0f;
 
+	// Assert
 	for( int i = 0; i < 16; ++i )
 	{
 		EXPECT_FLOAT_EQ( matrix.at( i ).value(), static_cast< float >( ( i + 1 ) * 2 ) );

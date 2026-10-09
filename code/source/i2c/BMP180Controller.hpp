@@ -90,7 +90,7 @@ public:
 	using enum Address;
 	using enum SamplingAccuracy;
 
-	explicit BMP180Controller( BusController& busController,
+	explicit BMP180Controller( Transport& busController,
 							   Address address = DEFAULT,
 							   SamplingAccuracy sAccuracy = STANDARD );
 
@@ -117,6 +117,7 @@ private:
 	BMP180Controller& operator=( const BMP180Controller& ) = delete;
 
 private:
+	bool m_calibrationValid{};
 	SamplingAccuracy m_samplingAccuracy;
 	utils::FastPimpl< CalibrationConstants, kCalibConstSize, kCalibConstAlign > m_constants;
 };

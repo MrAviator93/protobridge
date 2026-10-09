@@ -32,56 +32,98 @@ struct TrackDestruction
 	~TrackDestruction() { destroyed = true; }
 };
 
-
 } // namespace
 
 TEST( FastPimplTest, ConstructAndAccess )
 {
+	// Arrange
+	// No additional setup required.
+
+	// Act
 	FastPimpl< SimpleType, SimpleTypeSize, SimpleTypeAlignment > pimpl( 42, "Test" );
-	EXPECT_NE( pimpl.get(), nullptr );
-	EXPECT_EQ( pimpl->x, 42 );
-	EXPECT_EQ( pimpl->name, "Test" );
-	EXPECT_EQ( pimpl->doubleX(), 84 );
+	const auto pimplGetResult = pimpl.get();
+	const auto pimplXResult = pimpl->x;
+	const auto pimplNameResult = pimpl->name;
+	const auto pimplDoubleXResult = pimpl->doubleX();
+
+	// Assert
+	EXPECT_NE( pimplGetResult, nullptr );
+	EXPECT_EQ( pimplXResult, 42 );
+	EXPECT_EQ( pimplNameResult, "Test" );
+	EXPECT_EQ( pimplDoubleXResult, 84 );
 }
 
 TEST( FastPimplTest, ConstAccess )
 {
+	// Arrange
+	// No additional setup required.
+
+	// Act
 	const FastPimpl< SimpleType, SimpleTypeSize, SimpleTypeAlignment > pimpl( 10, "Const" );
-	EXPECT_EQ( pimpl->x, 10 );
-	EXPECT_EQ( pimpl->name, "Const" );
-	EXPECT_EQ( pimpl->doubleX(), 20 );
+	const auto pimplXResult = pimpl->x;
+	const auto pimplNameResult = pimpl->name;
+	const auto pimplDoubleXResult = pimpl->doubleX();
+
+	// Assert
+	EXPECT_EQ( pimplXResult, 10 );
+	EXPECT_EQ( pimplNameResult, "Const" );
+	EXPECT_EQ( pimplDoubleXResult, 20 );
 }
 
 TEST( FastPimplTest, StorageAlignmentAndSizeMatch )
 {
-	static_assert( sizeof( FastPimpl< SimpleType, SimpleTypeSize, SimpleTypeAlignment > ) == SimpleTypeSize,
-				   "Size mismatch" );
-	static_assert( alignof( FastPimpl< SimpleType, SimpleTypeSize, SimpleTypeAlignment > ) == SimpleTypeAlignment,
-				   "Alignment mismatch" );
+	// Arrange
+	// No additional setup required.
+
+	// Act
+	constexpr auto storageSize = sizeof( FastPimpl< SimpleType, SimpleTypeSize, SimpleTypeAlignment > );
+	constexpr auto storageAlignment = alignof( FastPimpl< SimpleType, SimpleTypeSize, SimpleTypeAlignment > );
+
+	// Assert
+	static_assert( storageSize == SimpleTypeSize, "Size mismatch" );
+	static_assert( storageAlignment == SimpleTypeAlignment, "Alignment mismatch" );
 }
 
 TEST( FastPimplTest, CompileTimeValidationFailsOnWrongSize )
 {
-	// The following static_assert is commented out to avoid compile error during normal build.
-	// Uncomment to test behavior manually.
-	// FastPimpl<SimpleType, SimpleTypeSize - 1, SimpleTypeAlignment> invalidSizePimpl(1, "fail");
+	// Arrange
+	// Invalid template arguments require a separate compile-failure test.
+
+	// Act
+	// No runtime operation can instantiate an intentionally invalid type.
+
+	// Assert
+	GTEST_SKIP() << "Requires a compile-failure test harness";
 }
 
 TEST( FastPimplTest, CompileTimeValidationFailsOnWrongAlignment )
 {
-	// The following static_assert is commented out to avoid compile error during normal build.
-	// Uncomment to test behavior manually.
-	// FastPimpl<SimpleType, SimpleTypeSize, SimpleTypeAlignment - 1> invalidAlignmentPimpl(1, "fail");
+	// Arrange
+	// Invalid template arguments require a separate compile-failure test.
+
+	// Act
+	// No runtime operation can instantiate an intentionally invalid type.
+
+	// Assert
+	GTEST_SKIP() << "Requires a compile-failure test harness";
 }
 
 TEST( FastPimplTest, DestructorCleansUpResources )
 {
+	// Arrange
 	destroyed = false;
+	bool destroyedWhileAlive{};
+
+	// Act
 	{
 		FastPimpl< TrackDestruction, sizeof( TrackDestruction ), alignof( TrackDestruction ) > temp;
-		EXPECT_FALSE( destroyed );
+		destroyedWhileAlive = destroyed;
 	}
-	EXPECT_TRUE( destroyed );
+	const bool destroyedAfterScope = destroyed;
+
+	// Assert
+	EXPECT_FALSE( destroyedWhileAlive );
+	EXPECT_TRUE( destroyedAfterScope );
 }
 
 } // namespace pbl::utils
