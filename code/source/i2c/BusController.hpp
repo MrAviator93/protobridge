@@ -1,6 +1,7 @@
 #ifndef PBL_I2C_BUS_CONTROLLER_HPP__
 #define PBL_I2C_BUS_CONTROLLER_HPP__
 
+#include "Transport.hpp"
 #include <utils/Counter.hpp>
 
 // C++
@@ -33,7 +34,7 @@ inline namespace v1
  * 
  * @author AK aka MrAviator93
  */
-class BusController : public utils::Counter< BusController >
+class BusController : public Transport, public utils::Counter< BusController >
 {
 public:
 	/// Default ctor opens a file descriptor.
@@ -124,11 +125,14 @@ public:
 		return read( deviceAdd, reg, data.data(), static_cast< std::uint16_t >( data.size() ) );
 	}
 
-	/// TBW
-	std::int16_t read( const std::uint8_t deviceAddr, std::span< std::uint8_t > data );
+	/// Reads the complete byte buffer.
+	utils::Result< void > read( Address deviceAddr, std::span< std::uint8_t > data ) override;
 
-	/// TBW
-	bool write( const std::uint8_t deviceAddr, const std::span< const std::uint8_t > data );
+	/// Writes the complete byte buffer.
+	utils::Result< void > write( Address deviceAddr, std::span< const std::uint8_t > data ) override;
+
+	utils::Result< void > writeRead( Address address, std::span< const std::uint8_t > request,
+		std::span< std::uint8_t > response ) override;
 
 	/**
      * @brief Write a single byte to the specified register

@@ -9,8 +9,13 @@ namespace pbl::math
 
 TEST( Matrix3x3Test, ElementAccessReturnsCorrectValues )
 {
+	// Arrange
+	// No additional setup required.
+
+	// Act
 	Matrix3x3< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
 
+	// Assert
 	EXPECT_FLOAT_EQ( matrix.at( 0 ).value(), 1.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 1 ).value(), 2.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 2 ).value(), 3.0f );
@@ -24,12 +29,14 @@ TEST( Matrix3x3Test, ElementAccessReturnsCorrectValues )
 
 TEST( Matrix3x3Test, MatrixAdditionReturnsCorrectResult )
 {
+	// Arrange
 	Matrix3x3< float > a{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
-
 	Matrix3x3< float > b{ 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
 
+	// Act
 	auto result = a + b;
 
+	// Assert
 	EXPECT_FLOAT_EQ( result.at( 0 ).value(), 10.0f );
 	EXPECT_FLOAT_EQ( result.at( 1 ).value(), 10.0f );
 	EXPECT_FLOAT_EQ( result.at( 2 ).value(), 10.0f );
@@ -43,12 +50,14 @@ TEST( Matrix3x3Test, MatrixAdditionReturnsCorrectResult )
 
 TEST( Matrix3x3Test, MatrixSubtractionReturnsCorrectResult )
 {
+	// Arrange
 	Matrix3x3< float > a{ 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
-
 	Matrix3x3< float > b{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 
+	// Act
 	auto result = a - b;
 
+	// Assert
 	EXPECT_FLOAT_EQ( result.at( 0 ).value(), 8.0f );
 	EXPECT_FLOAT_EQ( result.at( 1 ).value(), 7.0f );
 	EXPECT_FLOAT_EQ( result.at( 2 ).value(), 6.0f );
@@ -62,12 +71,14 @@ TEST( Matrix3x3Test, MatrixSubtractionReturnsCorrectResult )
 
 TEST( Matrix3x3Test, MatrixMultiplicationReturnsCorrectResult )
 {
+	// Arrange
 	Matrix3x3< float > a{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
-
 	Matrix3x3< float > b{ 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
 
+	// Act
 	auto result = a * b;
 
+	// Assert
 	EXPECT_FLOAT_EQ( result.at( 0 ).value(), 30.0f );
 	EXPECT_FLOAT_EQ( result.at( 1 ).value(), 24.0f );
 	EXPECT_FLOAT_EQ( result.at( 2 ).value(), 18.0f );
@@ -81,10 +92,13 @@ TEST( Matrix3x3Test, MatrixMultiplicationReturnsCorrectResult )
 
 TEST( Matrix3x3Test, ScalarAdditionReturnsCorrectMatrix )
 {
+	// Arrange
 	Matrix3x3< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
 
+	// Act
 	auto result = matrix + 1.0f;
 
+	// Assert
 	EXPECT_FLOAT_EQ( result.at( 0 ).value(), 2.0f );
 	EXPECT_FLOAT_EQ( result.at( 1 ).value(), 3.0f );
 	EXPECT_FLOAT_EQ( result.at( 2 ).value(), 4.0f );
@@ -98,10 +112,13 @@ TEST( Matrix3x3Test, ScalarAdditionReturnsCorrectMatrix )
 
 TEST( Matrix3x3Test, ScalarAdditionInPlaceModifiesMatrix )
 {
+	// Arrange
 	Matrix3x3< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
 
+	// Act
 	matrix += 1.0f;
 
+	// Assert
 	EXPECT_FLOAT_EQ( matrix.at( 0 ).value(), 2.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 1 ).value(), 3.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 2 ).value(), 4.0f );
@@ -115,10 +132,13 @@ TEST( Matrix3x3Test, ScalarAdditionInPlaceModifiesMatrix )
 
 TEST( Matrix3x3Test, ScalarMultiplicationReturnsCorrectMatrix )
 {
+	// Arrange
 	Matrix3x3< float > matrix{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f };
 
+	// Act
 	matrix = matrix * 2.0f;
 
+	// Assert
 	EXPECT_FLOAT_EQ( matrix.at( 0 ).value(), 2.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 1 ).value(), 4.0f );
 	EXPECT_FLOAT_EQ( matrix.at( 2 ).value(), 6.0f );

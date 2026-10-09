@@ -19,70 +19,129 @@ struct BasicTracked : private Counter< BasicTracked >
 
 TEST( CounterTest, DefaultConstructionIncrementsCount )
 {
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	// Arrange
+	const auto initialCount = BasicTracked::count();
+	std::size_t constructedCount{};
+
+	// Act
 	{
-		BasicTracked a;
-		EXPECT_EQ( BasicTracked::count(), 1 );
+		BasicTracked instance;
+		constructedCount = BasicTracked::count();
 	}
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	const auto destroyedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( initialCount, 0 );
+	EXPECT_EQ( constructedCount, 1 );
+	EXPECT_EQ( destroyedCount, 0 );
 }
 
 TEST( CounterTest, MultipleInstancesTrackCorrectly )
 {
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	// Arrange
+	const auto initialCount = BasicTracked::count();
+	std::size_t constructedCount{};
+
+	// Act
 	{
 		BasicTracked a, b, c;
-		EXPECT_EQ( BasicTracked::count(), 3 );
+		constructedCount = BasicTracked::count();
 	}
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	const auto destroyedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( initialCount, 0 );
+	EXPECT_EQ( constructedCount, 3 );
+	EXPECT_EQ( destroyedCount, 0 );
 }
 
 TEST( CounterTest, CopyConstructionIncrementsCount )
 {
+	// Arrange
+	std::size_t initialCount{};
+	std::size_t copiedCount{};
+
+	// Act
 	{
-		BasicTracked a;
-		std::size_t count_before = BasicTracked::count();
-		BasicTracked b = a;
-		EXPECT_EQ( BasicTracked::count(), count_before + 1 );
+		BasicTracked original;
+		initialCount = BasicTracked::count();
+		BasicTracked copy = original;
+		copiedCount = BasicTracked::count();
 	}
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	const auto destroyedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( copiedCount, initialCount + 1 );
+	EXPECT_EQ( destroyedCount, 0 );
 }
 
 TEST( CounterTest, MoveConstructionIncrementsCount )
 {
+	// Arrange
+	std::size_t initialCount{};
+	std::size_t movedCount{};
+
+	// Act
 	{
-		BasicTracked a;
-		std::size_t count_before = BasicTracked::count();
-		BasicTracked b = std::move( a );
-		EXPECT_EQ( BasicTracked::count(), count_before + 1 );
+		BasicTracked original;
+		initialCount = BasicTracked::count();
+		BasicTracked moved = std::move( original );
+		movedCount = BasicTracked::count();
 	}
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	const auto destroyedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( movedCount, initialCount + 1 );
+	EXPECT_EQ( destroyedCount, 0 );
 }
 
 TEST( CounterTest, CopyAssignmentDoesNotChangeCount )
 {
+	// Arrange
 	BasicTracked a, b;
-	EXPECT_EQ( BasicTracked::count(), 2 );
+	const auto initialCount = BasicTracked::count();
+
+	// Act
 	b = a;
-	EXPECT_EQ( BasicTracked::count(), 2 );
+	const auto assignedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( initialCount, 2 );
+	EXPECT_EQ( assignedCount, initialCount );
 }
 
 TEST( CounterTest, MoveAssignmentDoesNotChangeCount )
 {
+	// Arrange
 	BasicTracked a, b;
-	EXPECT_EQ( BasicTracked::count(), 2 );
+	const auto initialCount = BasicTracked::count();
+
+	// Act
 	b = std::move( a );
-	EXPECT_EQ( BasicTracked::count(), 2 );
+	const auto assignedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( initialCount, 2 );
+	EXPECT_EQ( assignedCount, initialCount );
 }
 
 TEST( CounterTest, DestructorDecrementsCount )
 {
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	// Arrange
+	const auto initialCount = BasicTracked::count();
+	std::size_t liveCount{};
+
+	// Act
 	{
 		BasicTracked a, b;
-		EXPECT_EQ( BasicTracked::count(), 2 );
+		liveCount = BasicTracked::count();
 	}
-	EXPECT_EQ( BasicTracked::count(), 0 );
+	const auto destroyedCount = BasicTracked::count();
+
+	// Assert
+	EXPECT_EQ( initialCount, 0 );
+	EXPECT_EQ( liveCount, 2 );
+	EXPECT_EQ( destroyedCount, 0 );
 }
 
 } // namespace pbl::utils

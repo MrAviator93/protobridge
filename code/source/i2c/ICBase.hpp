@@ -1,7 +1,8 @@
 #ifndef PBL_I2C_IC_BASE_HPP__
 #define PBL_I2C_IC_BASE_HPP__
 
-#include <utils/Result.hpp>
+#include "Transport.hpp"
+#include "BusController.hpp"
 
 // C++
 #include <span>
@@ -23,9 +24,9 @@ namespace detail
 /**
  * @brief A concept that checks for valid I2C address types.
  *
- * `AddressType` is a concept used to constrain a type to be either a `std::uint8_t` 
- * or an enum with an underlying type of `std::uint8_t`. This is particularly useful 
- * when defining types representing I2C addresses in integrated circuit communications, 
+ * `AddressType` is a concept used to constrain a type to be either a `std::uint8_t`
+ * or an enum with an underlying type of `std::uint8_t`. This is particularly useful
+ * when defining types representing I2C addresses in integrated circuit communications,
  * ensuring type-safety and correctness of the used types.
  *
  * @tparam T The type to be checked against the concept.
@@ -38,14 +39,15 @@ concept AddressType = std::is_same_v< T, std::uint8_t > ||
 
 /**
  * @class ICBase
- * @brief This class serves as a base for various integrated circuit (IC) controllers, providing fundamental 
+ * @brief This class serves as a base for various integrated circuit (IC) controllers, providing fundamental
  *        functionalities and interface that all IC controllers must have.
  *
- * ICBase is an abstract class that cannot be instantiated on its own. It encapsulates behaviors and 
- * state common to all ICs, such as maintaining a reference to the I2C bus controller, storing the IC's 
+ * ICBase has a protected constructor and encapsulates behaviors and
+ * state common to all ICs, such as maintaining a reference to the I2C bus controller, storing the IC's
  * unique address, and standard methods all IC controllers are expected to leverage (like sleep).
  * Derived classes should provide the specific implementation details for the respective ICs.
- * 
+ *
+ * @note The borrowed transport must outlive the controller.
  * @todo Rename to I2CDevice
  */
 class ICBase
@@ -74,9 +76,9 @@ protected:
      * @param icAddress The unique address of the IC on the I2C bus.
 	 */
 	template < detail::AddressType T >
-	ICBase( BusController& busController, const T icAddress ) noexcept
+	ICBase( Transport& busController, const T icAddress ) noexcept
 		: m_busController{ busController }
-		, m_icAddress{ static_cast< std::uint8_t >( icAddress ) }
+		, m_icAddress{ static_cast< Transport::Address >( icAddress ) }
 	{ }
 
 	void sleep( const std::chrono::milliseconds sleepTimeMs );
@@ -85,8 +87,8 @@ protected:
 	[[nodiscard]] auto& controller( this auto& self ) noexcept { return self.m_busController; }
 
 private:
-	BusController& m_busController;
-	std::uint8_t m_icAddress;
+	Transport& m_busController;
+	Transport::Address m_icAddress;
 };
 
 } // namespace v1
