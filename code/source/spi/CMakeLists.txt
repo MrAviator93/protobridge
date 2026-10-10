@@ -1,10 +1,12 @@
 
 set(PBL_LIB_HEADERS
     BusController.hpp
+    MCP3008Controller.hpp
 )
 
 set(PBL_LIB_SOURCE
     BusController.cpp
+    MCP3008Controller.cpp
 )
 
 set(PBL_LIB_PRIVATE_DEPS
